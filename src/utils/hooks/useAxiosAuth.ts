@@ -1,0 +1,69 @@
+import { useAtom } from 'jotai';
+import { getSession, useSession } from 'next-auth/react';
+import { useEffect } from 'react';
+
+import { sessionExpireModalAtom } from '@/store/modals';
+
+import axiosAuth from '../axiosAuth';
+
+import useRefreshToken from './useRefreshToken';
+
+const useAxiosAuth = () => {
+  const { data: session, status } = useSession();
+  const [sessionExpire, setSessionExpireModal] = useAtom(
+    sessionExpireModalAtom,
+  );
+  console.log({ status });
+  const refresh = useRefreshToken();
+
+  useEffect(() => {
+    const requestIntercept = axiosAuth.interceptors.request.use(
+      (config) => {
+        if (!config.headers['Authorization']) {
+          config.headers['Authorization'] = `Bearer ${session?.user?.access}`;
+        }
+
+        return config;
+      },
+      (error) => Promise.reject(error),
+    );
+
+    const responseIntercept = axiosAuth.interceptors.response.use(
+      (response) => {
+        return response;
+      },
+      async (error) => {
+        const prevReq = error.config;
+
+        if (error.response.status === 401 && !prevReq.retry) {
+          if (prevReq.url === '/api/login/refresh/') {
+            console.log('session expired');
+            setSessionExpireModal({
+              ...sessionExpire,
+              status: true,
+            });
+          } else {
+            prevReq.retry = true;
+            await refresh();
+            const updatedSession = await getSession();
+
+            prevReq.headers[
+              'Authorization'
+            ] = `Bearer ${updatedSession?.user?.access}`;
+            return axiosAuth(prevReq);
+          }
+        }
+        return Promise.reject(error);
+      },
+    );
+
+    return () => {
+      axiosAuth.interceptors.request.eject(requestIntercept);
+      axiosAuth.interceptors.response.eject(responseIntercept);
+    };
+  }, [session]);
+
+  return axiosAuth;
+};
+
+export default useAxiosAuth;

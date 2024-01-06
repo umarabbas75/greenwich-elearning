@@ -1,0 +1,243 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body,
+html {
+  height: 100vh;
+  width: 100%;
+}
+@layer base {
+  :root {
+    --background: #fcfcfc;
+    --foreground: #232323;
+
+    --card: #ffffff;
+    --card-foreground: #232323;
+
+    --popover: #ffffff;
+    --popover-foreground: #232323;
+
+    --primary: #f17f0e;
+    --primary-foreground: #f8fafc;
+
+    --secondary: #f1f5f9;
+    --secondary-foreground: #0f172a;
+
+    --muted: #f4f4f5;
+    --muted-foreground: #71717a;
+
+    --accent: #64748b;
+    --accent-foreground: #0f172a;
+
+    --destructive: #ef4444;
+    --destructive-foreground: #f8fafc;
+
+    --sidebar-hover: #383838;
+    --light-hover: #f9f9f9;
+    --dark-icon-hover: #fff7ec;
+
+    --border: #e2e8f0;
+    --input: #e2e8f0;
+    --ring: #232323;
+    --app-header-box-shadow: 0px 10px 30px 0px rgba(82, 63, 105, 0.05);
+    --radius: 0.5rem;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: #353333;
+    --foreground: #fcfcfc;
+
+    --card: #ffffff;
+    --card-foreground: #232323;
+
+    --popover: #ffffff;
+    --popover-foreground: #232323;
+
+    --primary: #f17f0e;
+    --primary-foreground: #f8fafc;
+
+    --secondary: #f1f5f9;
+    --secondary-foreground: #0f172a;
+
+    --muted: #bdc1c5;
+    --muted-foreground: #64748b;
+
+    --accent: #64748b;
+    --accent-foreground: #0f172a;
+
+    --destructive: #ef4444;
+    --destructive-foreground: #f8fafc;
+
+    --sidebar-hover: #383838;
+    --light-hover: #f9f9f9;
+    --dark-icon-hover: #fff7ec;
+
+    --border: #e2e8f0;
+    --input: #e2e8f0;
+    --ring: #232323;
+    --app-header-box-shadow: 0px 10px 30px 0px rgba(82, 63, 105, 0.05);
+    --radius: 0.5rem;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  .custom-file-uploader {
+    @apply w-24 h-28 flex flex-col items-center justify-center pt-7 !important;
+  }
+  /* this is for the react-phone-input-2 */
+  .custom-phone-input {
+    @apply dark:bg-background w-full h-14 pr-4 pl-16 py-2 rounded-md  border-2  !important;
+  }
+  .custom-phone-input + .flag-dropdown .selected-flag {
+    @apply dark:bg-background !important;
+  }
+  .custom-phone-input + .flag-dropdown .country-list {
+    @apply dark:bg-background !important;
+  }
+  .custom-phone-input + .flag-dropdown .country-list li {
+    @apply dark:hover:bg-neutral-700 !important;
+  }
+  .custom-phone-input + .flag-dropdown .country-list .country.highlight {
+    @apply dark:bg-neutral-700 !important;
+  }
+
+  /* this is for the react-select */
+  .my-react-select-container .my-react-select__control {
+    @apply bg-white p-2 dark:bg-background border-2 dark:border-2 dark:border-white border-neutral-300  hover:border-neutral-400 dark:hover:border-neutral-500;
+  }
+
+  .my-react-select-container .my-react-select__control--is-focused {
+    @apply border-neutral-500 hover:border-neutral-500 dark:border-neutral-400 dark:hover:border-neutral-400 shadow-none;
+  }
+
+  .my-react-select-container .my-react-select__menu {
+    @apply bg-neutral-100 dark:bg-background border-2 border-neutral-300 dark:border-neutral-600;
+  }
+
+  .my-react-select-container .my-react-select__option {
+    @apply text-neutral-600 dark:text-neutral-200 bg-neutral-100 hover:bg-neutral-200 dark:bg-background dark:hover:bg-neutral-800;
+  }
+
+  .my-react-select-container .my-react-select__indicator-separator {
+    @apply bg-neutral-400;
+  }
+
+  .my-react-select-container .my-react-select__input-container,
+  .my-react-select-container .my-react-select__placeholder,
+  .my-react-select-container .my-react-select__single-value {
+    @apply text-neutral-600 dark:text-neutral-200;
+  }
+}
+
+.sidenav-icon [fill='darkgray'] {
+  fill: #7f8194;
+  transition: fill 0.2s ease-in-out;
+}
+
+.sidenav-icon:hover [fill='darkgray'] {
+  fill: #ffffff;
+}
+
+.sidenav-icon.active-icon [fill='darkgray'] {
+  fill: #ffffff;
+}
+
+.dark-icon [fill='darkgray'] {
+  fill: #7f8194;
+  transition: fill 0.2s ease-in-out;
+}
+
+.dark-icon:hover [fill='darkgray'] {
+  fill: var(--primary);
+}
+.dark-icon.active-icon [fill='darkgray'] {
+  fill: var(--primary);
+}
+
+.animation-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 50%;
+  animation: containerFadeIn 20s linear infinite;
+}
+@keyframes containerFadeIn {
+  0% {
+    opacity: 0;
+    background-color: #fff;
+  }
+  30% {
+    opacity: 1;
+    background-color: lightgray;
+  }
+}
+
+.animation-container .imgBox img {
+  width: 90%;
+  margin: auto;
+  object-fit: contain;
+}
+.animation-container .progressBar {
+  position: relative;
+  width: 320px;
+}
+.animation-container .progressBar span {
+  position: absolute;
+  width: 0;
+  height: 8px;
+  background-color: #e74f4b;
+  animation: progressBar 10s linear infinite;
+  animation-fill-mode: forwards;
+}
+@keyframes progressBar {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  30% {
+    width: 0;
+    opacity: 1;
+  }
+  50% {
+    width: 30%;
+  }
+  80% {
+    width: 100%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+.animation-container .titleBox {
+  font-size: 2em;
+  font-weight: 100;
+  padding-top: 20px;
+  animation: titleFadeIn 10s linear infinite;
+}
+@keyframes titleFadeIn {
+  0% {
+    opacity: 0;
+  }
+  50%,
+  100% {
+    font-weight: 400;
+    opacity: 1;
+  }
+}
+
+.leaflet-div-icon {
+  background: transparent !important;
+  border: none !important;
+}
