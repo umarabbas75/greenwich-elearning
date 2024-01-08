@@ -28,92 +28,14 @@ export const siderbarmenu: SidebarMenuItem[] = [
     },
   },
   {
-    id: 'gensetType',
-    title: 'Genset Type',
-    icon: 'types',
-    link: '/gensetType',
-    role: ['Admin'],
-    permissions: {
-      Admin: ['read', 'update', 'delete', 'create'],
-      Manager: ['read'],
-    },
-  },
-  {
-    id: 'genset',
-    title: 'Genset',
-    icon: 'genmark',
-    link: '/genset',
+    id: 'user',
+    title: 'User',
+    icon: 'dashboard',
+    link: '/user',
     role: ['Admin', 'Manager'],
     permissions: {
       Admin: ['read', 'update', 'delete', 'create'],
       Manager: ['read'],
-    },
-  },
-
-  {
-    id: 'customers',
-    title: 'Customer',
-    icon: 'customer',
-    link: '/customer',
-    role: ['Admin'],
-    permissions: {
-      Admin: ['read', 'update', 'delete', 'create'],
-      Manager: [],
-    },
-  },
-  {
-    id: 'subscriptions',
-    title: 'Subscription',
-    icon: 'subscription',
-    link: '/subscription',
-    role: ['Admin'],
-    permissions: {
-      Admin: ['read', 'update', 'delete', 'create'],
-      Manager: [],
-    },
-  },
-  {
-    id: 'drivers',
-    title: 'Driver',
-    icon: 'driver',
-    link: '/driver',
-    role: ['Admin', 'Manager'],
-    permissions: {
-      Admin: ['read', 'update', 'delete', 'create'],
-      Manager: ['read'],
-    },
-  },
-  {
-    id: 'gensetsonmap',
-    title: 'Gensets on map',
-    icon: 'map',
-    link: '/gensetsonmap',
-    role: ['Admin', 'Manager'],
-    permissions: {
-      Admin: ['read', 'update', 'delete', 'create'],
-      Manager: ['read'],
-    },
-  },
-  {
-    id: 'serviceDealer',
-    title: 'Serive Dealer',
-    icon: 'serviceDealer',
-    link: '/serviceDealer',
-    role: ['Admin', 'Manager'],
-    permissions: {
-      Admin: ['read', 'update', 'delete', 'create'],
-      Manager: ['read'],
-    },
-  },
-  {
-    id: 'warnings',
-    title: 'Alarms',
-    icon: 'warning',
-    link: '/warning',
-    role: ['Admin'],
-    permissions: {
-      Admin: ['read', 'update', 'delete', 'create'],
-      Manager: [],
     },
   },
   {

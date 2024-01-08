@@ -7,12 +7,12 @@ import { useState } from 'react';
 import { AlertDestructive } from '@/components/common/FormError';
 import SearchComponent from '@/components/common/SearchInput';
 import { Button } from '@/components/ui/button';
-import { useFetchGensetTypeList } from '@/lib/dashboard/client/gensetType';
-import { gensetTypeModalAtom } from '@/store/modals';
+import { useFetchUserList } from '@/lib/dashboard/client/user';
+import { userModalAtom } from '@/store/modals';
 import useDebounce from '@/utils/hooks/useDebounce';
 
-import GensetTypeModal from './_components/GensetTypeModal';
-import GensetTypeTable from './_components/GensetTypeTable';
+import UserModal from './_components/UserModal';
+import UserTable from './_components/UserTable';
 
 const Page = () => {
   const [pagination, setPagination] = useState({
@@ -22,40 +22,40 @@ const Page = () => {
 
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 500);
-  const [gensetTypeState, setGensetTypeState] = useAtom(gensetTypeModalAtom);
-  const { data, isLoading, error, isError } = useFetchGensetTypeList({
-    search: debouncedSearch,
+  const [userState, setUserState] = useAtom(userModalAtom);
+  const { data, isLoading, error, isError } = useFetchUserList({
     page: pagination.pageIndex + 1,
+    search: debouncedSearch,
   });
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex flex-col gap-2 md:flex md:flex-row">
-        <div className="md:flex-1"></div>
-        <div className="flex flex-col md:flex-row md:justify-end gap-2 md:flex-1">
+    <div>
+      <div className="grid grid-cols-2 my-2 mr-2 items-center mb-4">
+        <div className="flex justify-start col-span-1"></div>
+        <div className="flex justify-end col-span-1 gap-4">
           <SearchComponent setSearch={setSearch} search={search} />
           <Button
             onClick={() =>
-              setGensetTypeState({
+              setUserState({
                 status: true,
                 data: null,
               })
             }
           >
-            Add New Genset Type
+            Add New User
           </Button>
         </div>
       </div>
       {isError && <AlertDestructive error={error} />}
       {data?.results?.length > 0 ? (
-        <GensetTypeTable
+        <UserTable
           data={data ?? []}
           pagination={pagination}
           setPagination={setPagination}
           isLoading={isLoading}
         />
       ) : (
-        <div className="flex item-center justify-center">
+        <div className="flex item-center justify-center mt-4">
           <div className="flex flex-col items-center opacity-70">
             <span>NO DATA FOUND</span>
             <Database />
@@ -63,7 +63,7 @@ const Page = () => {
         </div>
       )}
 
-      {gensetTypeState.status && <GensetTypeModal />}
+      {userState.status && <UserModal />}
     </div>
   );
 };

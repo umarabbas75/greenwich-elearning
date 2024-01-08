@@ -6,8 +6,8 @@ import React from 'react';
 import { LoginAuthForm } from './_components/LoginAuthForm';
 
 export const metadata: Metadata = {
-  title: 'Authentication',
-  description: 'Authentication forms built using the components.',
+  title: 'Greenwich',
+  description: 'Greewich home page.',
 };
 
 const page = () => {
@@ -18,10 +18,10 @@ const page = () => {
           <div className="flex flex-col space-y-2 text-center">
             <div className="grid justify-center mb-4">
               <Image
-                src="/assets/images/genmark_logo.png"
-                width={350}
-                height={200}
-                alt="Genmark logo"
+                src="/assets/images/greenwich_logo.png"
+                width={150}
+                height={180}
+                alt="Greenwich logo"
               />
             </div>
             <h1 className="text-2xl font-semibold tracking-tight">Sign In</h1>

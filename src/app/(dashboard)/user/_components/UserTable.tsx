@@ -6,57 +6,42 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
+import Image from 'next/image';
 import { FC } from 'react';
 
 import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
-import StatusComp from '@/components/common/Status';
 import TableComponent from '@/components/common/Table';
 import TableActions from '@/components/common/TableActions';
 import { useToast } from '@/components/ui/use-toast';
-import { useDeleteSubscription } from '@/lib/dashboard/client/subscription';
-import {
-  confirmationModalAtom,
-  currenySignAtom,
-  subscriptionListModalAtom,
-  subscriptionModalAtom,
-} from '@/store/modals';
-import { formatNumber } from '@/utils/formatNumber';
+import { useDeleteUser } from '@/lib/dashboard/client/user';
+import { confirmationModalAtom, userModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
-import SubscriptionListModal from './SubscriptionListModal';
-import SubscriptionModal from './SubscriptionModal';
+import UserModal from './UserModal';
 
-const columnHelper = createColumnHelper<SubscriptionType>();
+const columnHelper = createColumnHelper<UserType>();
 
 interface Props {
-  data: SubscriptionData;
+  data: UserData;
   pagination: Pagination;
   setPagination: any;
   isLoading: boolean;
 }
-const SubscriptionTable: FC<Props> = ({
+const UserTable: FC<Props> = ({
   data,
   pagination,
   setPagination,
   isLoading,
 }) => {
-  const [subscriptionState, setSubscriptionState] = useAtom(
-    subscriptionModalAtom,
-  );
+  const [userState, setUserState] = useAtom(userModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
-  const [subscriptionListState, setSubscriptionListState] = useAtom(
-    subscriptionListModalAtom,
-  );
   const { toast } = useToast();
-
-  const [currenySign] = useAtom(currenySignAtom);
-
-  const renderActions = (row: SubscriptionType) => {
+  const renderActions = (row: UserType) => {
     return (
       <div className="flex flex-col p-2 gap-1 ">
         <span
           onClick={() => {
-            setSubscriptionState({
+            setUserState({
               status: true,
               data: row,
             });
@@ -85,59 +70,63 @@ const SubscriptionTable: FC<Props> = ({
 
   const columns = [
     // Accessor Columns
-    columnHelper.accessor('name', {
-      header: 'Package Name',
-      cell: (props) => {
-        return <h1>{props.row.original.name}</h1>;
-      },
-      footer: (props) => props.column.id,
-    }),
-    columnHelper.accessor('price', {
-      header: 'Price',
+    columnHelper.accessor('photo', {
+      header: 'Photo',
       cell: (props) => {
         return (
-          <h1>
-            {currenySign.currencySign} {formatNumber(+props.row.original.price)}
+          <h1 className="flex  flex-col justify-center w-fit text-center items-center">
+            {props.row.original.photo ? (
+              <Image
+                src={props.row.original.photo}
+                alt="genset type"
+                width={50}
+                height={50}
+                className="rounded-full"
+              />
+            ) : (
+              <Icons iconName="avatar" className="h-12 w-12" />
+            )}
           </h1>
         );
       },
       footer: (props) => props.column.id,
     }),
-    columnHelper.accessor('feature_list', {
-      id: 'feature_list',
-      header: 'Features',
-      cell: (props) => (
-        <h1
-          className="cursor-pointer underline"
-          onClick={() => {
-            setSubscriptionListState({
-              status: true,
-              data: props.row.original.feature_list,
-            });
-          }}
-        >
-          {props.row.original.feature_list?.length} Features
-        </h1>
-      ),
-      footer: (props) => props.column.id,
-    }),
-    columnHelper.accessor('total_assigned', {
-      header: 'Total Assigned',
+    columnHelper.accessor('firstName', {
+      header: 'Name',
       cell: (props) => {
-        return <h1>{props.row.original.total_assigned}</h1>;
+        return (
+          <h1 className="flex  flex-col justify-center w-fit text-center items-center">
+            <span>
+              {`${props.row.original.firstName} ${props.row.original.lastName}`}
+            </span>
+          </h1>
+        );
       },
       footer: (props) => props.column.id,
     }),
-    columnHelper.accessor('status', {
-      id: 'status',
-      header: 'Status',
-      cell: (props) => <StatusComp status={props.row.original.status} />,
+
+    columnHelper.accessor('email', {
+      id: 'email',
+      header: 'Email',
+      cell: (props) => <h1>{props.row.original.email}</h1>,
+      footer: (props) => props.column.id,
+    }),
+    columnHelper.accessor('phone', {
+      id: 'phone',
+      header: 'Phone',
+      cell: (props) => <h1>{props.row.original.phone}</h1>,
       footer: (props) => props.column.id,
     }),
 
+    columnHelper.accessor('role', {
+      id: 'role',
+      header: 'Role',
+      cell: (props) => <h1>{props.row.original.role}</h1>,
+      footer: (props) => props.column.id,
+    }),
     {
       id: 'actions',
-      cell: (props: CellContext<SubscriptionType, string>) => (
+      cell: (props: CellContext<UserType, string>) => (
         <TableActions>{renderActions(props.row.original)}</TableActions>
       ),
     },
@@ -177,32 +166,34 @@ const SubscriptionTable: FC<Props> = ({
     });
   };
 
-  const { mutate: deleteSubscription, isLoading: deletingSubscription } =
-    useDeleteSubscription(handleDeleteSuccess, handleDeleteError);
+  const { mutate: deleteUser, isLoading: deletingUser } = useDeleteUser(
+    handleDeleteSuccess,
+    handleDeleteError,
+  );
 
   return (
     <>
       <div className="p-2 border rounded">
-        <p className="pl-2 font-medium mb-4">Subscription</p>
+        <p className="pl-2 font-medium mb-4">Users</p>
         {isLoading ? 'loading...' : <TableComponent table={table} />}
 
         <div className="h-4" />
       </div>
 
-      {subscriptionState.status && <SubscriptionModal />}
-      {subscriptionListState.status && <SubscriptionListModal />}
+      {userState.status && <UserModal />}
       {confirmState.status && (
         <ConfirmationModal
           open={confirmState.status}
           onClose={() => setConfirmState({ status: false, data: null })}
-          title={'Delete Subscription'}
-          content={`Are you sure you want to delete this subscription?`}
+          title={'Delete User'}
+          content={`Are you sure you want to delete this user?`}
           primaryAction={{
             label: 'Delete',
             onClick: () => {
-              deleteSubscription(confirmState.data.id);
+              deleteUser(confirmState.data.id);
+              //setConfirmState({ status: false, data: null });
             },
-            loading: deletingSubscription,
+            loading: deletingUser,
           }}
           secondaryAction={{
             label: 'Cancel',
@@ -214,4 +205,4 @@ const SubscriptionTable: FC<Props> = ({
   );
 };
 
-export default SubscriptionTable;
+export default UserTable;

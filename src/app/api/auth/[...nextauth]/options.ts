@@ -40,7 +40,21 @@ export const options = {
             },
           );
           const user = await res.json();
-
+          //adding this temporarily-start
+          return {
+            ...user,
+            access: '123345dfg4354r23c2d423x',
+            refresh: '35434c4d435364554',
+            first_name: user?.first_name ?? 'umar',
+            last_name: user?.last_name ?? 'abbas',
+            email: user?.email ?? 'umarabbas75@gmail.com',
+            id: user?.id ?? '12345',
+            photo:
+              user?.photo ??
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXuzt2s8nfTKBrSQTx1lNn9M8vIRY0xujttj2HD75gu1yTGxF8Gz75KAMpWf1qlgMlV_U&usqp=CAU',
+            role: user?.role ?? 'Admin',
+          } as any;
+          //adding this temporarily-end
           if (!res.ok) {
             throw new Error(user.detail ?? 'Something went wrong');
           }
@@ -119,7 +133,7 @@ export const options = {
         token.access = session.access;
         token.refresh = session.refresh;
       }
-
+      console.log({ token });
       if (account && user) {
         return {
           ...token,

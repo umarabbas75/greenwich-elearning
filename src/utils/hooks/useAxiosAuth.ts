@@ -1,20 +1,15 @@
-import { useAtom } from 'jotai';
-import { getSession, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
-
-import { sessionExpireModalAtom } from '@/store/modals';
 
 import axiosAuth from '../axiosAuth';
 
-import useRefreshToken from './useRefreshToken';
-
 const useAxiosAuth = () => {
   const { data: session, status } = useSession();
-  const [sessionExpire, setSessionExpireModal] = useAtom(
-    sessionExpireModalAtom,
-  );
+  // const [sessionExpire, setSessionExpireModal] = useAtom(
+  //   sessionExpireModalAtom,
+  // );
   console.log({ status });
-  const refresh = useRefreshToken();
+  // const refresh = useRefreshToken();
 
   useEffect(() => {
     const requestIntercept = axiosAuth.interceptors.request.use(
@@ -33,26 +28,26 @@ const useAxiosAuth = () => {
         return response;
       },
       async (error) => {
-        const prevReq = error.config;
+        // const prevReq = error.config;
 
-        if (error.response.status === 401 && !prevReq.retry) {
-          if (prevReq.url === '/api/login/refresh/') {
-            console.log('session expired');
-            setSessionExpireModal({
-              ...sessionExpire,
-              status: true,
-            });
-          } else {
-            prevReq.retry = true;
-            await refresh();
-            const updatedSession = await getSession();
+        // if (error.response.status === 401 && !prevReq.retry) {
+        //   if (prevReq.url === '/api/login/refresh/') {
+        //     console.log('session expired');
+        //     setSessionExpireModal({
+        //       ...sessionExpire,
+        //       status: true,
+        //     });
+        //   } else {
+        //     prevReq.retry = true;
+        //     await refresh();
+        //     const updatedSession = await getSession();
 
-            prevReq.headers[
-              'Authorization'
-            ] = `Bearer ${updatedSession?.user?.access}`;
-            return axiosAuth(prevReq);
-          }
-        }
+        //     prevReq.headers[
+        //       'Authorization'
+        //     ] = `Bearer ${updatedSession?.user?.access}`;
+        //     return axiosAuth(prevReq);
+        //   }
+        // }
         return Promise.reject(error);
       },
     );
