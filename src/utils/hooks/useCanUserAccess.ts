@@ -16,7 +16,7 @@ type Props = {
     | 'settings';
   access: Permission[];
 };
-type Role = 'Admin' | 'Manager';
+type Role = 'admin' | 'student';
 type Permission = 'create' | 'read' | 'update' | 'delete';
 
 type MenuItem = {
@@ -26,8 +26,8 @@ type MenuItem = {
   link: string;
   role: Role[];
   permissions: {
-    Admin: Permission[];
-    Manager: Permission[];
+    admin: Permission[];
+    student: Permission[];
     //Staff?: Permission[];
   };
 };
@@ -36,7 +36,7 @@ const useCanUserAccess = ({ module, access }: Props) => {
   const menu = siderbarmenu;
   const currentModule: MenuItem = menu.find((item: any) => item.id === module)!;
 
-  const role: Role = session?.user?.role || 'Admin';
+  const role: Role = session?.user?.role || 'admin';
 
   const checkPermissions = (
     currentPermission: Permission[],

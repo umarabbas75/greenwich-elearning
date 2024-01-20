@@ -1,4 +1,4 @@
-type Role = 'Admin' | 'Manager';
+type Role = 'admin' | 'student';
 type Permission = 'create' | 'read' | 'update' | 'delete';
 
 type SidebarMenuItem = {
@@ -8,8 +8,8 @@ type SidebarMenuItem = {
   link: string;
   role: Role[];
   permissions: {
-    Admin: Permission[];
-    Manager: Permission[];
+    admin: Permission[];
+    student: Permission[];
     //Staff?: Permission[];
   };
   showInSidebar?: boolean;
@@ -21,10 +21,10 @@ export const siderbarmenu: SidebarMenuItem[] = [
     title: 'Dashboard',
     icon: 'dashboard',
     link: '/',
-    role: ['Admin', 'Manager'],
+    role: ['admin', 'student'],
     permissions: {
-      Admin: ['read', 'update', 'delete', 'create'],
-      Manager: ['read'],
+      admin: ['read', 'update', 'delete', 'create'],
+      student: ['read'],
     },
   },
   {
@@ -32,10 +32,21 @@ export const siderbarmenu: SidebarMenuItem[] = [
     title: 'User',
     icon: 'dashboard',
     link: '/user',
-    role: ['Admin', 'Manager'],
+    role: ['admin', 'student'],
     permissions: {
-      Admin: ['read', 'update', 'delete', 'create'],
-      Manager: ['read'],
+      admin: ['read', 'update', 'delete', 'create'],
+      student: ['read'],
+    },
+  },
+  {
+    id: 'course',
+    title: 'Course',
+    icon: 'dashboard',
+    link: '/course',
+    role: ['admin', 'student'],
+    permissions: {
+      admin: ['read', 'update', 'delete', 'create'],
+      student: ['read'],
     },
   },
   {
@@ -43,10 +54,10 @@ export const siderbarmenu: SidebarMenuItem[] = [
     title: 'Settings',
     icon: 'setting',
     link: '/setting/account',
-    role: ['Admin', 'Manager'],
+    role: ['admin', 'student'],
     permissions: {
-      Admin: ['read', 'update', 'delete', 'create'],
-      Manager: ['read', 'update', 'delete', 'create'],
+      admin: ['read', 'update', 'delete', 'create'],
+      student: ['read', 'update', 'delete', 'create'],
     },
   },
   {
@@ -55,10 +66,10 @@ export const siderbarmenu: SidebarMenuItem[] = [
     title: 'Settings',
     icon: 'setting',
     link: '/setting/users',
-    role: ['Admin'],
+    role: ['admin'],
     permissions: {
-      Admin: ['read', 'update', 'delete', 'create'],
-      Manager: [],
+      admin: ['read', 'update', 'delete', 'create'],
+      student: [],
     },
   },
 ];

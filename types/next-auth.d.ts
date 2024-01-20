@@ -4,7 +4,7 @@ declare module 'next-auth' {
   /**
    * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
    */
-  type Role = 'Admin' | 'Manager';
+  type Role = 'admin' | 'student';
   interface Session {
     user: {
       expiry: string;

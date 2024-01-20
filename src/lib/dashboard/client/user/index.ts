@@ -1,3 +1,4 @@
+import { AxiosRequestConfig } from 'axios';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import generateQueryString from '@/utils/generateQueryString';
@@ -161,3 +162,42 @@ export const useUpdatePassword = ({
 
   return mutation;
 };
+type ApiCallProps = {
+  endpoint: string;
+  method?: 'get' | 'post' | 'put' | 'delete';
+  config?: any;
+  queryKey?: any[];
+  axiosConfig?: AxiosRequestConfig;
+  queryParams?: any;
+};
+export function useApiCall({
+  endpoint,
+  method = 'post',
+  config = {}, // Include additional configuration options, including onSuccess and onError
+  queryKey,
+  axiosConfig = {},
+}: ApiCallProps) {
+  const axiosAuth = useAxiosAuth();
+  const queryOptions = {
+    ...config, // Spread other configuration options
+  };
+  const queryKeyToUse = queryKey || [endpoint];
+
+  const mutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await axiosAuth[method](endpoint, data, axiosConfig);
+      return response.data;
+    },
+    ...queryOptions,
+  });
+
+  const query = useQuery(
+    queryKeyToUse,
+    () => axiosAuth[method](endpoint, axiosConfig),
+    {
+      ...queryOptions,
+    },
+  );
+
+  return method === 'get' ? query : mutation;
+}

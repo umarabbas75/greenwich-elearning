@@ -80,12 +80,12 @@ const UserModal = () => {
   };
   const roles = [
     {
-      label: 'Admin',
-      value: 'Admin',
+      label: 'admin',
+      value: 'admin',
     },
     {
-      label: 'Manager',
-      value: 'Manager',
+      label: 'student',
+      value: 'student',
     },
   ];
 
@@ -136,7 +136,7 @@ const UserModal = () => {
 
   const { data: customerListData, isLoading: customreListLoading } =
     useFetchCustomerList({
-      enabled: customerValue === 'Manager' ? true : false,
+      enabled: customerValue === 'student' ? true : false,
     });
 
   const { data, isLoading: fetchingUser } = useFetchUser({
@@ -162,7 +162,7 @@ const UserModal = () => {
       !(typeof values.photo === 'string' && values.photo?.includes('http')) &&
       addFormData.append('photo', values.photo as any);
     {
-      values.role === 'Manager' &&
+      values.role === 'student' &&
         addFormData.append('customer', (values.customer as any).id);
     }
     addFormData.append('first_name', values.first_name);
@@ -180,7 +180,7 @@ const UserModal = () => {
       !(typeof values.photo === 'string' && values.photo?.includes('http')) &&
       editFormData.append('photo', values.photo as any);
     {
-      values.role === 'Manager' &&
+      values.role === 'student' &&
         editFormData.append('customer', (values.customer as any).id);
     }
 
@@ -191,7 +191,7 @@ const UserModal = () => {
   };
 
   const renderCustomerField = () => {
-    if (customerValue !== 'Manager') return;
+    if (customerValue !== 'student') return;
     if (customreListLoading) return <Spinner />;
     return (
       <div className="space-y-2">

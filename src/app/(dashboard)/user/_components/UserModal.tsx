@@ -5,7 +5,6 @@ import { Controller, useForm } from 'react-hook-form';
 import { CountryData } from 'react-phone-input-2';
 import * as Yup from 'yup';
 
-import AddressSearchField from '@/components/common/AddressSearchField';
 import { AlertDestructive } from '@/components/common/FormError';
 import LoadingButton from '@/components/common/LoadingButton';
 import Modal from '@/components/common/Modal';
@@ -23,7 +22,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { useFetchCustomerList } from '@/lib/dashboard/client/customer';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
 import {
   useAddUser,
@@ -38,11 +36,9 @@ type UserFormTypes = {
   password?: string | undefined;
   role: string;
   photo: null | undefined | string;
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   phone: string;
-  location: object | null | undefined;
-  customer: object | null | undefined;
 };
 
 const UserModal = () => {
@@ -80,43 +76,31 @@ const UserModal = () => {
   };
   const roles = [
     {
-      label: 'Admin',
-      value: 'Admin',
+      label: 'Student',
+      value: 'student',
     },
     {
-      label: 'Manager',
-      value: 'Manager',
+      label: 'admin',
+      value: 'admin',
     },
   ];
 
   const defaultValues = {
-    first_name: '',
-    last_name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
-    location: null,
-    customer: null,
     password: '',
     role: '',
     photo: null,
   };
   const validationSchema = Yup.object().shape({
-    first_name: Yup.string().required('first name is required'),
-    last_name: Yup.string().required('last name is required'),
+    firstName: Yup.string().required('first name is required'),
+    lastName: Yup.string().required('last name is required'),
 
-    email: Yup.string()
-      .email('Invalid email')
-      .when('uid', {
-        is: () => !!userState?.data?.id,
-        then: () => Yup.string().notRequired(),
-        otherwise: () =>
-          Yup.string()
-            .email('invalid email address')
-            .required('email is required'),
-      }),
+    email: Yup.string().email('Invalid email').required('phone is required'),
     phone: Yup.string().required('phone is required'),
     location: Yup.mixed().required('Address is required'),
-    customer: Yup.object().required('customer is required').nullable(),
     password: Yup.string().when('uid', {
       is: () => !!userState?.data?.id,
       then: () => Yup.string().notRequired(),
@@ -130,14 +114,7 @@ const UserModal = () => {
     defaultValues,
     resolver: yupResolver(validationSchema) as any,
   });
-  const { handleSubmit, control, watch } = form;
-
-  const customerValue = watch('role');
-
-  const { data: customerListData, isLoading: customreListLoading } =
-    useFetchCustomerList({
-      enabled: customerValue === 'Manager' ? true : false,
-    });
+  const { handleSubmit, control } = form;
 
   const { data, isLoading: fetchingUser } = useFetchUser({
     variables: {
@@ -161,62 +138,23 @@ const UserModal = () => {
     values.photo &&
       !(typeof values.photo === 'string' && values.photo?.includes('http')) &&
       addFormData.append('photo', values.photo as any);
-    {
-      values.role === 'Manager' &&
-        addFormData.append('customer', (values.customer as any).id);
-    }
-    addFormData.append('first_name', values.first_name);
-    addFormData.append('last_name', values.last_name);
+
+    addFormData.append('firstName', values.firstName);
+    addFormData.append('lastName', values.lastName);
     addFormData.append('phone', values.phone);
-    addFormData.append('location', JSON.stringify(values.location) as any);
 
     const editFormData = new FormData();
     editFormData.append('role', values.role);
-    editFormData.append('first_name', values.first_name);
-    editFormData.append('last_name', values.last_name);
+    editFormData.append('firstName', values.firstName);
+    editFormData.append('lastName', values.lastName);
     editFormData.append('phone', values.phone);
-    editFormData.append('location', JSON.stringify(values.location) as any);
     values.photo &&
       !(typeof values.photo === 'string' && values.photo?.includes('http')) &&
       editFormData.append('photo', values.photo as any);
-    {
-      values.role === 'Manager' &&
-        editFormData.append('customer', (values.customer as any).id);
-    }
 
-    console.log('userState', userState?.data?.id);
     data
       ? editUser({ formData: editFormData, id: userState?.data?.id })
       : addUser(addFormData);
-  };
-
-  const renderCustomerField = () => {
-    if (customerValue !== 'Manager') return;
-    if (customreListLoading) return <Spinner />;
-    return (
-      <div className="space-y-2">
-        <FormLabel>Company</FormLabel>
-        <Controller
-          name="customer"
-          control={control}
-          render={({ field: { onChange, value }, formState: { errors } }) => {
-            console.log('customerval', value);
-            return (
-              <>
-                <ReactSelect
-                  options={customerListData?.results ?? []}
-                  value={value}
-                  onChange={(val) => onChange(val)}
-                  getOptionLabel={(option: any) => option.company} // Use 'type' as label
-                  getOptionValue={(option: any) => option.id} // Use 'value' as value
-                />
-                <FormMessage>{errors.customer?.message}</FormMessage>
-              </>
-            );
-          }}
-        />
-      </div>
-    );
   };
 
   return (
@@ -237,7 +175,7 @@ const UserModal = () => {
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={control}
-                  name="first_name"
+                  name="firstName"
                   render={({
                     field: { onChange, value },
                     formState: { errors },
@@ -249,14 +187,14 @@ const UserModal = () => {
                           <Input onChange={onChange} value={value} />
                         </FormControl>
 
-                        <FormMessage>{errors.first_name?.message}</FormMessage>
+                        <FormMessage>{errors.firstName?.message}</FormMessage>
                       </FormItem>
                     );
                   }}
                 />
                 <FormField
                   control={control}
-                  name="last_name"
+                  name="lastName"
                   render={({
                     field: { onChange, value },
                     formState: { errors },
@@ -268,7 +206,7 @@ const UserModal = () => {
                           <Input onChange={onChange} value={value} />
                         </FormControl>
 
-                        <FormMessage>{errors.last_name?.message}</FormMessage>
+                        <FormMessage>{errors.lastName?.message}</FormMessage>
                       </FormItem>
                     );
                   }}
@@ -337,22 +275,6 @@ const UserModal = () => {
                   }}
                 />
 
-                <FormField
-                  control={control}
-                  name="location"
-                  render={({
-                    field: { onChange, value },
-                    formState: { errors },
-                  }) => {
-                    return (
-                      <div className="flex flex-col space-y-2">
-                        <FormLabel className="mt-2">Address</FormLabel>
-                        <AddressSearchField value={value} onChange={onChange} />
-                        <FormMessage>{errors.location?.message}</FormMessage>
-                      </div>
-                    );
-                  }}
-                />
                 {!data && (
                   <FormField
                     control={control}
@@ -396,7 +318,6 @@ const UserModal = () => {
                     }}
                   />
                 </div>
-                {renderCustomerField()}
                 <FormField
                   control={control}
                   name="photo"
@@ -411,20 +332,6 @@ const UserModal = () => {
                           value={value}
                           types={['jpeg', 'png', 'jpg', 'svg+xml', 'webp']}
                         />
-
-                        {/* {(typeof value === 'string' || value instanceof File) && (
-                        <div className="flex justify-between mt-1 p-2 hover:bg-gray-200 cursor-pointer">
-                          {value instanceof File && <span> {value.name}</span>}
-                          {typeof value === 'string' && (
-                            <span>{getFileName(value)}</span>
-                          )}
-
-                          <DeleteIcon
-                            className="cursor-pointer"
-                            onClick={() => onChange({})}
-                          />
-                        </div>
-                      )} */}
                       </div>
                     );
                   }}

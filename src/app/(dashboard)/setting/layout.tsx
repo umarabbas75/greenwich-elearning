@@ -16,7 +16,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         router.push(`/setting/${route}`);
       }}
     >
-      {session?.user?.role === 'Admin' && (
+      {session?.user?.role === 'admin' && (
         <TabsList className="grid w-[400px] grid-cols-2">
           <TabsTrigger value="account">Account</TabsTrigger>
 

@@ -17,12 +17,12 @@ export default withAuth(
     }
 
     const pathname = req.nextUrl.pathname; // "/dashboard"
-    const role = token?.role; // "Manager"
+    const role = token?.role; // "student"
     const currentPathAuthorizationSettings = siderbarmenu.find(
       (item) => item.link === pathname,
-    ); // { Manager: ["read"] }
+    ); // { student: ["read"] }
     const currentPathPermissions =
-      currentPathAuthorizationSettings?.role?.includes(role as any); // { Manager: ["read"] }
+      currentPathAuthorizationSettings?.role?.includes(role as any); // { student: ["read"] }
 
     if (isAuth && !isAuthPage && !currentPathPermissions) {
       return new NextResponse('You are not authorized!');

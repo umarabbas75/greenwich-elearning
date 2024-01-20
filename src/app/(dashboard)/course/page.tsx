@@ -5,12 +5,12 @@ import { useState } from 'react';
 
 import SearchComponent from '@/components/common/SearchInput';
 import { Button } from '@/components/ui/button';
-import { userModalAtom } from '@/store/modals';
+import { addCourseModalAtom } from '@/store/modals';
 
-import { UserType } from '../../../../types/user.types';
+import { CourseType } from '../../../../types/course.types';
 
-import UserModal from './_components/UserModal';
-import UserTable from './_components/UserTable';
+import CourseModal from './_components/CourseModal';
+import CourseTable from './_components/CourseTable';
 
 const Page = () => {
   const [pagination, setPagination] = useState({
@@ -20,7 +20,7 @@ const Page = () => {
 
   const [search, setSearch] = useState('');
   //const debouncedSearch = useDebounce(search, 500);
-  const [userState, setUserState] = useAtom(userModalAtom);
+  const [courseModalState, setCourseModalState] = useAtom(addCourseModalAtom);
 
   // const { data, isLoading, error, isError } = useApiCall({
   //   endpoint: `user/auth/${generateQueryString({
@@ -29,16 +29,18 @@ const Page = () => {
   //   })}`,
   //   queryKey: ['get-user', pagination.pageIndex, debouncedSearch],
   // });
-  const tempData: UserType[] = [
+  const tempData: CourseType[] = [
     {
-      firstName: 'asad',
-      lastName: 'kamran',
-      phone: '+923410666880',
-      email: 'umarabbas75@gmail.com',
-      role: 'student',
-      photo: '',
+      title: 'Nebosh 1',
+      description: 'This is desc for nebosh 1',
       status: 'active',
-      password: '',
+      _id: '123dsf4534we',
+    },
+    {
+      title: 'Nebosh 2',
+      description: 'This is desc for nebosh 2',
+      status: 'active',
+      _id: '123dsf4534we',
     },
   ];
 
@@ -47,23 +49,23 @@ const Page = () => {
       <div className="grid grid-cols-2 my-2 mr-2 items-center">
         <div className="col-span-2 md:col-span-1 flex justify-start"></div>
         <div className="col-span-2  md:col-span-1 ">
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end  gap-2">
             <SearchComponent setSearch={setSearch} search={search} />
             <Button
               onClick={() =>
-                setUserState({
+                setCourseModalState({
                   status: true,
                   data: null,
                 })
               }
             >
-              Add User
+              Add Course
             </Button>
           </div>
         </div>
       </div>
       {/* {isError && <AlertDestructive error={error} />} */}
-      <UserTable
+      <CourseTable
         data={{
           results: tempData,
           count: 10,
@@ -90,7 +92,7 @@ const Page = () => {
         </div>
       )} */}
 
-      {userState.status && <UserModal />}
+      {courseModalState.status && <CourseModal />}
     </div>
   );
 };

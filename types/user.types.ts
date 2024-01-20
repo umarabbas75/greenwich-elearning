@@ -1,4 +1,4 @@
-type UserType = {
+export type UserType = {
   firstName: string;
   lastName: string;
   email: string;
@@ -6,10 +6,15 @@ type UserType = {
   password: string;
   role: string;
   photo: string | null;
-  status: UserStatus;
+  status: 'active' | 'inActive' | 'pendingApproval' | 'suspended';
 };
-type UserStatus = 'Active' | 'Inactive' | 'pendingApproval' | 'suspended';
-type UserData = {
+export type UserStatus =
+  | 'active'
+  | 'inActive'
+  | 'pendingApproval'
+  | 'suspended';
+
+export type UserData = {
   count: number;
   next: null;
   previous: null;

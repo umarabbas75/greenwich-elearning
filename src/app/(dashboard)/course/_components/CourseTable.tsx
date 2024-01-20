@@ -6,7 +6,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
-import Image from 'next/image';
 import { FC } from 'react';
 
 import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
@@ -17,33 +16,33 @@ import { useDeleteUser } from '@/lib/dashboard/client/user';
 import { confirmationModalAtom, userModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
-import { UserData, UserType } from '../../../../../types/user.types';
+import { CourseData, CourseType } from '../../../../../types/course.types';
 
-import UserModal from './UserModal';
+import UserModal from './CourseModal';
 
-const columnHelper = createColumnHelper<any>();
+const columnHelper = createColumnHelper<CourseType>();
 
 interface Props {
-  data: UserData;
+  data: CourseData;
   pagination: Pagination;
   setPagination: any;
   isLoading: boolean;
 }
-const UserTable: FC<Props> = ({
+const CourseTable: FC<Props> = ({
   data,
   pagination,
   setPagination,
   isLoading,
 }) => {
-  const [userState, setUserState] = useAtom(userModalAtom);
+  const [courseModalState, setCourseModalState] = useAtom(userModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const { toast } = useToast();
-  const renderActions = (row: UserType) => {
+  const renderActions = (row: CourseType) => {
     return (
       <div className="flex flex-col p-2 gap-1 ">
         <span
           onClick={() => {
-            setUserState({
+            setCourseModalState({
               status: true,
               data: row,
             });
@@ -72,63 +71,29 @@ const UserTable: FC<Props> = ({
 
   const columns = [
     // Accessor Columns
-    columnHelper.accessor('photo', {
-      header: 'Photo',
+
+    columnHelper.accessor('title', {
+      header: 'Ttitle',
       cell: (props) => {
         return (
           <h1 className="flex  flex-col justify-center w-fit text-center items-center">
-            {props.row.original.photo ? (
-              <Image
-                src={props.row.original.photo}
-                alt="genset type"
-                width={50}
-                height={50}
-                className="rounded-full"
-              />
-            ) : (
-              <Icons iconName="avatar" className="h-12 w-12" />
-            )}
-          </h1>
-        );
-      },
-      footer: (props) => props.column.id,
-    }),
-    columnHelper.accessor('firstName', {
-      header: 'Name',
-      cell: (props) => {
-        return (
-          <h1 className="flex  flex-col justify-center w-fit text-center items-center">
-            <span>
-              {`${props.row.original.firstName} ${props.row.original.lastName}`}
-            </span>
+            <span>{`${props.row.original.title}`}</span>
           </h1>
         );
       },
       footer: (props) => props.column.id,
     }),
 
-    columnHelper.accessor('email', {
-      id: 'email',
-      header: 'Email',
-      cell: (props) => <h1>{props.row.original.email}</h1>,
-      footer: (props) => props.column.id,
-    }),
-    columnHelper.accessor('phone', {
-      id: 'phone',
-      header: 'Phone',
-      cell: (props) => <h1>{props.row.original.phone}</h1>,
+    columnHelper.accessor('description', {
+      id: 'description',
+      header: 'Description',
+      cell: (props) => <h1>{props.row.original.description}</h1>,
       footer: (props) => props.column.id,
     }),
 
-    columnHelper.accessor('role', {
-      id: 'role',
-      header: 'Role',
-      cell: (props) => <h1>{props.row.original.role}</h1>,
-      footer: (props) => props.column.id,
-    }),
     {
       id: 'actions',
-      cell: (props: CellContext<UserType, string>) => (
+      cell: (props: CellContext<CourseType, string>) => (
         <TableActions>{renderActions(props.row.original)}</TableActions>
       ),
     },
@@ -182,7 +147,7 @@ const UserTable: FC<Props> = ({
         <div className="h-4" />
       </div>
 
-      {userState.status && <UserModal />}
+      {courseModalState.status && <UserModal />}
       {confirmState.status && (
         <ConfirmationModal
           open={confirmState.status}
@@ -207,4 +172,4 @@ const UserTable: FC<Props> = ({
   );
 };
 
-export default UserTable;
+export default CourseTable;
