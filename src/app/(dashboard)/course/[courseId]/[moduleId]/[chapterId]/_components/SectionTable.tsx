@@ -6,7 +6,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
-import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 
 import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
@@ -17,29 +16,31 @@ import { useDeleteUser } from '@/lib/dashboard/client/user';
 import { confirmationModalAtom, userModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
-import { CourseData, CourseType } from '../../../../../types/course.types';
+import {
+  ChapterData,
+  SectionType,
+} from '../../../../../../../../types/course.types';
 
-import UserModal from './CourseModal';
+import SectionModal from './SectionModal';
 
-const columnHelper = createColumnHelper<CourseType>();
+const columnHelper = createColumnHelper<SectionType>();
 
 interface Props {
-  data: CourseData;
+  data: ChapterData;
   pagination: Pagination;
   setPagination: any;
   isLoading: boolean;
 }
-const CourseTable: FC<Props> = ({
+const SectionTable: FC<Props> = ({
   data,
   pagination,
   setPagination,
   isLoading,
 }) => {
-  const router = useRouter();
   const [courseModalState, setCourseModalState] = useAtom(userModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const { toast } = useToast();
-  const renderActions = (row: CourseType) => {
+  const renderActions = (row: SectionType) => {
     return (
       <div className="flex flex-col p-2 gap-1 ">
         <span
@@ -78,7 +79,7 @@ const CourseTable: FC<Props> = ({
       header: 'Title',
       cell: (props) => {
         return (
-          <h1 className="flex  flex-col justify-center w-fit text-center items-center">
+          <h1 className="">
             <span>{`${props.row.original.title}`}</span>
           </h1>
         );
@@ -95,7 +96,7 @@ const CourseTable: FC<Props> = ({
 
     {
       id: 'actions',
-      cell: (props: CellContext<CourseType, string>) => (
+      cell: (props: CellContext<SectionType, string>) => (
         <TableActions>{renderActions(props.row.original)}</TableActions>
       ),
     },
@@ -140,25 +141,16 @@ const CourseTable: FC<Props> = ({
     handleDeleteError,
   );
 
-  const onRowClick = (data: CourseType) => {
-    console.log({ data });
-    router.push(`/course/${data._id}`);
-  };
-
   return (
     <>
       <div className="p-2 border rounded">
-        <p className="pl-2 font-medium mb-4">Users</p>
-        {isLoading ? (
-          'loading...'
-        ) : (
-          <TableComponent table={table} onRowClick={onRowClick} />
-        )}
+        <p className="pl-2 font-medium mb-4">Sections</p>
+        {isLoading ? 'loading...' : <TableComponent table={table} />}
 
         <div className="h-4" />
       </div>
 
-      {courseModalState.status && <UserModal />}
+      {courseModalState.status && <SectionModal />}
       {confirmState.status && (
         <ConfirmationModal
           open={confirmState.status}
@@ -183,4 +175,4 @@ const CourseTable: FC<Props> = ({
   );
 };
 
-export default CourseTable;
+export default SectionTable;

@@ -15,8 +15,8 @@ const oepnsans = Open_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Genmark',
-  description: 'genmark',
+  title: 'E-learning Greenwich',
+  description: 'E-learning Greenwich',
 };
 
 export default function RootLayout({

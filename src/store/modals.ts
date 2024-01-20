@@ -14,6 +14,9 @@ export const confirmationModalAtom = createModalAtom();
 export const sessionExpireModalAtom = createModalAtom();
 export const sideBarDrawerAtom = createModalAtom();
 export const addCourseModalAtom = createModalAtom();
+export const addModuleModalAtom = createModalAtom();
+export const addChapterModalAtom = createModalAtom();
+export const addSectionModalAtom = createModalAtom();
 
 export const currenySignAtom = atom({
   currencySign: '€',

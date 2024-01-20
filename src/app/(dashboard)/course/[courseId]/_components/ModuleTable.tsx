@@ -17,29 +17,31 @@ import { useDeleteUser } from '@/lib/dashboard/client/user';
 import { confirmationModalAtom, userModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
-import { CourseData, CourseType } from '../../../../../types/course.types';
+import { ModuleData, ModuleType } from '../../../../../../types/course.types';
 
-import UserModal from './CourseModal';
+import UserModal from './ModuleModal';
 
-const columnHelper = createColumnHelper<CourseType>();
+const columnHelper = createColumnHelper<ModuleType>();
 
 interface Props {
-  data: CourseData;
+  data: ModuleData;
   pagination: Pagination;
   setPagination: any;
   isLoading: boolean;
+  courseId: string;
 }
-const CourseTable: FC<Props> = ({
+const ModuleTable: FC<Props> = ({
   data,
   pagination,
   setPagination,
   isLoading,
+  courseId,
 }) => {
   const router = useRouter();
   const [courseModalState, setCourseModalState] = useAtom(userModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const { toast } = useToast();
-  const renderActions = (row: CourseType) => {
+  const renderActions = (row: ModuleType) => {
     return (
       <div className="flex flex-col p-2 gap-1 ">
         <span
@@ -95,7 +97,7 @@ const CourseTable: FC<Props> = ({
 
     {
       id: 'actions',
-      cell: (props: CellContext<CourseType, string>) => (
+      cell: (props: CellContext<ModuleType, string>) => (
         <TableActions>{renderActions(props.row.original)}</TableActions>
       ),
     },
@@ -140,15 +142,15 @@ const CourseTable: FC<Props> = ({
     handleDeleteError,
   );
 
-  const onRowClick = (data: CourseType) => {
+  const onRowClick = (data: ModuleType) => {
     console.log({ data });
-    router.push(`/course/${data._id}`);
+    router.push(`/course/${courseId}/${data._id}`);
   };
 
   return (
     <>
       <div className="p-2 border rounded">
-        <p className="pl-2 font-medium mb-4">Users</p>
+        <p className="pl-2 font-medium mb-4">Modules</p>
         {isLoading ? (
           'loading...'
         ) : (
@@ -183,4 +185,4 @@ const CourseTable: FC<Props> = ({
   );
 };
 
-export default CourseTable;
+export default ModuleTable;

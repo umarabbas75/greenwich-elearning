@@ -18,9 +18,9 @@ const SideBarContent = () => {
       <div className="h-20 flex justify-center items-center border-b border-dashed border-gray-500">
         <Link href="/">
           <Image
-            src="/assets/images/genmark_logo.png"
-            width={200}
-            height={100}
+            src="/assets/images/greenwich_logo.png"
+            width={80}
+            height={50}
             alt="Genmark logo"
           />
         </Link>

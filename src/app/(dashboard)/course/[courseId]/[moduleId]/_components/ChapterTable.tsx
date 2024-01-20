@@ -6,7 +6,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { FC } from 'react';
 
 import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
@@ -17,29 +17,35 @@ import { useDeleteUser } from '@/lib/dashboard/client/user';
 import { confirmationModalAtom, userModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
-import { CourseData, CourseType } from '../../../../../types/course.types';
+import {
+  ChapterData,
+  ChapterType,
+} from '../../../../../../../types/course.types';
 
-import UserModal from './CourseModal';
+import UserModal from './ChapterModal';
 
-const columnHelper = createColumnHelper<CourseType>();
+const columnHelper = createColumnHelper<ChapterType>();
 
 interface Props {
-  data: CourseData;
+  data: ChapterData;
   pagination: Pagination;
   setPagination: any;
   isLoading: boolean;
 }
-const CourseTable: FC<Props> = ({
+const ChapterTable: FC<Props> = ({
   data,
   pagination,
   setPagination,
   isLoading,
 }) => {
   const router = useRouter();
+  const params = useParams();
+  const { courseId, moduleId } = params || {};
+  console.log({ courseId, moduleId });
   const [courseModalState, setCourseModalState] = useAtom(userModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const { toast } = useToast();
-  const renderActions = (row: CourseType) => {
+  const renderActions = (row: ChapterType) => {
     return (
       <div className="flex flex-col p-2 gap-1 ">
         <span
@@ -78,7 +84,7 @@ const CourseTable: FC<Props> = ({
       header: 'Title',
       cell: (props) => {
         return (
-          <h1 className="flex  flex-col justify-center w-fit text-center items-center">
+          <h1 className="">
             <span>{`${props.row.original.title}`}</span>
           </h1>
         );
@@ -95,7 +101,7 @@ const CourseTable: FC<Props> = ({
 
     {
       id: 'actions',
-      cell: (props: CellContext<CourseType, string>) => (
+      cell: (props: CellContext<ChapterType, string>) => (
         <TableActions>{renderActions(props.row.original)}</TableActions>
       ),
     },
@@ -140,15 +146,15 @@ const CourseTable: FC<Props> = ({
     handleDeleteError,
   );
 
-  const onRowClick = (data: CourseType) => {
+  const onRowClick = (data: ChapterType) => {
     console.log({ data });
-    router.push(`/course/${data._id}`);
+    router.push(`/course/${courseId}/${moduleId}/${data._id}`);
   };
 
   return (
     <>
       <div className="p-2 border rounded">
-        <p className="pl-2 font-medium mb-4">Users</p>
+        <p className="pl-2 font-medium mb-4">Chapters</p>
         {isLoading ? (
           'loading...'
         ) : (
@@ -183,4 +189,4 @@ const CourseTable: FC<Props> = ({
   );
 };
 
-export default CourseTable;
+export default ChapterTable;
