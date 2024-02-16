@@ -1,5 +1,11 @@
 import { AxiosRequestConfig } from 'axios';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import {
+  UseMutationOptions,
+  UseQueryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from 'react-query';
 
 import generateQueryString from '@/utils/generateQueryString';
 import useAxiosAuth from '@/utils/hooks/useAxiosAuth';
@@ -162,42 +168,60 @@ export const useUpdatePassword = ({
 
   return mutation;
 };
-type ApiCallProps = {
+type ApiGetCallProps<TData = any, TError = any> = {
   endpoint: string;
-  method?: 'get' | 'post' | 'put' | 'delete';
-  config?: any;
-  queryKey?: any[];
+  config?: UseQueryOptions<TData, TError>;
+  queryKey: any[];
   axiosConfig?: AxiosRequestConfig;
-  queryParams?: any;
 };
-export function useApiCall({
+
+export function useApiGet<TData = any, TError = any>({
   endpoint,
-  method = 'post',
-  config = {}, // Include additional configuration options, including onSuccess and onError
+  config = {},
   queryKey,
   axiosConfig = {},
-}: ApiCallProps) {
+}: ApiGetCallProps<TData, TError>) {
   const axiosAuth = useAxiosAuth();
   const queryOptions = {
-    ...config, // Spread other configuration options
+    ...config,
   };
-  const queryKeyToUse = queryKey || [endpoint];
 
-  const mutation = useMutation({
-    mutationFn: async (data: any) => {
-      const response = await axiosAuth[method](endpoint, data, axiosConfig);
-      return response.data;
-    },
-    ...queryOptions,
-  });
-
-  const query = useQuery(
-    queryKeyToUse,
-    () => axiosAuth[method](endpoint, axiosConfig),
+  const query = useQuery<TData, TError>(
+    queryKey || [endpoint],
+    () => axiosAuth.get(endpoint, axiosConfig),
     {
       ...queryOptions,
     },
   );
 
-  return method === 'get' ? query : mutation;
+  return query;
+}
+
+type ApiMutationCallProps<TData = any, TError = any> = {
+  endpoint: string;
+  method: 'post' | 'put' | 'delete';
+  config?: UseQueryOptions<TData, TError>;
+  queryKey?: any[];
+  axiosConfig?: AxiosRequestConfig;
+};
+
+export function useApiMutation<TData = any, TError = any>({
+  endpoint,
+  method = 'post',
+  config = {},
+  axiosConfig = {},
+}: ApiMutationCallProps<TData, TError>) {
+  const axiosAuth = useAxiosAuth();
+  const queryOptions = {
+    ...config,
+  };
+
+  const mutation = useMutation<TData, TError, any, any>(
+    (data: any) => axiosAuth[method](endpoint, data, axiosConfig),
+    {
+      ...queryOptions,
+    } as UseMutationOptions<TData, TError>,
+  );
+
+  return mutation;
 }

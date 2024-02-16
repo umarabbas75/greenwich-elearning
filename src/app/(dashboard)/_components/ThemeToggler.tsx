@@ -2,11 +2,7 @@
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Icons } from '@/utils/icon';
 
 const ThemeToggler = () => {
@@ -32,11 +28,7 @@ const ThemeToggler = () => {
       <DropdownMenuTrigger asChild>
         <div className=" dark-icon border  rounded  p-2 text-accent transition duration-300  hover:bg-dark-icon-hover hover:text-primary">
           <Icons
-            iconName={
-              theme === 'dark' || theme === 'system' || theme === undefined
-                ? 'sun'
-                : 'moon'
-            }
+            iconName={theme === 'dark' || theme === 'system' || theme === undefined ? 'sun' : 'moon'}
             className="h-6 w-6 cursor-pointer "
           />
         </div>
@@ -51,10 +43,7 @@ const ThemeToggler = () => {
               setOpenMenu(false);
             }}
           >
-            <Icons
-              iconName="moon"
-              className="h-6 w-6 cursor-pointer scale-150"
-            />
+            <Icons iconName="moon" className="h-6 w-6 cursor-pointer scale-150" />
             Dark
           </span>
           <span

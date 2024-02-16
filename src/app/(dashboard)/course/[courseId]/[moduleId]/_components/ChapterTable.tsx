@@ -1,10 +1,5 @@
 'use client';
-import {
-  CellContext,
-  createColumnHelper,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
 import { useParams, useRouter } from 'next/navigation';
 import { FC } from 'react';
@@ -17,10 +12,7 @@ import { useDeleteUser } from '@/lib/dashboard/client/user';
 import { confirmationModalAtom, userModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
-import {
-  ChapterData,
-  ChapterType,
-} from '../../../../../../../types/course.types';
+import { ChapterData, ChapterType } from '../../../../../../../types/course.types';
 
 import UserModal from './ChapterModal';
 
@@ -32,12 +24,7 @@ interface Props {
   setPagination: any;
   isLoading: boolean;
 }
-const ChapterTable: FC<Props> = ({
-  data,
-  pagination,
-  setPagination,
-  isLoading,
-}) => {
+const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) => {
   const router = useRouter();
   const params = useParams();
   const { courseId, moduleId } = params || {};
@@ -155,11 +142,7 @@ const ChapterTable: FC<Props> = ({
     <>
       <div className="p-2 border rounded">
         <p className="pl-2 font-medium mb-4">Chapters</p>
-        {isLoading ? (
-          'loading...'
-        ) : (
-          <TableComponent table={table} onRowClick={onRowClick} />
-        )}
+        {isLoading ? 'loading...' : <TableComponent table={table} onRowClick={onRowClick} />}
 
         <div className="h-4" />
       </div>

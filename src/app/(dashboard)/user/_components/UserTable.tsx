@@ -17,14 +17,14 @@ import { useDeleteUser } from '@/lib/dashboard/client/user';
 import { confirmationModalAtom, userModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
-import { UserData, UserType } from '../../../../../types/user.types';
+import { UserData, UsersDataResponse } from '../page';
 
 import UserModal from './UserModal';
 
-const columnHelper = createColumnHelper<any>();
+const columnHelper = createColumnHelper<UserData>();
 
 interface Props {
-  data: UserData;
+  data: UsersDataResponse;
   pagination: Pagination;
   setPagination: any;
   isLoading: boolean;
@@ -38,7 +38,7 @@ const UserTable: FC<Props> = ({
   const [userState, setUserState] = useAtom(userModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const { toast } = useToast();
-  const renderActions = (row: UserType) => {
+  const renderActions = (row: UserData) => {
     return (
       <div className="flex flex-col p-2 gap-1 ">
         <span
@@ -98,9 +98,7 @@ const UserTable: FC<Props> = ({
       cell: (props) => {
         return (
           <h1 className="flex  flex-col justify-center w-fit text-center items-center">
-            <span>
-              {`${props.row.original.firstName} ${props.row.original.lastName}`}
-            </span>
+            <span>{`${props.row.original.firstName} ${props.row.original.lastName}`}</span>
           </h1>
         );
       },
@@ -128,16 +126,16 @@ const UserTable: FC<Props> = ({
     }),
     {
       id: 'actions',
-      cell: (props: CellContext<UserType, string>) => (
+      cell: (props: CellContext<UserData, string>) => (
         <TableActions>{renderActions(props.row.original)}</TableActions>
       ),
     },
   ];
 
   const table = useReactTable({
-    data: data?.results,
+    data: data?.data,
     columns,
-    pageCount: Math.ceil(data?.count / 10),
+    pageCount: Math.ceil(data?.data.length / 10),
     state: {
       pagination,
     },

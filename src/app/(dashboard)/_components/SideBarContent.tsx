@@ -17,21 +17,12 @@ const SideBarContent = () => {
     <>
       <div className="h-20 flex justify-center items-center border-b border-dashed border-gray-500">
         <Link href="/">
-          <Image
-            src="/assets/images/greenwich_logo.png"
-            width={80}
-            height={50}
-            alt="Genmark logo"
-          />
+          <Image src="/assets/images/greenwich_logo.png" width={80} height={50} alt="Genmark logo" />
         </Link>
       </div>
       <nav className="grid items-start gap-2 p-6">
         {siderbarmenu?.map((item) => {
-          if (
-            item?.link &&
-            item?.showInSidebar !== false &&
-            item.role.includes(session?.user?.role as any)
-          ) {
+          if (item?.link && item?.showInSidebar !== false && item.role.includes(session?.user?.role as any)) {
             const iconName = item?.icon as ValidIconNames;
 
             return (
@@ -43,8 +34,7 @@ const SideBarContent = () => {
                       : 'bg-transparent'
                   }`}
                 >
-                  <Icons iconName={iconName} className="mr-2 h-8 w-8 " />{' '}
-                  {/* Dynamic icon */}
+                  <Icons iconName={iconName} className="mr-2 h-8 w-8 " /> {/* Dynamic icon */}
                   <span>{item?.title}</span>
                 </span>
               </Link>

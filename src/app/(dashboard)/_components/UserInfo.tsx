@@ -48,12 +48,7 @@ const UserInfo = () => {
           } `}
         >
           {session?.user.photo ? (
-            <Image
-              src={session?.user.photo}
-              width={20}
-              height={20}
-              alt="Profile image"
-            />
+            <Image src={session?.user.photo} width={20} height={20} alt="Profile image" />
           ) : (
             <Icons iconName="customer" className="h-6 w-6 cursor-pointer " />
           )}
@@ -63,17 +58,9 @@ const UserInfo = () => {
       <DropdownMenuContent className="w-64 bg-white" align="end" side="top">
         <div className="flex gap-2 items-center p-2">
           {session?.user.photo ? (
-            <Image
-              src={session?.user.photo}
-              width={50}
-              height={50}
-              alt="Profile image"
-            />
+            <Image src={session?.user.photo} width={50} height={50} alt="Profile image" />
           ) : (
-            <Icons
-              iconName="customer"
-              className="w-16 h-16 cursor-pointer text-accent"
-            />
+            <Icons iconName="customer" className="w-16 h-16 cursor-pointer text-accent" />
           )}
 
           <div className="flex flex-col gap-0">

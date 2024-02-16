@@ -1,10 +1,5 @@
 'use client';
-import {
-  CellContext,
-  createColumnHelper,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
@@ -30,13 +25,7 @@ interface Props {
   isLoading: boolean;
   courseId: string;
 }
-const ModuleTable: FC<Props> = ({
-  data,
-  pagination,
-  setPagination,
-  isLoading,
-  courseId,
-}) => {
+const ModuleTable: FC<Props> = ({ data, pagination, setPagination, isLoading, courseId }) => {
   const router = useRouter();
   const [courseModalState, setCourseModalState] = useAtom(userModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
@@ -151,11 +140,7 @@ const ModuleTable: FC<Props> = ({
     <>
       <div className="p-2 border rounded">
         <p className="pl-2 font-medium mb-4">Modules</p>
-        {isLoading ? (
-          'loading...'
-        ) : (
-          <TableComponent table={table} onRowClick={onRowClick} />
-        )}
+        {isLoading ? 'loading...' : <TableComponent table={table} onRowClick={onRowClick} />}
 
         <div className="h-4" />
       </div>

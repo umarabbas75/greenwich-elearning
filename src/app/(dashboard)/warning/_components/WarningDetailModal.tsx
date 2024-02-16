@@ -27,9 +27,7 @@ const WarningDetailModal = () => {
         {entries.map(([key, value]) => (
           <div key={key} className="flex items-center justify-between">
             <div className="capitalize font-bold">{key}</div>
-            <div className="capitalize dark:text-gray-100 text-gray-500">
-              {value as any}
-            </div>
+            <div className="capitalize dark:text-gray-100 text-gray-500">{value as any}</div>
           </div>
         ))}
       </div>

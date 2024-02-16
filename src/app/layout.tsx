@@ -19,11 +19,7 @@ export const metadata: Metadata = {
   description: 'E-learning Greenwich',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -43,11 +39,7 @@ export default function RootLayout({
       <body className={`${oepnsans.className}  dark:bg-[#0d1117]`}>
         <JotaiProvider>
           <QueryProvider>
-            <NextThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-            >
+            <NextThemeProvider attribute="class" defaultTheme="system" enableSystem>
               <NextAuthProvider>
                 {children}
                 <Toaster />

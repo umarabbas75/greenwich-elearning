@@ -18,8 +18,7 @@ const Page = () => {
 
   const [search, setSearch] = useState('');
   //const debouncedSearch = useDebounce(search, 500);
-  const [sectionModalState, setSectionModalState] =
-    useAtom(addSectionModalAtom);
+  const [sectionModalState, setSectionModalState] = useAtom(addSectionModalAtom);
 
   // const { data, isLoading, error, isError } = useApiCall({
   //   endpoint: `user/auth/${generateQueryString({
@@ -30,8 +29,7 @@ const Page = () => {
   // });
   const tempData: any[] = [
     {
-      title:
-        'Element 1: Key Environmental Cycles and the Effects of Human Activity on the Environment.',
+      title: 'Element 1: Key Environmental Cycles and the Effects of Human Activity on the Environment.',
       content: '',
       status: 'active',
       _id: '3523hdfdfd5j340932',

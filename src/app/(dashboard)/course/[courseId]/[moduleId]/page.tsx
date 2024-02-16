@@ -18,8 +18,7 @@ const Page = () => {
 
   const [search, setSearch] = useState('');
   //const debouncedSearch = useDebounce(search, 500);
-  const [chapterModalState, setChapterModalState] =
-    useAtom(addChapterModalAtom);
+  const [chapterModalState, setChapterModalState] = useAtom(addChapterModalAtom);
 
   // const { data, isLoading, error, isError } = useApiCall({
   //   endpoint: `user/auth/${generateQueryString({
@@ -44,10 +43,8 @@ const Page = () => {
       _id: 'sdfds4543csdfc2',
     },
     {
-      title:
-        'Element 3: Environmental Management Systems & Emergency Planning 2018.Lesson',
-      description:
-        'Element 3: Environmental Management Systems & Emergency Planning 2018.Lesson',
+      title: 'Element 3: Environmental Management Systems & Emergency Planning 2018.Lesson',
+      description: 'Element 3: Environmental Management Systems & Emergency Planning 2018.Lesson',
       status: 'active',
       _id: 'sdfds4543csdfc2',
     },

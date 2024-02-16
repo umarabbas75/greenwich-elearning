@@ -51,14 +51,7 @@ export const Icons = ({
       >
         <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
           <rect x="0" y="0" width="24" height="24"></rect>
-          <rect
-            fill="darkgray"
-            x="4"
-            y="4"
-            width="7"
-            height="7"
-            rx="1.5"
-          ></rect>
+          <rect fill="darkgray" x="4" y="4" width="7" height="7" rx="1.5"></rect>
           <path
             d="M5.5,13 L9.5,13 C10.3284271,13 11,13.6715729 11,14.5 L11,18.5 C11,19.3284271 10.3284271,20 9.5,20 L5.5,20 C4.67157288,20 4,19.3284271 4,18.5 L4,14.5 C4,13.6715729 4.67157288,13 5.5,13 Z M14.5,4 L18.5,4 C19.3284271,4 20,4.67157288 20,5.5 L20,9.5 C20,10.3284271 19.3284271,11 18.5,11 L14.5,11 C13.6715729,11 13,10.3284271 13,9.5 L13,5.5 C13,4.67157288 13.6715729,4 14.5,4 Z M14.5,13 L18.5,13 C19.3284271,13 20,13.6715729 20,14.5 L20,18.5 C20,19.3284271 19.3284271,20 18.5,20 L14.5,20 C13.6715729,20 13,19.3284271 13,18.5 L13,14.5 C13,13.6715729 13.6715729,13 14.5,13 Z"
             fill="darkgray"
@@ -90,15 +83,7 @@ export const Icons = ({
       >
         <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
           <rect x="0" y="0" width="24" height="24"></rect>
-          <rect
-            fill="darkgray"
-            opacity="0.3"
-            x="2"
-            y="6"
-            width="20"
-            height="14"
-            rx="2"
-          ></rect>
+          <rect fill="darkgray" opacity="0.3" x="2" y="6" width="20" height="14" rx="2"></rect>
           <path
             d="M5,4 L7,4 C7.55228475,4 8,4.44771525 8,5 L8,6 L4,6 L4,5 C4,4.44771525 4.44771525,4 5,4 Z M17,4 L19,4 C19.5522847,4 20,4.44771525 20,5 L20,6 L16,6 L16,5 C16,4.44771525 16.4477153,4 17,4 Z"
             fill="darkgray"
@@ -107,14 +92,7 @@ export const Icons = ({
             d="M7,12 L7,11 C7,10.4477153 7.44771525,10 8,10 C8.55228475,10 9,10.4477153 9,11 L9,12 L10,12 C10.5522847,12 11,12.4477153 11,13 C11,13.5522847 10.5522847,14 10,14 L9,14 L9,15 C9,15.5522847 8.55228475,16 8,16 C7.44771525,16 7,15.5522847 7,15 L7,14 L6,14 C5.44771525,14 5,13.5522847 5,13 C5,12.4477153 5.44771525,12 6,12 L7,12 Z"
             fill="darkgray"
           ></path>
-          <rect
-            fill="darkgray"
-            x="14"
-            y="12"
-            width="4"
-            height="2"
-            rx="1"
-          ></rect>
+          <rect fill="darkgray" x="14" y="12" width="4" height="2" rx="1"></rect>
         </g>
       </svg>
     ),
@@ -299,15 +277,7 @@ export const Icons = ({
       >
         <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
           <rect x="0" y="0" width="24" height="24"></rect>
-          <rect
-            fill="darkgray"
-            opacity="0.3"
-            x="2"
-            y="2"
-            width="10"
-            height="12"
-            rx="2"
-          ></rect>
+          <rect fill="darkgray" opacity="0.3" x="2" y="2" width="10" height="12" rx="2"></rect>
           <path
             d="M4,6 L20,6 C21.1045695,6 22,6.8954305 22,8 L22,20 C22,21.1045695 21.1045695,22 20,22 L4,22 C2.8954305,22 2,21.1045695 2,20 L2,8 C2,6.8954305 2.8954305,6 4,6 Z M18,16 C19.1045695,16 20,15.1045695 20,14 C20,12.8954305 19.1045695,12 18,12 C16.8954305,12 16,12.8954305 16,14 C16,15.1045695 16.8954305,16 18,16 Z"
             fill="darkgray"
@@ -353,14 +323,7 @@ export const Icons = ({
             opacity="0.3"
           ></path>
           <rect fill="darkgray" x="11" y="9" width="2" height="7" rx="1"></rect>
-          <rect
-            fill="darkgray"
-            x="11"
-            y="17"
-            width="2"
-            height="2"
-            rx="1"
-          ></rect>
+          <rect fill="darkgray" x="11" y="17" width="2" height="2" rx="1"></rect>
         </g>
       </svg>
     ),
@@ -417,11 +380,7 @@ export const Icons = ({
       >
         <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
           <rect x="0" y="0" width="24" height="24"></rect>
-          <polygon
-            fill="darkgray"
-            opacity="0.3"
-            points="5 7 5 15 19 15 19 7"
-          ></polygon>
+          <polygon fill="darkgray" opacity="0.3" points="5 7 5 15 19 15 19 7"></polygon>
           <path
             d="M11,19 L11,16 C11,15.4477153 11.4477153,15 12,15 C12.5522847,15 13,15.4477153 13,16 L13,19 L14.5,19 C14.7761424,19 15,19.2238576 15,19.5 C15,19.7761424 14.7761424,20 14.5,20 L9.5,20 C9.22385763,20 9,19.7761424 9,19.5 C9,19.2238576 9.22385763,19 9.5,19 L11,19 Z"
             fill="darkgray"
@@ -449,14 +408,7 @@ export const Icons = ({
             fill="darkgray"
             opacity="0.3"
           ></path>
-          <rect
-            fill="darkgray"
-            x="10"
-            y="16"
-            width="4"
-            height="4"
-            rx="2"
-          ></rect>
+          <rect fill="darkgray" x="10" y="16" width="4" height="4" rx="2"></rect>
         </g>
       </svg>
     ),
@@ -476,15 +428,7 @@ export const Icons = ({
             fillRule="nonzero"
             transform="translate(12.000000, 10.707409) rotate(-135.000000) translate(-12.000000, -10.707409) "
           ></path>
-          <rect
-            fill="darkgray"
-            opacity="0.3"
-            x="5"
-            y="20"
-            width="15"
-            height="2"
-            rx="1"
-          ></rect>
+          <rect fill="darkgray" opacity="0.3" x="5" y="20" width="15" height="2" rx="1"></rect>
         </g>
       </svg>
     ),
@@ -499,15 +443,7 @@ export const Icons = ({
         <g stroke="none" strokeWidth="1">
           <rect x="10" y="9" width="4" height="4" rx="3" fill="darkgray"></rect>
           <rect x="17" y="9" width="4" height="4" rx="3" fill="darkgray"></rect>
-          <rect
-            x="3"
-            y="9"
-            width="4"
-            height="4"
-            rx="3"
-            fill="darkgray"
-            fillOpacity="0.7"
-          ></rect>
+          <rect x="3" y="9" width="4" height="4" rx="3" fill="darkgray" fillOpacity="0.7"></rect>
         </g>
       </svg>
     ),
@@ -550,15 +486,7 @@ export const Icons = ({
             fillRule="nonzero"
             transform="translate(12.000000, 10.707409) rotate(-135.000000) translate(-12.000000, -10.707409) "
           ></path>
-          <rect
-            fill="darkgray"
-            opacity="0.3"
-            x="5"
-            y="20"
-            width="15"
-            height="2"
-            rx="1"
-          ></rect>
+          <rect fill="darkgray" opacity="0.3" x="5" y="20" width="15" height="2" rx="1"></rect>
         </g>
       </svg>
     ),
@@ -594,15 +522,7 @@ export const Icons = ({
       >
         <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
           <rect x="0" y="0" width="24" height="24"></rect>
-          <rect
-            fill="darkgray"
-            opacity="0.3"
-            x="4"
-            y="4"
-            width="4"
-            height="4"
-            rx="1"
-          ></rect>
+          <rect fill="darkgray" opacity="0.3" x="4" y="4" width="4" height="4" rx="1"></rect>
           <path
             d="M5,10 L7,10 C7.55228475,10 8,10.4477153 8,11 L8,13 C8,13.5522847 7.55228475,14 7,14 L5,14 C4.44771525,14 4,13.5522847 4,13 L4,11 C4,10.4477153 4.44771525,10 5,10 Z M11,4 L13,4 C13.5522847,4 14,4.44771525 14,5 L14,7 C14,7.55228475 13.5522847,8 13,8 L11,8 C10.4477153,8 10,7.55228475 10,7 L10,5 C10,4.44771525 10.4477153,4 11,4 Z M11,10 L13,10 C13.5522847,10 14,10.4477153 14,11 L14,13 C14,13.5522847 13.5522847,14 13,14 L11,14 C10.4477153,14 10,13.5522847 10,13 L10,11 C10,10.4477153 10.4477153,10 11,10 Z M17,4 L19,4 C19.5522847,4 20,4.44771525 20,5 L20,7 C20,7.55228475 19.5522847,8 19,8 L17,8 C16.4477153,8 16,7.55228475 16,7 L16,5 C16,4.44771525 16.4477153,4 17,4 Z M17,10 L19,10 C19.5522847,10 20,10.4477153 20,11 L20,13 C20,13.5522847 19.5522847,14 19,14 L17,14 C16.4477153,14 16,13.5522847 16,13 L16,11 C16,10.4477153 16.4477153,10 17,10 Z M5,16 L7,16 C7.55228475,16 8,16.4477153 8,17 L8,19 C8,19.5522847 7.55228475,20 7,20 L5,20 C4.44771525,20 4,19.5522847 4,19 L4,17 C4,16.4477153 4.44771525,16 5,16 Z M11,16 L13,16 C13.5522847,16 14,16.4477153 14,17 L14,19 C14,19.5522847 13.5522847,20 13,20 L11,20 C10.4477153,20 10,19.5522847 10,19 L10,17 C10,16.4477153 10.4477153,16 11,16 Z M17,16 L19,16 C19.5522847,16 20,16.4477153 20,17 L20,19 C20,19.5522847 19.5522847,20 19,20 L17,20 C16.4477153,20 16,19.5522847 16,19 L16,17 C16,16.4477153 16.4477153,16 17,16 Z"
             fill="darkgray"
@@ -674,12 +594,7 @@ export const Icons = ({
         </g>
         <defs>
           <clipPath id="clip0_663_5451">
-            <rect
-              width="24"
-              height="24"
-              fill="white"
-              transform="translate(0 0.5)"
-            />
+            <rect width="24" height="24" fill="white" transform="translate(0 0.5)" />
           </clipPath>
         </defs>
       </svg>
@@ -705,12 +620,7 @@ export const Icons = ({
         </g>
         <defs>
           <clipPath id="clip0_663_5505">
-            <rect
-              width="24"
-              height="24"
-              fill="white"
-              transform="translate(0 0.5)"
-            />
+            <rect width="24" height="24" fill="white" transform="translate(0 0.5)" />
           </clipPath>
         </defs>
       </svg>
@@ -736,12 +646,7 @@ export const Icons = ({
         </g>
         <defs>
           <clipPath id="clip0_663_5435">
-            <rect
-              width="24"
-              height="24"
-              fill="white"
-              transform="translate(0 0.5)"
-            />
+            <rect width="24" height="24" fill="white" transform="translate(0 0.5)" />
           </clipPath>
         </defs>
       </svg>
@@ -782,12 +687,7 @@ export const Icons = ({
         </g>
         <defs>
           <clipPath id="clip0_663_5470">
-            <rect
-              width="24"
-              height="24"
-              fill="white"
-              transform="translate(0 0.5)"
-            />
+            <rect width="24" height="24" fill="white" transform="translate(0 0.5)" />
           </clipPath>
         </defs>
       </svg>
@@ -829,12 +729,7 @@ export const Icons = ({
         </g>
         <defs>
           <clipPath id="clip0_663_5489">
-            <rect
-              width="25"
-              height="25"
-              fill="white"
-              transform="translate(0 0.5)"
-            />
+            <rect width="25" height="25" fill="white" transform="translate(0 0.5)" />
           </clipPath>
         </defs>
       </svg>
@@ -872,12 +767,7 @@ export const Icons = ({
         </g>
         <defs>
           <clipPath id="clip0_663_5442">
-            <rect
-              width="27"
-              height="27"
-              fill="white"
-              transform="translate(0 0.5)"
-            />
+            <rect width="27" height="27" fill="white" transform="translate(0 0.5)" />
           </clipPath>
         </defs>
       </svg>
@@ -903,12 +793,7 @@ export const Icons = ({
         </g>
         <defs>
           <clipPath id="clip0_663_5464">
-            <rect
-              width="27"
-              height="27"
-              fill="white"
-              transform="translate(0 0.5)"
-            />
+            <rect width="27" height="27" fill="white" transform="translate(0 0.5)" />
           </clipPath>
         </defs>
       </svg>
@@ -939,14 +824,7 @@ export const Icons = ({
       >
         <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
           <rect x="0" y="0" width="24" height="24"></rect>
-          <rect
-            fill="darkgray"
-            x="4"
-            y="5"
-            width="16"
-            height="3"
-            rx="1.5"
-          ></rect>
+          <rect fill="darkgray" x="4" y="5" width="16" height="3" rx="1.5"></rect>
           <path
             d="M5.5,15 L18.5,15 C19.3284271,15 20,15.6715729 20,16.5 C20,17.3284271 19.3284271,18 18.5,18 L5.5,18 C4.67157288,18 4,17.3284271 4,16.5 C4,15.6715729 4.67157288,15 5.5,15 Z M5.5,10 L18.5,10 C19.3284271,10 20,10.6715729 20,11.5 C20,12.3284271 19.3284271,13 18.5,13 L5.5,13 C4.67157288,13 4,12.3284271 4,11.5 C4,10.6715729 4.67157288,10 5.5,10 Z"
             fill="darkgray"

@@ -3,6 +3,7 @@ import { useAtom } from 'jotai';
 import { FileUploader } from 'react-drag-drop-files';
 import { Controller, useForm } from 'react-hook-form';
 import { CountryData } from 'react-phone-input-2';
+import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 
 import { AlertDestructive } from '@/components/common/FormError';
@@ -23,11 +24,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
-import {
-  useAddUser,
-  useEditUser,
-  useFetchUser,
-} from '@/lib/dashboard/client/user';
+import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
 import { userModalAtom } from '@/store/modals';
 /* const MAX_FILE_SIZE = 102400; */
 
@@ -44,29 +41,52 @@ type UserFormTypes = {
 const UserModal = () => {
   const [userState, setUserState] = useAtom(userModalAtom);
   const { toast } = useToast();
-
-  const handleSuccess = () => {
-    closeModal();
-    toast({
-      variant: 'success',
-      // title: 'Success ',
-      description: 'Record addedd successfully',
-    });
-  };
-
+  const queryClient = useQueryClient();
   const {
     mutate: addUser,
     isLoading: addingUser,
     isError: isAddError,
     error: addError,
-  } = useAddUser(handleSuccess);
+  } = useApiMutation<any>({
+    endpoint: `/users`,
+    method: 'post',
+    config: {
+      onSuccess: (res: any) => {
+        console.log({ res });
+
+        queryClient.invalidateQueries({ queryKey: ['get-users'] });
+        closeModal();
+        toast({
+          variant: 'success',
+          // title: 'Success ',
+          description: 'Record added successfully',
+        });
+      },
+    },
+  });
+
   const {
     mutate: editUser,
     isLoading: editingUser,
     isError: isEditError,
     error: editError,
-  } = useEditUser(handleSuccess);
+  } = useApiMutation<any>({
+    endpoint: `/users/${userState?.data?.id}`,
+    method: 'put',
+    config: {
+      onSuccess: (res: any) => {
+        console.log({ res });
 
+        queryClient.invalidateQueries({ queryKey: ['get-users'] });
+        closeModal();
+        toast({
+          variant: 'success',
+          // title: 'Success ',
+          description: 'Record added successfully',
+        });
+      },
+    },
+  });
   const closeModal = () => {
     setUserState({
       ...userState,
@@ -77,7 +97,7 @@ const UserModal = () => {
   const roles = [
     {
       label: 'Student',
-      value: 'student',
+      value: 'user',
     },
     {
       label: 'admin',
@@ -100,7 +120,7 @@ const UserModal = () => {
 
     email: Yup.string().email('Invalid email').required('phone is required'),
     phone: Yup.string().required('phone is required'),
-    location: Yup.mixed().required('Address is required'),
+
     password: Yup.string().when('uid', {
       is: () => !!userState?.data?.id,
       then: () => Yup.string().notRequired(),
@@ -114,18 +134,38 @@ const UserModal = () => {
     defaultValues,
     resolver: yupResolver(validationSchema) as any,
   });
-  const { handleSubmit, control } = form;
+  const {
+    reset,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = form;
+  console.log({ errors });
 
-  const { data, isLoading: fetchingUser } = useFetchUser({
-    variables: {
-      id: userState?.data?.id,
-    },
-    onSuccessCallback: (data: any) => {
-      console.log('dataaa', data);
-      form.reset({
-        ...data,
-        customer: data?.customer,
-      });
+  // const { data, isLoading: fetchingUser } = useFetchUser({
+  //   variables: {
+  //     id: userState?.data?.id,
+  //   },
+  //   onSuccessCallback: (data: any) => {
+  //     console.log('dataaa', data);
+  //     form.reset({
+  //       ...data,
+  //       customer: data?.customer,
+  //     });
+  //   },
+  // });
+
+  const { data, isLoading: fetchingUser } = useApiGet<any>({
+    endpoint: `/users/${userState?.data?.id}`,
+    queryKey: ['get-user', userState?.data?.id],
+    config: {
+      enabled: !!userState?.data?.id,
+      onSuccess: (data: any) => {
+        console.log({ data });
+        reset({
+          ...data?.data,
+        });
+      },
     },
   });
 
@@ -151,10 +191,13 @@ const UserModal = () => {
     values.photo &&
       !(typeof values.photo === 'string' && values.photo?.includes('http')) &&
       editFormData.append('photo', values.photo as any);
-
-    data
-      ? editUser({ formData: editFormData, id: userState?.data?.id })
-      : addUser(addFormData);
+    const payload = {
+      firstName: values.firstName,
+      lastName: values.lastName,
+      phone: values.phone,
+      role: values.role,
+    };
+    data ? editUser(payload) : addUser(addFormData);
   };
 
   return (
@@ -330,6 +373,7 @@ const UserModal = () => {
                           handleChange={onChange}
                           name="file"
                           value={value}
+                          disabled={true}
                           types={['jpeg', 'png', 'jpg', 'svg+xml', 'webp']}
                         />
                       </div>

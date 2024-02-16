@@ -18,12 +18,7 @@ export function AlertDestructive({ title = 'Error', error }: props) {
   const renderError = (error: AxiosError) => {
     console.log('error', error);
     if (error.request)
-      return (
-        <p>
-          {error?.message ??
-            'Network error. Please check your internet connection.'}{' '}
-        </p>
-      );
+      return <p>{error?.message ?? 'Network error. Please check your internet connection.'} </p>;
     else if (error.response) {
       const value = error.response.data;
       const result = transformObjectToArray(value);

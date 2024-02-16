@@ -38,43 +38,28 @@ export const useFetchCustomerList = ({
 } = {}) => {
   const axiosAuth = useAxiosAuth();
   const query = generateQueryString({ search, page });
-  return useQuery(
-    ['customer-list', search, page],
-    () => fetchCustomerList(axiosAuth, query),
-    {
-      enabled: enabled,
-      keepPreviousData: true,
-      ...(onSuccess && { onSuccess: onSuccess }),
-    },
-  );
+  return useQuery(['customer-list', search, page], () => fetchCustomerList(axiosAuth, query), {
+    enabled: enabled,
+    keepPreviousData: true,
+    ...(onSuccess && { onSuccess: onSuccess }),
+  });
 };
 
-export const useFetchCustomer = ({
-  variables,
-  onSuccessCallback,
-  onErrorCallback,
-}: any) => {
+export const useFetchCustomer = ({ variables, onSuccessCallback, onErrorCallback }: any) => {
   const axiosAuth = useAxiosAuth();
-  return useQuery(
-    ['customer', variables?.id],
-    () => fetchCustomer(axiosAuth, variables?.id),
-    {
-      enabled: variables?.id ? true : false,
+  return useQuery(['customer', variables?.id], () => fetchCustomer(axiosAuth, variables?.id), {
+    enabled: variables?.id ? true : false,
 
-      onSuccess: (data) => {
-        onSuccessCallback && onSuccessCallback(data);
-      },
-      onError: (error) => {
-        onErrorCallback && onErrorCallback(error); // Call the error callback
-      },
+    onSuccess: (data) => {
+      onSuccessCallback && onSuccessCallback(data);
     },
-  );
+    onError: (error) => {
+      onErrorCallback && onErrorCallback(error); // Call the error callback
+    },
+  });
 };
 
-export const useCheckCustomerId = (
-  onSuccessCallback?: any,
-  onErrorCallback?: any,
-) => {
+export const useCheckCustomerId = (onSuccessCallback?: any, onErrorCallback?: any) => {
   const axiosAuth = useAxiosAuth();
   const mutation = useMutation({
     mutationFn: (data: CheckCustomerIdPayload) => {
@@ -91,10 +76,7 @@ export const useCheckCustomerId = (
   return mutation;
 };
 
-export const useAddCustomer = (
-  onSuccessCallback: any,
-  onErrorCallback?: any,
-) => {
+export const useAddCustomer = (onSuccessCallback: any, onErrorCallback?: any) => {
   const queryClient = useQueryClient();
   const axiosAuth = useAxiosAuth();
   const mutation = useMutation({
@@ -113,10 +95,7 @@ export const useAddCustomer = (
   return mutation;
 };
 
-export const useEditCustomer = (
-  onSuccessCallback: any,
-  onErrorCallback?: any,
-) => {
+export const useEditCustomer = (onSuccessCallback: any, onErrorCallback?: any) => {
   const queryClient = useQueryClient();
   const axiosAuth = useAxiosAuth();
   const mutation = useMutation({
@@ -135,10 +114,7 @@ export const useEditCustomer = (
   return mutation;
 };
 
-export const useDeleteCustomer = (
-  onSuccessCallback: any,
-  onErrorCallback: any,
-) => {
+export const useDeleteCustomer = (onSuccessCallback: any, onErrorCallback: any) => {
   const queryClient = useQueryClient();
   const axiosAuth = useAxiosAuth();
   const mutation = useMutation({

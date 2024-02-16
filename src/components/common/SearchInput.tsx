@@ -3,10 +3,7 @@ interface SearchComponentProps {
   search: string;
 }
 
-const SearchComponent: React.FC<SearchComponentProps> = ({
-  setSearch,
-  search,
-}) => {
+const SearchComponent: React.FC<SearchComponentProps> = ({ setSearch, search }) => {
   return (
     <div className="w-full relative text-gray-600 focus-within:text-gray-400 border rounded-md bg-white md:max-w-xs">
       <span className="absolute inset-y-0 left-0 flex items-center pl-2">

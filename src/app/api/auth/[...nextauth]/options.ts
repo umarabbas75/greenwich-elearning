@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 import CredentialsProvider from 'next-auth/providers/credentials';
 export const options = {
   // Configure one or more authentication providers
@@ -27,48 +28,47 @@ export const options = {
           email: email,
           password: password,
         };
-
+        console.log('api path', `${process.env.NEXT_PUBLIC_API_URI}/users/login`);
         try {
-          const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URI}/api/login/`,
-            {
-              method: 'POST',
-              body: JSON.stringify(payload),
-              headers: {
-                'Content-Type': 'application/json',
-              },
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URI}/users/login`, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: {
+              'Content-Type': 'application/json',
             },
-          );
+          });
           const user = await res.json();
-          //adding this temporarily-start
-          return {
-            ...user,
-            access: '123345dfg4354r23c2d423x',
-            refresh: '35434c4d435364554',
-            first_name: user?.first_name ?? 'umar',
-            last_name: user?.last_name ?? 'abbas',
-            email: user?.email ?? 'umarabbas75@gmail.com',
-            id: user?.id ?? '12345',
-            photo:
-              user?.photo ??
-              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXuzt2s8nfTKBrSQTx1lNn9M8vIRY0xujttj2HD75gu1yTGxF8Gz75KAMpWf1qlgMlV_U&usqp=CAU',
-            role: user?.role ?? 'admin',
-          } as any;
-          //adding this temporarily-end
+          const decoded = jwtDecode(user.data.jwt);
+          console.log({ res, user, decoded });
+          // //adding this temporarily-start
+          // return {
+          //   ...user,
+          //   access: '123345dfg4354r23c2d423x',
+          //   refresh: '35434c4d435364554',
+          //   first_name: user?.first_name ?? 'umar',
+          //   last_name: user?.last_name ?? 'abbas',
+          //   email: user?.email ?? 'umarabbas75@gmail.com',
+          //   id: user?.id ?? '12345',
+          //   photo:
+          //     user?.photo ??
+          //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXuzt2s8nfTKBrSQTx1lNn9M8vIRY0xujttj2HD75gu1yTGxF8Gz75KAMpWf1qlgMlV_U&usqp=CAU',
+          //   role: user?.role ?? 'admin',
+          // } as any;
+          // //adding this temporarily-end
           if (!res.ok) {
             throw new Error(user.detail ?? 'Something went wrong');
           }
           console.log({ user });
           return {
             ...user,
-            access: user?.access,
-            refresh: user?.refresh,
-            first_name: user?.first_name,
-            last_name: user?.last_name,
-            email: user?.email,
-            id: user?.id,
-            photo: user?.photo,
-            role: user?.role,
+            access: user?.data.jwt,
+            refresh: user?.refresh ?? '',
+            first_name: user?.first_name ?? '',
+            last_name: user?.last_name ?? '',
+            email: user?.email ?? '',
+            id: decoded?.sub ?? '',
+            photo: user?.photo ?? '',
+            role: user?.role ?? 'admin',
           } as any;
         } catch (error) {
           if (error instanceof Error) {

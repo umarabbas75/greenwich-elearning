@@ -8,11 +8,7 @@ export type UserType = {
   photo: string | null;
   status: 'active' | 'inActive' | 'pendingApproval' | 'suspended';
 };
-export type UserStatus =
-  | 'active'
-  | 'inActive'
-  | 'pendingApproval'
-  | 'suspended';
+export type UserStatus = 'active' | 'inActive' | 'pendingApproval' | 'suspended';
 
 export type UserData = {
   count: number;

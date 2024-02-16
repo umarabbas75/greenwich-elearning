@@ -5,14 +5,7 @@ import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 
 import LoadingButton from '@/components/common/LoadingButton';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 const UpdateNameForm = ({ isEdit }: { isEdit: boolean }) => {
@@ -75,19 +68,12 @@ const UpdateNameForm = ({ isEdit }: { isEdit: boolean }) => {
               <FormField
                 control={control}
                 name="first_name"
-                render={({
-                  field: { onChange, value },
-                  formState: { errors },
-                }) => {
+                render={({ field: { onChange, value }, formState: { errors } }) => {
                   return (
                     <FormItem>
                       <FormLabel>First Name</FormLabel>
                       <FormControl>
-                        <Input
-                          disabled={!isEdit}
-                          onChange={onChange}
-                          value={value}
-                        />
+                        <Input disabled={!isEdit} onChange={onChange} value={value} />
                       </FormControl>
 
                       <FormMessage>{errors.first_name?.message}</FormMessage>
@@ -98,19 +84,12 @@ const UpdateNameForm = ({ isEdit }: { isEdit: boolean }) => {
               <FormField
                 control={control}
                 name="last_name"
-                render={({
-                  field: { onChange, value },
-                  formState: { errors },
-                }) => {
+                render={({ field: { onChange, value }, formState: { errors } }) => {
                   return (
                     <FormItem>
                       <FormLabel>Last Name</FormLabel>
                       <FormControl>
-                        <Input
-                          disabled={!isEdit}
-                          onChange={onChange}
-                          value={value}
-                        />
+                        <Input disabled={!isEdit} onChange={onChange} value={value} />
                       </FormControl>
 
                       <FormMessage>{errors.last_name?.message}</FormMessage>
@@ -122,11 +101,7 @@ const UpdateNameForm = ({ isEdit }: { isEdit: boolean }) => {
 
             {isEdit && (
               <div className="flex items-center justify-start gap-2">
-                <LoadingButton
-                  loading={loading}
-                  type="submit"
-                  variant="default"
-                >
+                <LoadingButton loading={loading} type="submit" variant="default">
                   Submit
                 </LoadingButton>
               </div>

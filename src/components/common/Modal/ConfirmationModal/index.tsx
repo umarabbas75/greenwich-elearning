@@ -2,13 +2,7 @@ import { FC } from 'react';
 
 import LoadingButton from '@/components/common/LoadingButton';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 type Props = {
   title: string | React.ReactNode;
   content: React.ReactNode;
@@ -26,14 +20,7 @@ type Props = {
   };
 };
 
-const ConfirmationModal: FC<Props> = ({
-  open,
-  onClose,
-  title,
-  content,
-  primaryAction,
-  secondaryAction,
-}) => {
+const ConfirmationModal: FC<Props> = ({ open, onClose, title, content, primaryAction, secondaryAction }) => {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="min-w-[90%] md:min-w-[55rem]  md:m-0">

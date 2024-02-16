@@ -13,10 +13,7 @@ const addSubscription = (axiosAuth: any, payload: any) => {
 const deleteSubscription = (axiosAuth: any, id: string) => {
   return axiosAuth.delete(`/api/subscriptions/${id}/`);
 };
-const editSubscription = (
-  axiosAuth: any,
-  payload: SubscriptionFormTypes & { uid: string },
-) => {
+const editSubscription = (axiosAuth: any, payload: SubscriptionFormTypes & { uid: string }) => {
   return axiosAuth.patch(`/api/subscriptions/${payload.uid}/`, payload);
 };
 const fetchSubscription = (axiosAuth: any, id: any) => {
@@ -38,48 +35,31 @@ export const useFetchSubscriptionList = ({
   const axiosAuth = useAxiosAuth();
   const query = generateQueryString({ search, page });
 
-  return useQuery(
-    ['subscription-list', search, page],
-    () => fetchSubscriptionList(axiosAuth, query),
-    {
-      keepPreviousData: true,
-      ...(onSuccess && { onSuccess: onSuccess }),
-    },
-  );
+  return useQuery(['subscription-list', search, page], () => fetchSubscriptionList(axiosAuth, query), {
+    keepPreviousData: true,
+    ...(onSuccess && { onSuccess: onSuccess }),
+  });
 };
 
-export const useFetchSubscription = ({
-  variables,
-  onSuccessCallback,
-  onErrorCallback,
-}: any) => {
+export const useFetchSubscription = ({ variables, onSuccessCallback, onErrorCallback }: any) => {
   const axiosAuth = useAxiosAuth();
-  return useQuery(
-    ['subscription', variables?.id],
-    () => fetchSubscription(axiosAuth, variables?.id),
-    {
-      enabled: variables?.id ? true : false,
+  return useQuery(['subscription', variables?.id], () => fetchSubscription(axiosAuth, variables?.id), {
+    enabled: variables?.id ? true : false,
 
-      onSuccess: (data) => {
-        onSuccessCallback && onSuccessCallback(data);
-      },
-      onError: (error) => {
-        onErrorCallback && onErrorCallback(error); // Call the error callback
-      },
+    onSuccess: (data) => {
+      onSuccessCallback && onSuccessCallback(data);
     },
-  );
+    onError: (error) => {
+      onErrorCallback && onErrorCallback(error); // Call the error callback
+    },
+  });
 };
 export const useFetchFeatures = () => {
   const axiosAuth = useAxiosAuth();
-  return useQuery(['subscription-features'], () =>
-    fetchSubscriptionFeatures(axiosAuth),
-  );
+  return useQuery(['subscription-features'], () => fetchSubscriptionFeatures(axiosAuth));
 };
 
-export const useAddSubscription = (
-  onSuccessCallback: any,
-  onErrorCallback: any,
-) => {
+export const useAddSubscription = (onSuccessCallback: any, onErrorCallback: any) => {
   const queryClient = useQueryClient();
   const axiosAuth = useAxiosAuth();
   const mutation = useMutation({
@@ -98,10 +78,7 @@ export const useAddSubscription = (
   return mutation;
 };
 
-export const useEditSubscription = (
-  onSuccessCallback: any,
-  onErrorCallback: any,
-) => {
+export const useEditSubscription = (onSuccessCallback: any, onErrorCallback: any) => {
   const queryClient = useQueryClient();
   const axiosAuth = useAxiosAuth();
   const mutation = useMutation({
@@ -119,10 +96,7 @@ export const useEditSubscription = (
 
   return mutation;
 };
-export const useDeleteSubscription = (
-  onSuccessCallback: any,
-  onErrorCallback: any,
-) => {
+export const useDeleteSubscription = (onSuccessCallback: any, onErrorCallback: any) => {
   const queryClient = useQueryClient();
   const axiosAuth = useAxiosAuth();
   const mutation = useMutation({

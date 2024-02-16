@@ -25,11 +25,7 @@ export function Toaster() {
               {props.variant === 'destructive' && <XCircle />}
               <div>
                 {title && <ToastTitle>{title}</ToastTitle>}
-                {description && (
-                  <ToastDescription className="font-normal">
-                    {description}
-                  </ToastDescription>
-                )}
+                {description && <ToastDescription className="font-normal">{description}</ToastDescription>}
               </div>
             </div>
 

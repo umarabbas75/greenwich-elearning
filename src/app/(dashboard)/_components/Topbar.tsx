@@ -2,11 +2,7 @@
 //import { usePathname } from 'next/navigation';
 
 import { useAtom } from 'jotai';
-import {
-  useParams,
-  usePathname,
-  useSelectedLayoutSegments,
-} from 'next/navigation';
+import { useParams, usePathname, useSelectedLayoutSegments } from 'next/navigation';
 import React from 'react';
 
 import SessionExpireModal from '@/components/common/Modal/SessionExpireModal';
@@ -47,10 +43,7 @@ const Topbar = () => {
           }}
           className="dark-icon border rounded visible md:invisible  p-2 text-accent transition duration-300  hover:bg-dark-icon-hover hover:text-primary"
         >
-          <Icons
-            iconName="menu"
-            className="h-6 w-6 cursor-pointer text-accent"
-          />
+          <Icons iconName="menu" className="h-6 w-6 cursor-pointer text-accent" />
         </div>
         <div>
           {segments.map((segment, index) => (
@@ -63,10 +56,7 @@ const Topbar = () => {
       </>
       <div className="flex gap-2 items-center">
         <div className="dark-icon border rounded  p-2 text-accent transition duration-300  hover:bg-dark-icon-hover hover:text-primary">
-          <Icons
-            iconName="notification"
-            className="h-6 w-6 cursor-pointer text-accent"
-          />
+          <Icons iconName="notification" className="h-6 w-6 cursor-pointer text-accent" />
         </div>
         <ThemeToggler />
 

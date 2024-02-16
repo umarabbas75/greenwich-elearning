@@ -1,6 +1,6 @@
 module.exports = {
   // Specify the maximum line length.
-  printWidth: 80,
+  printWidth: 110,
 
   // Use two spaces for indentation.
   tabWidth: 2,

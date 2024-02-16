@@ -24,11 +24,7 @@ const AddressSearchField = (props: Props) => {
     props.onChange(val);
   };
   const options: any = data || [];
-  const {
-    className = 'my-react-select-container',
-    classNamePrefix = 'my-react-select',
-    value,
-  } = props || {};
+  const { className = 'my-react-select-container', classNamePrefix = 'my-react-select', value } = props || {};
   return (
     <Select
       key={key}

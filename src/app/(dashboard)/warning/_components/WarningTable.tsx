@@ -1,9 +1,5 @@
 'use client';
-import {
-  createColumnHelper,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
 import { Database } from 'lucide-react';
 import { FC } from 'react';
@@ -23,12 +19,7 @@ interface Props {
   setPagination: any;
   isLoading: boolean;
 }
-const WarningTable: FC<Props> = ({
-  data,
-  pagination,
-  setPagination,
-  isLoading,
-}) => {
+const WarningTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) => {
   const [warningState, setWarningState] = useAtom(warningDetailAtom);
   const columns = [
     // Accessor Columns
@@ -76,8 +67,7 @@ const WarningTable: FC<Props> = ({
       header: 'Lat/Lng',
       cell: (props) => (
         <h1>
-          {props.row.original.data.latitude ?? '---'},{' '}
-          {props.row.original.data.longitude ?? '---'}
+          {props.row.original.data.latitude ?? '---'}, {props.row.original.data.longitude ?? '---'}
         </h1>
       ),
       footer: (props) => props.column.id,
@@ -92,9 +82,7 @@ const WarningTable: FC<Props> = ({
     columnHelper.accessor('status', {
       id: 'status',
       header: 'Status',
-      cell: (props) => (
-        <WebhookStatus status={props.row.original.data.status} />
-      ),
+      cell: (props) => <WebhookStatus status={props.row.original.data.status} />,
       footer: (props) => props.column.id,
     }),
 

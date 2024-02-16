@@ -5,9 +5,7 @@ import useAxiosAuth from '@/utils/hooks/useAxiosAuth';
 const fetchDriverList = (axiosAuth: any, status?: string, page?: any) => {
   return axiosAuth.get(
     `/api/drivers/${
-      status
-        ? `?status=${status}${page ? `&page=${page}` : ''}`
-        : `${page ? `?page=${page}` : ''}`
+      status ? `?status=${status}${page ? `&page=${page}` : ''}` : `${page ? `?page=${page}` : ''}`
     }`,
   );
 };
@@ -22,14 +20,10 @@ export const useFetchDriverList = ({
   status?: string;
 } = {}) => {
   const axiosAuth = useAxiosAuth();
-  return useQuery(
-    ['driver-list'],
-    () => fetchDriverList(axiosAuth, status, page),
-    {
-      keepPreviousData: true,
-      ...(onSuccess && { onSuccess: onSuccess }),
-    },
-  );
+  return useQuery(['driver-list'], () => fetchDriverList(axiosAuth, status, page), {
+    keepPreviousData: true,
+    ...(onSuccess && { onSuccess: onSuccess }),
+  });
 };
 
 export const useFetchMapDriver = ({
@@ -42,14 +36,10 @@ export const useFetchMapDriver = ({
   status?: string;
 } = {}) => {
   const axiosAuth = useAxiosAuth();
-  return useQuery(
-    ['driver-list-map'],
-    () => fetchDriverList(axiosAuth, status, page),
-    {
-      keepPreviousData: true,
-      ...(onSuccess && { onSuccess: onSuccess }),
-    },
-  );
+  return useQuery(['driver-list-map'], () => fetchDriverList(axiosAuth, status, page), {
+    keepPreviousData: true,
+    ...(onSuccess && { onSuccess: onSuccess }),
+  });
 };
 
 const uploadDriver = (axiosAuth: any, payload: FormData) => {
@@ -81,10 +71,7 @@ const deleteDriver = (axiosAuth: any, id: string) => {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 };
-export const useDeleteDriver = (
-  onSuccessCallback: any,
-  onErrorCallback: any,
-) => {
+export const useDeleteDriver = (onSuccessCallback: any, onErrorCallback: any) => {
   const queryClient = useQueryClient();
   const axiosAuth = useAxiosAuth();
   const mutation = useMutation({

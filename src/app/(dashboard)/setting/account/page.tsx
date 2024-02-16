@@ -18,9 +18,7 @@ const Page = () => {
       <div className="flex justify-between items-center py-4 border-b ">
         <div>
           <h3 className="text-xl font-bold">Account Details</h3>
-          <p className="text-accent">
-            Update your email, name, and profile picture
-          </p>
+          <p className="text-accent">Update your email, name, and profile picture</p>
         </div>
         <div
           className={`${

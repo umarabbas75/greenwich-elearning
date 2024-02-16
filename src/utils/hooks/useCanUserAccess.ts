@@ -38,10 +38,7 @@ const useCanUserAccess = ({ module, access }: Props) => {
 
   const role: Role = session?.user?.role || 'admin';
 
-  const checkPermissions = (
-    currentPermission: Permission[],
-    access: Permission[],
-  ) => {
+  const checkPermissions = (currentPermission: Permission[], access: Permission[]) => {
     return access.map((permission) => currentPermission?.includes(permission));
   };
 

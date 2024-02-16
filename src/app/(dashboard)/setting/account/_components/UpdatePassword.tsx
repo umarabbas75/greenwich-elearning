@@ -4,14 +4,7 @@ import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 
 import LoadingButton from '@/components/common/LoadingButton';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { useUpdatePassword } from '@/lib/dashboard/client/user';
@@ -69,12 +62,7 @@ const UpdatePassword = ({ isEdit }: { isEdit: boolean }) => {
                 <FormItem>
                   <FormLabel>Old Password</FormLabel>
                   <FormControl>
-                    <Input
-                      disabled={!isEdit}
-                      type="password"
-                      onChange={onChange}
-                      value={value}
-                    />
+                    <Input disabled={!isEdit} type="password" onChange={onChange} value={value} />
                   </FormControl>
 
                   <FormMessage>{errors.old_password?.message}</FormMessage>
@@ -90,12 +78,7 @@ const UpdatePassword = ({ isEdit }: { isEdit: boolean }) => {
                 <FormItem>
                   <FormLabel>New Password</FormLabel>
                   <FormControl>
-                    <Input
-                      disabled={!isEdit}
-                      type="password"
-                      onChange={onChange}
-                      value={value}
-                    />
+                    <Input disabled={!isEdit} type="password" onChange={onChange} value={value} />
                   </FormControl>
 
                   <FormMessage>{errors.new_password?.message}</FormMessage>

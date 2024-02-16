@@ -1,10 +1,5 @@
 'use client';
-import {
-  CellContext,
-  createColumnHelper,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
 import { FC } from 'react';
 
@@ -16,10 +11,7 @@ import { useDeleteUser } from '@/lib/dashboard/client/user';
 import { confirmationModalAtom, userModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
-import {
-  ChapterData,
-  SectionType,
-} from '../../../../../../../../types/course.types';
+import { ChapterData, SectionType } from '../../../../../../../../types/course.types';
 
 import SectionModal from './SectionModal';
 
@@ -31,12 +23,7 @@ interface Props {
   setPagination: any;
   isLoading: boolean;
 }
-const SectionTable: FC<Props> = ({
-  data,
-  pagination,
-  setPagination,
-  isLoading,
-}) => {
+const SectionTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) => {
   const [courseModalState, setCourseModalState] = useAtom(userModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const { toast } = useToast();

@@ -1,11 +1,4 @@
-export type Status =
-  | 'Offline'
-  | 'Running'
-  | 'Active'
-  | 'Inactive'
-  | 'Working'
-  | 'ERROR'
-  | 'Stop';
+export type Status = 'Offline' | 'Running' | 'Active' | 'Inactive' | 'Working' | 'ERROR' | 'Stop';
 
 type StatusColorMap = {
   [key in Status]: string;

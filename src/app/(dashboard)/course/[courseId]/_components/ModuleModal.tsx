@@ -8,22 +8,11 @@ import LoadingButton from '@/components/common/LoadingButton';
 import Modal from '@/components/common/Modal';
 import Spinner from '@/components/common/Spinner';
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
-import {
-  useAddUser,
-  useEditUser,
-  useFetchUser,
-} from '@/lib/dashboard/client/user';
+import { useAddUser, useEditUser, useFetchUser } from '@/lib/dashboard/client/user';
 import { addModuleModalAtom } from '@/store/modals';
 /* const MAX_FILE_SIZE = 102400; */
 
@@ -100,28 +89,19 @@ const ModuleModal = () => {
   };
 
   return (
-    <Modal
-      open={moduleModalState.status}
-      onClose={() => {}}
-      title={data ? 'Edit Module' : 'New Module'}
-    >
+    <Modal open={moduleModalState.status} onClose={() => {}} title={data ? 'Edit Module' : 'New Module'}>
       {fetchingUser ? (
         <Spinner />
       ) : (
         <>
-          {(isEditError || isAddError) && (
-            <AlertDestructive error={editError || addError} />
-          )}
+          {(isEditError || isAddError) && <AlertDestructive error={editError || addError} />}
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={control}
                   name="title"
-                  render={({
-                    field: { onChange, value },
-                    formState: { errors },
-                  }) => {
+                  render={({ field: { onChange, value }, formState: { errors } }) => {
                     return (
                       <FormItem>
                         <FormLabel>Title</FormLabel>
@@ -137,10 +117,7 @@ const ModuleModal = () => {
                 <FormField
                   control={control}
                   name="description"
-                  render={({
-                    field: { onChange, value },
-                    formState: { errors },
-                  }) => {
+                  render={({ field: { onChange, value }, formState: { errors } }) => {
                     return (
                       <FormItem>
                         <FormLabel>Description</FormLabel>
@@ -160,11 +137,7 @@ const ModuleModal = () => {
                   Cancel
                 </Button>
 
-                <LoadingButton
-                  loading={addingCourse || editingCourse}
-                  type="submit"
-                  variant="default"
-                >
+                <LoadingButton loading={addingCourse || editingCourse} type="submit" variant="default">
                   Submit
                 </LoadingButton>
               </div>

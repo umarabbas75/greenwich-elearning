@@ -20,12 +20,9 @@ export default withAuth(
     console.log('pathnameee', pathname?.split('/')?.[1]);
     const role = token?.role; // "student"
     const currentPathAuthorizationSettings = siderbarmenu.find(
-      (item) =>
-        item.link === pathname ||
-        item.link.startsWith(pathname.split(item.link)[0]),
+      (item) => item.link === pathname || item.link.startsWith(pathname.split(item.link)[0]),
     ); // { student: ["read"] }
-    const currentPathPermissions =
-      currentPathAuthorizationSettings?.role?.includes(role as any); // { student: ["read"] }
+    const currentPathPermissions = currentPathAuthorizationSettings?.role?.includes(role as any); // { student: ["read"] }
 
     if (isAuth && !isAuthPage && !currentPathPermissions) {
       return new NextResponse('You are not authorized!');
@@ -41,9 +38,7 @@ export default withAuth(
         from += req.nextUrl.search;
       }
 
-      return NextResponse.redirect(
-        new URL(`/login?from=${encodeURIComponent(from)}`, req.url),
-      );
+      return NextResponse.redirect(new URL(`/login?from=${encodeURIComponent(from)}`, req.url));
     }
   },
   {

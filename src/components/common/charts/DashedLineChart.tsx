@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const DashedLineChart = () => {
   const data = [
@@ -74,30 +65,10 @@ const DashedLineChart = () => {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Line
-          type="monotone"
-          dataKey="warning"
-          stroke="#8884d8"
-          strokeDasharray="5 5"
-        />
-        <Line
-          type="monotone"
-          dataKey="Running"
-          stroke="#82ca9d"
-          strokeDasharray="3 4 5 2"
-        />
-        <Line
-          type="monotone"
-          dataKey="breakdown"
-          stroke="#453453"
-          strokeDasharray="3 4 5 2"
-        />
-        <Line
-          type="monotone"
-          dataKey="inactive"
-          stroke="#3a35a2"
-          strokeDasharray="3 4 5 2"
-        />
+        <Line type="monotone" dataKey="warning" stroke="#8884d8" strokeDasharray="5 5" />
+        <Line type="monotone" dataKey="Running" stroke="#82ca9d" strokeDasharray="3 4 5 2" />
+        <Line type="monotone" dataKey="breakdown" stroke="#453453" strokeDasharray="3 4 5 2" />
+        <Line type="monotone" dataKey="inactive" stroke="#3a35a2" strokeDasharray="3 4 5 2" />
       </LineChart>
     </ResponsiveContainer>
   );

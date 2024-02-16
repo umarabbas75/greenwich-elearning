@@ -2,13 +2,7 @@
 import { LatLngTuple, divIcon } from 'leaflet';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import {
-  MapContainer,
-  Marker,
-  Popup,
-  TileLayer,
-  ZoomControl,
-} from 'react-leaflet';
+import { MapContainer, Marker, Popup, TileLayer, ZoomControl } from 'react-leaflet';
 
 import 'leaflet/dist/leaflet.css';
 
@@ -110,9 +104,7 @@ const OpenStreetMap = ({ gensetLocations }: props) => {
                 </div>
                 <div className="flex justify-between gap-2">
                   <div className="text-black">Location:</div>
-                  <div className="text-gray-500">
-                    {marker?.location?.display_name}
-                  </div>
+                  <div className="text-gray-500">{marker?.location?.display_name}</div>
                 </div>
                 <div className="flex gap-1 items-center">
                   <StatusComp status={marker.status} />

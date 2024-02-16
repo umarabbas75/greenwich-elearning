@@ -14,11 +14,7 @@ const LoadingButton = ({
   loading?: boolean;
 } & ButtonProps) => {
   return (
-    <Button
-      {...props}
-      onClick={() => !loading && onClick && onClick()}
-      disabled={loading}
-    >
+    <Button {...props} onClick={() => !loading && onClick && onClick()} disabled={loading}>
       {loading ? <Spinner /> : children}
     </Button>
   );

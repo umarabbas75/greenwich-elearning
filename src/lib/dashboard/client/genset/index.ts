@@ -10,10 +10,7 @@ const fetchGensetList = (axiosAuth: any, query: string) => {
 const addGenset = (axiosAuth: any, payload: GensetFormValues) => {
   return axiosAuth.post(`/api/gensets/`, payload);
 };
-const editGenset = (
-  axiosAuth: any,
-  payload: GensetFormValues & { uid: string },
-) => {
+const editGenset = (axiosAuth: any, payload: GensetFormValues & { uid: string }) => {
   return axiosAuth.patch(`/api/gensets/${payload.uid}/`, payload);
 };
 
@@ -28,35 +25,23 @@ export const useFetchGensetList = ({ search, page }: any) => {
   const axiosAuth = useAxiosAuth();
   const query = generateQueryString({ search, page });
 
-  return useQuery(
-    ['genset-list', search, page],
-    () => fetchGensetList(axiosAuth, query),
-    {
-      keepPreviousData: true,
-    },
-  );
+  return useQuery(['genset-list', search, page], () => fetchGensetList(axiosAuth, query), {
+    keepPreviousData: true,
+  });
 };
 
-export const useFetchGenset = ({
-  variables,
-  onSuccessCallback,
-  onErrorCallback,
-}: any) => {
+export const useFetchGenset = ({ variables, onSuccessCallback, onErrorCallback }: any) => {
   const axiosAuth = useAxiosAuth();
-  return useQuery(
-    ['genset', variables?.id],
-    () => fetchGenset(axiosAuth, variables?.id),
-    {
-      enabled: variables?.id ? true : false,
+  return useQuery(['genset', variables?.id], () => fetchGenset(axiosAuth, variables?.id), {
+    enabled: variables?.id ? true : false,
 
-      onSuccess: (data) => {
-        onSuccessCallback && onSuccessCallback(data);
-      },
-      onError: (error) => {
-        onErrorCallback && onErrorCallback(error); // Call the error callback
-      },
+    onSuccess: (data) => {
+      onSuccessCallback && onSuccessCallback(data);
     },
-  );
+    onError: (error) => {
+      onErrorCallback && onErrorCallback(error); // Call the error callback
+    },
+  });
 };
 
 export const useAddGenset = (onSuccessCallback: any, onErrorCallback?: any) => {
@@ -78,10 +63,7 @@ export const useAddGenset = (onSuccessCallback: any, onErrorCallback?: any) => {
   return mutation;
 };
 
-export const useEditGenset = (
-  onSuccessCallback: any,
-  onErrorCallback?: any,
-) => {
+export const useEditGenset = (onSuccessCallback: any, onErrorCallback?: any) => {
   const queryClient = useQueryClient();
   const axiosAuth = useAxiosAuth();
   const mutation = useMutation({
@@ -100,10 +82,7 @@ export const useEditGenset = (
   return mutation;
 };
 
-export const useDeleteGenset = (
-  onSuccessCallback: any,
-  onErrorCallback: any,
-) => {
+export const useDeleteGenset = (onSuccessCallback: any, onErrorCallback: any) => {
   const queryClient = useQueryClient();
   const axiosAuth = useAxiosAuth();
   const mutation = useMutation({

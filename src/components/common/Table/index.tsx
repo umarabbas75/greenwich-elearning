@@ -1,14 +1,7 @@
 import { Table as TableType, flexRender } from '@tanstack/react-table';
 import React, { FC } from 'react';
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 type TableProps<T> = {
   table: TableType<T>;
@@ -26,10 +19,7 @@ const TableComponent: FC<TableProps<any>> = ({ table, onRowClick }) => {
                 <TableHead key={header.id}>
                   {header.isPlaceholder
                     ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                    : flexRender(header.column.columnDef.header, header.getContext())}
                 </TableHead>
               ))}
             </TableRow>
@@ -47,11 +37,7 @@ const TableComponent: FC<TableProps<any>> = ({ table, onRowClick }) => {
                 <TableCell
                   key={cell.id}
                   onClick={() =>
-                    cell.column.id !== 'actions'
-                      ? onRowClick
-                        ? onRowClick(row?.original)
-                        : {}
-                      : {}
+                    cell.column.id !== 'actions' ? (onRowClick ? onRowClick(row?.original) : {}) : {}
                   }
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -96,8 +82,7 @@ const TableComponent: FC<TableProps<any>> = ({ table, onRowClick }) => {
         <span className="flex items-center gap-1">
           <div>Page</div>
           <strong>
-            {table.getState().pagination.pageIndex + 1} of{' '}
-            {table.getPageCount()}
+            {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
           </strong>
         </span>
         <span className="flex items-center gap-1">

@@ -1,17 +1,34 @@
 'use client';
 
 import { useAtom } from 'jotai';
+import Error from 'next/error';
 import { useState } from 'react';
 
 import SearchComponent from '@/components/common/SearchInput';
 import { Button } from '@/components/ui/button';
+import { useApiGet } from '@/lib/dashboard/client/user';
 import { userModalAtom } from '@/store/modals';
-
-import { UserType } from '../../../../types/user.types';
 
 import UserModal from './_components/UserModal';
 import UserTable from './_components/UserTable';
+export type UserData = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  photo: string;
+  role: string;
+  timestamp: string;
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
+export type UsersDataResponse = {
+  message: string;
+  statusCode: number;
+  data: UserData[];
+};
 const Page = () => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -22,25 +39,11 @@ const Page = () => {
   //const debouncedSearch = useDebounce(search, 500);
   const [userState, setUserState] = useAtom(userModalAtom);
 
-  // const { data, isLoading, error, isError } = useApiCall({
-  //   endpoint: `user/auth/${generateQueryString({
-  //     page: pagination.pageIndex,
-  //     search: debouncedSearch,
-  //   })}`,
-  //   queryKey: ['get-user', pagination.pageIndex, debouncedSearch],
-  // });
-  const tempData: UserType[] = [
-    {
-      firstName: 'asad',
-      lastName: 'kamran',
-      phone: '+923410666880',
-      email: 'umarabbas75@gmail.com',
-      role: 'student',
-      photo: '',
-      status: 'active',
-      password: '',
-    },
-  ];
+  const { data: usersData, isLoading } = useApiGet<UsersDataResponse, Error>({
+    endpoint: `/users`,
+    queryKey: ['get-users'],
+  });
+  console.log({ usersData });
 
   return (
     <div>
@@ -63,20 +66,10 @@ const Page = () => {
         </div>
       </div>
       {/* {isError && <AlertDestructive error={error} />} */}
-      <UserTable
-        data={{
-          results: tempData,
-          count: 10,
-          previous: null,
-          next: null,
-        }}
-        pagination={pagination}
-        setPagination={setPagination}
-        isLoading={false}
-      />
-      {/* {data?.results?.length > 0 ? (
+
+      {usersData && usersData.data && usersData.data.length > 0 ? (
         <UserTable
-          data={data ?? []}
+          data={usersData}
           pagination={pagination}
           setPagination={setPagination}
           isLoading={isLoading}
@@ -85,10 +78,9 @@ const Page = () => {
         <div className="flex item-center justify-center mt-4">
           <div className="flex flex-col items-center opacity-70">
             <span>NO DATA FOUND</span>
-            <Database />
           </div>
         </div>
-      )} */}
+      )}
 
       {userState.status && <UserModal />}
     </div>

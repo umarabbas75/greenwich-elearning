@@ -17,35 +17,21 @@ const page = () => {
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[550px]">
           <div className="flex flex-col space-y-2 text-center">
             <div className="grid justify-center mb-4">
-              <Image
-                src="/assets/images/greenwich_logo.png"
-                width={150}
-                height={180}
-                alt="Greenwich logo"
-              />
+              <Image src="/assets/images/greenwich_logo.png" width={150} height={180} alt="Greenwich logo" />
             </div>
             <h1 className="text-2xl font-semibold tracking-tight">Sign In</h1>
-            <p className="text-sm text-muted-foreground">
-              Enter your email below to login into your account
-            </p>
+            <p className="text-sm text-muted-foreground">Enter your email below to login into your account</p>
           </div>
           <LoginAuthForm />
           <p className="text-right text-sm text-muted-foreground">
-            <Link
-              href="/terms"
-              className="underline underline-offset-4 hover:text-primary"
-            >
+            <Link href="/terms" className="underline underline-offset-4 hover:text-primary">
               Forgot password?
             </Link>{' '}
           </p>
         </div>
       </div>
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
-        <Image
-          src="/assets/images/genmark_login_bg.png"
-          fill={true}
-          alt="Genmark login picture"
-        />
+        <Image src="/assets/images/bg-image.jpg" fill={true} alt="Genmark login picture" />
       </div>
     </>
   );

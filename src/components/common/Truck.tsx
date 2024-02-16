@@ -3,11 +3,7 @@ import React from 'react';
 const Truck = () => {
   const cls1 = 'fill-red-500';
   return (
-    <svg
-      id="Layer_1"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 1084.31 1080"
-    >
+    <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1084.31 1080">
       {/* <defs>
         <style>
             .cls-1 {

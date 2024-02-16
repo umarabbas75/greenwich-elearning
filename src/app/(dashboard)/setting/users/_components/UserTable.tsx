@@ -1,10 +1,5 @@
 'use client';
-import {
-  CellContext,
-  createColumnHelper,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
 import Image from 'next/image';
 import { FC } from 'react';
@@ -27,12 +22,7 @@ interface Props {
   setPagination: any;
   isLoading: boolean;
 }
-const UserTable: FC<Props> = ({
-  data,
-  pagination,
-  setPagination,
-  isLoading,
-}) => {
+const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) => {
   const [userState, setUserState] = useAtom(userModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const { toast } = useToast();
@@ -96,9 +86,7 @@ const UserTable: FC<Props> = ({
       cell: (props) => {
         return (
           <h1 className="flex  flex-col justify-center w-fit text-center items-center">
-            <span>
-              {`${props.row.original.first_name} ${props.row.original.last_name}`}
-            </span>
+            <span>{`${props.row.original.first_name} ${props.row.original.last_name}`}</span>
           </h1>
         );
       },

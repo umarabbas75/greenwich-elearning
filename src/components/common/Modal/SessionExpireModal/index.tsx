@@ -8,9 +8,7 @@ import { Dialog, DialogContent, DialogFooter } from '@/components/ui/dialog';
 import { sessionExpireModalAtom } from '@/store/modals';
 
 const SessionExpireModal = () => {
-  const [sessionExpire, setSessionExpireModal] = useAtom(
-    sessionExpireModalAtom,
-  );
+  const [sessionExpire, setSessionExpireModal] = useAtom(sessionExpireModalAtom);
   const [loading, setIsLoading] = useState(false);
   const logutUser = async () => {
     setIsLoading(true);
@@ -44,12 +42,7 @@ const SessionExpireModal = () => {
         </div>
 
         <DialogFooter>
-          <LoadingButton
-            loading={loading}
-            onClick={logutUser}
-            variant="default"
-            color="primary"
-          >
+          <LoadingButton loading={loading} onClick={logutUser} variant="default" color="primary">
             Login
           </LoadingButton>
         </DialogFooter>

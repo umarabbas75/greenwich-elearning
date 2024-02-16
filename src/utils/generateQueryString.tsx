@@ -1,6 +1,4 @@
-const generateQueryString = (
-  params: Record<string, string | boolean | number>,
-): string => {
+const generateQueryString = (params: Record<string, string | boolean | number>): string => {
   const searchParams = new URLSearchParams();
 
   for (const [key, value] of Object.entries(params)) {

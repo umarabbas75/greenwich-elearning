@@ -2,8 +2,7 @@ import * as React from 'react';
 
 import { cn } from '@/utils/utils';
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
 }
@@ -12,11 +11,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, startIcon, endIcon, ...props }, ref) => {
     return (
       <div className="relative">
-        {startIcon && (
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-            {startIcon}
-          </div>
-        )}
+        {startIcon && <div className="absolute left-3 top-1/2 transform -translate-y-1/2">{startIcon}</div>}
         <input
           type={type}
           className={cn(
@@ -28,11 +23,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           {...props}
         />
-        {endIcon && (
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            {endIcon}
-          </div>
-        )}
+        {endIcon && <div className="absolute right-3 top-1/2 transform -translate-y-1/2">{endIcon}</div>}
       </div>
     );
   },

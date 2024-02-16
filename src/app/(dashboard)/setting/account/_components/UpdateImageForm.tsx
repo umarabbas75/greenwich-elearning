@@ -46,14 +46,10 @@ const UpdateImageForm = ({ isEdit }: { isEdit: boolean }) => {
           <div className="flex items-center gap-4">
             <Avatar className="h-28 w-28">
               <AvatarImage
-                src={
-                  file ? URL.createObjectURL(file) : session?.user?.photo ?? ''
-                }
+                src={file ? URL.createObjectURL(file) : session?.user?.photo ?? ''}
                 alt="user profile pic"
               />
-              <AvatarFallback className="text-2xl">
-                {session?.user?.first_name || 'A'}
-              </AvatarFallback>
+              <AvatarFallback className="text-2xl">{session?.user?.first_name || 'A'}</AvatarFallback>
             </Avatar>
 
             <FileUploader
@@ -73,20 +69,12 @@ const UpdateImageForm = ({ isEdit }: { isEdit: boolean }) => {
               <div className="flex justify-between mt-1 p-2 hover:bg-gray-200 cursor-pointer">
                 {file.name && <span> {file.name}</span>}
 
-                <DeleteIcon
-                  className="cursor-pointer"
-                  onClick={() => setFile(undefined)}
-                />
+                <DeleteIcon className="cursor-pointer" onClick={() => setFile(undefined)} />
               </div>
             )}
           </div>
           {isEdit && (
-            <LoadingButton
-              loading={isLoading}
-              onClick={updatePhoto}
-              className="w-fit"
-              variant="default"
-            >
+            <LoadingButton loading={isLoading} onClick={updatePhoto} className="w-fit" variant="default">
               Submit
             </LoadingButton>
           )}

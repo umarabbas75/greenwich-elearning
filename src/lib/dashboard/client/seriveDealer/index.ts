@@ -8,9 +8,7 @@ const fetchServiceDealerList = (axiosAuth: any, query: any) => {
   return axiosAuth.get(`/api/service-dealers/${query ?? ''}`);
 };
 const fetchAddressList = (searchTerm: any) => {
-  return axios.get(
-    `https://nominatim.openstreetmap.org/search?format=json&q=${searchTerm}&limit=5`,
-  );
+  return axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${searchTerm}&limit=5`);
 };
 
 const addServiceDealer = (axiosAuth: any, payload: any) => {
@@ -21,10 +19,7 @@ const deleteServiceDealer = (axiosAuth: any, id: string) => {
   return axiosAuth.delete(`/api/service-dealers/${id}/`);
 };
 
-const editServiceDealer = (
-  axiosAuth: any,
-  payload: ServiceDealerFormValues & { uid: string },
-) => {
+const editServiceDealer = (axiosAuth: any, payload: ServiceDealerFormValues & { uid: string }) => {
   return axiosAuth.patch(`/api/service-dealers/${payload.uid}/`, payload);
 };
 const fetchServiceDealer = (axiosAuth: any, id: any) => {
@@ -34,41 +29,26 @@ const fetchServiceDealer = (axiosAuth: any, id: any) => {
 export const useFetchServiceDealerList = ({ page, search }: any) => {
   const axiosAuth = useAxiosAuth();
   const query = generateQueryString({ page, search });
-  return useQuery(
-    ['service-dealer-list', page, search],
-    () => fetchServiceDealerList(axiosAuth, query),
-    {
-      keepPreviousData: true,
-    },
-  );
+  return useQuery(['service-dealer-list', page, search], () => fetchServiceDealerList(axiosAuth, query), {
+    keepPreviousData: true,
+  });
 };
 
-export const useFetchServiceDealer = ({
-  variables,
-  onSuccessCallback,
-  onErrorCallback,
-}: any) => {
+export const useFetchServiceDealer = ({ variables, onSuccessCallback, onErrorCallback }: any) => {
   const axiosAuth = useAxiosAuth();
-  return useQuery(
-    ['service-dealer', variables?.id],
-    () => fetchServiceDealer(axiosAuth, variables?.id),
-    {
-      enabled: variables?.id ? true : false,
+  return useQuery(['service-dealer', variables?.id], () => fetchServiceDealer(axiosAuth, variables?.id), {
+    enabled: variables?.id ? true : false,
 
-      onSuccess: (data) => {
-        onSuccessCallback && onSuccessCallback(data);
-      },
-      onError: (error) => {
-        onErrorCallback && onErrorCallback(error); // Call the error callback
-      },
+    onSuccess: (data) => {
+      onSuccessCallback && onSuccessCallback(data);
     },
-  );
+    onError: (error) => {
+      onErrorCallback && onErrorCallback(error); // Call the error callback
+    },
+  });
 };
 
-export const useAddServiceDealer = (
-  onSuccessCallback: any,
-  onErrorCallback?: any,
-) => {
+export const useAddServiceDealer = (onSuccessCallback: any, onErrorCallback?: any) => {
   const queryClient = useQueryClient();
   const axiosAuth = useAxiosAuth();
   const mutation = useMutation({
@@ -87,10 +67,7 @@ export const useAddServiceDealer = (
   return mutation;
 };
 
-export const useEditServiceDealer = (
-  onSuccessCallback: any,
-  onErrorCallback?: any,
-) => {
+export const useEditServiceDealer = (onSuccessCallback: any, onErrorCallback?: any) => {
   const queryClient = useQueryClient();
   const axiosAuth = useAxiosAuth();
   const mutation = useMutation({
@@ -108,10 +85,7 @@ export const useEditServiceDealer = (
 
   return mutation;
 };
-export const useDeleteServiceDealer = (
-  onSuccessCallback: any,
-  onErrorCallback: any,
-) => {
+export const useDeleteServiceDealer = (onSuccessCallback: any, onErrorCallback: any) => {
   const queryClient = useQueryClient();
   const axiosAuth = useAxiosAuth();
   const mutation = useMutation({
