@@ -1,6 +1,8 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useAtom } from 'jotai';
+import { useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 
 import { AlertDestructive } from '@/components/common/FormError';
@@ -12,42 +14,67 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
-import { useAddUser, useEditUser, useFetchUser } from '@/lib/dashboard/client/user';
-import { addModuleModalAtom } from '@/store/modals';
+import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
+import { addChapterModalAtom } from '@/store/modals';
 /* const MAX_FILE_SIZE = 102400; */
 
-type UserFormTypes = {
+type ChapterFormTypes = {
   title: string;
   description: string;
 };
 
 const ChapterModal = () => {
-  const [chapterModalState, setChapterModalState] = useAtom(addModuleModalAtom);
+  const [chapterModalState, setChapterModalState] = useAtom(addChapterModalAtom);
   const { toast } = useToast();
-
-  const handleSuccess = () => {
-    closeModal();
-    toast({
-      variant: 'success',
-      // title: 'Success ',
-      description: 'Record addedd successfully',
-    });
-  };
-
+  const queryClient = useQueryClient();
+  const params = useParams();
+  const { moduleId } = params || {};
+  console.log({ moduleId });
   const {
-    mutate: addCourse,
-    isLoading: addingCourse,
+    mutate: addChapter,
+    isLoading: addingChapter,
     isError: isAddError,
     error: addError,
-  } = useAddUser(handleSuccess);
+  } = useApiMutation<any>({
+    endpoint: `/courses/chapter`,
+    method: 'post',
+    config: {
+      onSuccess: (res: any) => {
+        console.log({ res });
+
+        queryClient.invalidateQueries({ queryKey: ['get-chapters'] });
+        closeModal();
+        toast({
+          variant: 'success',
+          // title: 'Success ',
+          description: 'Record added successfully',
+        });
+      },
+    },
+  });
+
   const {
-    mutate: editCourse,
-    isLoading: editingCourse,
+    mutate: editChapter,
+    isLoading: editingChapter,
     isError: isEditError,
     error: editError,
-  } = useEditUser(handleSuccess);
+  } = useApiMutation<any>({
+    endpoint: `/courses/chapter/${chapterModalState?.data?.id}`,
+    method: 'put',
+    config: {
+      onSuccess: (res: any) => {
+        console.log({ res });
 
-  console.log({ addCourse, editCourse });
+        queryClient.invalidateQueries({ queryKey: ['get-chapters'] });
+        closeModal();
+        toast({
+          variant: 'success',
+          // title: 'Success ',
+          description: 'Record added successfully',
+        });
+      },
+    },
+  });
 
   const closeModal = () => {
     setChapterModalState({
@@ -66,31 +93,34 @@ const ChapterModal = () => {
     description: Yup.string().required('description is required'),
   });
 
-  const form = useForm<UserFormTypes>({
+  const form = useForm<ChapterFormTypes>({
     defaultValues,
     resolver: yupResolver(validationSchema) as any,
   });
-  const { handleSubmit, control } = form;
+  const { handleSubmit, control, reset } = form;
 
-  const { data, isLoading: fetchingUser } = useFetchUser({
-    variables: {
-      id: chapterModalState?.data?.id,
-    },
-    onSuccessCallback: (data: any) => {
-      form.reset({
-        ...data,
-        customer: data?.customer,
-      });
+  const { data, isLoading: fetchingChapter } = useApiGet<any>({
+    endpoint: `/courses/chapter/${chapterModalState?.data?.id}`,
+    queryKey: ['get-chapter', chapterModalState?.data?.id],
+    config: {
+      enabled: !!chapterModalState?.data?.id,
+      onSuccess: (data: any) => {
+        console.log({ data });
+        reset({
+          ...data?.data,
+        });
+      },
     },
   });
 
-  const onSubmit = (values: UserFormTypes) => {
+  const onSubmit = (values: ChapterFormTypes) => {
     console.log('values', values);
+    data ? editChapter(values) : addChapter({ ...values, id: moduleId });
   };
 
   return (
-    <Modal open={chapterModalState.status} onClose={() => {}} title={data ? 'Edit Module' : 'New Module'}>
-      {fetchingUser ? (
+    <Modal open={chapterModalState.status} onClose={() => {}} title={data ? 'Edit Chapter' : 'New Chapter'}>
+      {fetchingChapter ? (
         <Spinner />
       ) : (
         <>
@@ -137,7 +167,7 @@ const ChapterModal = () => {
                   Cancel
                 </Button>
 
-                <LoadingButton loading={addingCourse || editingCourse} type="submit" variant="default">
+                <LoadingButton loading={addingChapter || editingChapter} type="submit" variant="default">
                   Submit
                 </LoadingButton>
               </div>

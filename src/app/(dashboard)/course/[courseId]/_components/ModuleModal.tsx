@@ -1,6 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useAtom } from 'jotai';
 import { useForm } from 'react-hook-form';
+import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 
 import { AlertDestructive } from '@/components/common/FormError';
@@ -12,42 +13,67 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
-import { useAddUser, useEditUser, useFetchUser } from '@/lib/dashboard/client/user';
+import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
 import { addModuleModalAtom } from '@/store/modals';
 /* const MAX_FILE_SIZE = 102400; */
 
-type UserFormTypes = {
+type ModuleFormTypes = {
   title: string;
   description: string;
+  courseId: string;
 };
 
-const ModuleModal = () => {
+const ModuleModal = ({ courseId }: { courseId: string }) => {
   const [moduleModalState, setModuleModalState] = useAtom(addModuleModalAtom);
   const { toast } = useToast();
-
-  const handleSuccess = () => {
-    closeModal();
-    toast({
-      variant: 'success',
-      // title: 'Success ',
-      description: 'Record addedd successfully',
-    });
-  };
+  const queryClient = useQueryClient();
+  console.log({ courseId });
 
   const {
-    mutate: addCourse,
-    isLoading: addingCourse,
+    mutate: addModule,
+    isLoading: addingModule,
     isError: isAddError,
     error: addError,
-  } = useAddUser(handleSuccess);
+  } = useApiMutation<any>({
+    endpoint: `/courses/module`,
+    method: 'post',
+    config: {
+      onSuccess: (res: any) => {
+        console.log({ res });
+
+        queryClient.invalidateQueries({ queryKey: ['get-modules'] });
+        closeModal();
+        toast({
+          variant: 'success',
+          // title: 'Success ',
+          description: 'Record added successfully',
+        });
+      },
+    },
+  });
+
   const {
-    mutate: editCourse,
-    isLoading: editingCourse,
+    mutate: editModule,
+    isLoading: editingModule,
     isError: isEditError,
     error: editError,
-  } = useEditUser(handleSuccess);
+  } = useApiMutation<any>({
+    endpoint: `/courses/module/${moduleModalState?.data?.id}`,
+    method: 'put',
+    config: {
+      onSuccess: (res: any) => {
+        console.log({ res });
 
-  console.log({ addCourse, editCourse });
+        queryClient.invalidateQueries({ queryKey: ['get-modules'] });
+        closeModal();
+        toast({
+          variant: 'success',
+          // title: 'Success ',
+          description: 'Record added successfully',
+        });
+      },
+    },
+  });
 
   const closeModal = () => {
     setModuleModalState({
@@ -66,31 +92,34 @@ const ModuleModal = () => {
     description: Yup.string().required('description is required'),
   });
 
-  const form = useForm<UserFormTypes>({
+  const form = useForm<ModuleFormTypes>({
     defaultValues,
     resolver: yupResolver(validationSchema) as any,
   });
-  const { handleSubmit, control } = form;
+  const { handleSubmit, control, reset } = form;
 
-  const { data, isLoading: fetchingUser } = useFetchUser({
-    variables: {
-      id: moduleModalState?.data?.id,
-    },
-    onSuccessCallback: (data: any) => {
-      form.reset({
-        ...data,
-        customer: data?.customer,
-      });
+  const { data, isLoading: fetchingModule } = useApiGet<any>({
+    endpoint: `/courses/module/${moduleModalState?.data?.id}`,
+    queryKey: ['get-module', moduleModalState?.data?.id],
+    config: {
+      enabled: !!moduleModalState?.data?.id,
+      onSuccess: (data: any) => {
+        console.log({ data });
+        reset({
+          ...data?.data,
+        });
+      },
     },
   });
 
-  const onSubmit = (values: UserFormTypes) => {
+  const onSubmit = (values: ModuleFormTypes) => {
     console.log('values', values);
+    data ? editModule(values) : addModule({ ...values, id: courseId });
   };
 
   return (
     <Modal open={moduleModalState.status} onClose={() => {}} title={data ? 'Edit Module' : 'New Module'}>
-      {fetchingUser ? (
+      {fetchingModule ? (
         <Spinner />
       ) : (
         <>
@@ -137,7 +166,7 @@ const ModuleModal = () => {
                   Cancel
                 </Button>
 
-                <LoadingButton loading={addingCourse || editingCourse} type="submit" variant="default">
+                <LoadingButton loading={addingModule || editingModule} type="submit" variant="default">
                   Submit
                 </LoadingButton>
               </div>

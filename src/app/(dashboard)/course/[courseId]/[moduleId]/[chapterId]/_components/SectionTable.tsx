@@ -8,31 +8,31 @@ import TableComponent from '@/components/common/Table';
 import TableActions from '@/components/common/TableActions';
 import { useToast } from '@/components/ui/use-toast';
 import { useDeleteUser } from '@/lib/dashboard/client/user';
-import { confirmationModalAtom, userModalAtom } from '@/store/modals';
+import { addSectionModalAtom, confirmationModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
-import { ChapterData, SectionType } from '../../../../../../../../types/course.types';
+import { Section, SectionsDataResponse } from '../page';
 
 import SectionModal from './SectionModal';
 
-const columnHelper = createColumnHelper<SectionType>();
+const columnHelper = createColumnHelper<Section>();
 
 interface Props {
-  data: ChapterData;
+  data: SectionsDataResponse;
   pagination: Pagination;
   setPagination: any;
   isLoading: boolean;
 }
 const SectionTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) => {
-  const [courseModalState, setCourseModalState] = useAtom(userModalAtom);
+  const [sectionModalState, setSectionModalState] = useAtom(addSectionModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const { toast } = useToast();
-  const renderActions = (row: SectionType) => {
+  const renderActions = (row: Section) => {
     return (
       <div className="flex flex-col p-2 gap-1 ">
         <span
           onClick={() => {
-            setCourseModalState({
+            setSectionModalState({
               status: true,
               data: row,
             });
@@ -83,16 +83,16 @@ const SectionTable: FC<Props> = ({ data, pagination, setPagination, isLoading })
 
     {
       id: 'actions',
-      cell: (props: CellContext<SectionType, string>) => (
+      cell: (props: CellContext<Section, string>) => (
         <TableActions>{renderActions(props.row.original)}</TableActions>
       ),
     },
   ];
 
   const table = useReactTable({
-    data: data?.results,
+    data: data?.data,
     columns,
-    pageCount: Math.ceil(data?.count / 10),
+    pageCount: Math.ceil(data?.data.length / 10),
     state: {
       pagination,
     },
@@ -137,7 +137,7 @@ const SectionTable: FC<Props> = ({ data, pagination, setPagination, isLoading })
         <div className="h-4" />
       </div>
 
-      {courseModalState.status && <SectionModal />}
+      {sectionModalState.status && <SectionModal />}
       {confirmState.status && (
         <ConfirmationModal
           open={confirmState.status}

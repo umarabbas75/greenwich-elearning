@@ -9,27 +9,27 @@ import TableComponent from '@/components/common/Table';
 import TableActions from '@/components/common/TableActions';
 import { useToast } from '@/components/ui/use-toast';
 import { useDeleteUser } from '@/lib/dashboard/client/user';
-import { confirmationModalAtom, userModalAtom } from '@/store/modals';
+import { addCourseModalAtom, confirmationModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
-import { CourseData, CourseType } from '../../../../../types/course.types';
+import { Course, CoursesDataResponse } from '../page';
 
-import UserModal from './CourseModal';
+import CourseModal from './CourseModal';
 
-const columnHelper = createColumnHelper<CourseType>();
+const columnHelper = createColumnHelper<Course>();
 
 interface Props {
-  data: CourseData;
+  data: CoursesDataResponse;
   pagination: Pagination;
   setPagination: any;
   isLoading: boolean;
 }
 const CourseTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) => {
   const router = useRouter();
-  const [courseModalState, setCourseModalState] = useAtom(userModalAtom);
+  const [courseModalState, setCourseModalState] = useAtom(addCourseModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const { toast } = useToast();
-  const renderActions = (row: CourseType) => {
+  const renderActions = (row: Course) => {
     return (
       <div className="flex flex-col p-2 gap-1 ">
         <span
@@ -85,16 +85,16 @@ const CourseTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) 
 
     {
       id: 'actions',
-      cell: (props: CellContext<CourseType, string>) => (
+      cell: (props: CellContext<Course, string>) => (
         <TableActions>{renderActions(props.row.original)}</TableActions>
       ),
     },
   ];
 
   const table = useReactTable({
-    data: data?.results,
+    data: data?.data,
     columns,
-    pageCount: Math.ceil(data?.count / 10),
+    pageCount: Math.ceil(data?.data?.length / 10),
     state: {
       pagination,
     },
@@ -130,27 +130,27 @@ const CourseTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) 
     handleDeleteError,
   );
 
-  const onRowClick = (data: CourseType) => {
+  const onRowClick = (data: Course) => {
     console.log({ data });
-    router.push(`/course/${data._id}`);
+    router.push(`/course/${data.id}`);
   };
 
   return (
     <>
       <div className="p-2 border rounded">
-        <p className="pl-2 font-medium mb-4">Users</p>
+        <p className="pl-2 font-medium mb-4">Courses</p>
         {isLoading ? 'loading...' : <TableComponent table={table} onRowClick={onRowClick} />}
 
         <div className="h-4" />
       </div>
 
-      {courseModalState.status && <UserModal />}
+      {courseModalState.status && <CourseModal />}
       {confirmState.status && (
         <ConfirmationModal
           open={confirmState.status}
           onClose={() => setConfirmState({ status: false, data: null })}
-          title={'Delete User'}
-          content={`Are you sure you want to delete this user?`}
+          title={'Delete Course'}
+          content={`Are you sure you want to delete this course?`}
           primaryAction={{
             label: 'Delete',
             onClick: () => {

@@ -9,35 +9,36 @@ import TableComponent from '@/components/common/Table';
 import TableActions from '@/components/common/TableActions';
 import { useToast } from '@/components/ui/use-toast';
 import { useDeleteUser } from '@/lib/dashboard/client/user';
-import { confirmationModalAtom, userModalAtom } from '@/store/modals';
+import { addChapterModalAtom, confirmationModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
-import { ChapterData, ChapterType } from '../../../../../../../types/course.types';
+import { Chapter, ChaptersDataResponse } from '../page';
 
 import UserModal from './ChapterModal';
 
-const columnHelper = createColumnHelper<ChapterType>();
+const columnHelper = createColumnHelper<Chapter>();
 
 interface Props {
-  data: ChapterData;
+  data: ChaptersDataResponse;
   pagination: Pagination;
   setPagination: any;
   isLoading: boolean;
+  moduleId: string;
 }
-const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) => {
+const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, moduleId }) => {
   const router = useRouter();
   const params = useParams();
-  const { courseId, moduleId } = params || {};
+  const { courseId } = params || {};
   console.log({ courseId, moduleId });
-  const [courseModalState, setCourseModalState] = useAtom(userModalAtom);
+  const [chapterModalState, setChapterModalState] = useAtom(addChapterModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const { toast } = useToast();
-  const renderActions = (row: ChapterType) => {
+  const renderActions = (row: Chapter) => {
     return (
       <div className="flex flex-col p-2 gap-1 ">
         <span
           onClick={() => {
-            setCourseModalState({
+            setChapterModalState({
               status: true,
               data: row,
             });
@@ -88,16 +89,16 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading })
 
     {
       id: 'actions',
-      cell: (props: CellContext<ChapterType, string>) => (
+      cell: (props: CellContext<Chapter, string>) => (
         <TableActions>{renderActions(props.row.original)}</TableActions>
       ),
     },
   ];
 
   const table = useReactTable({
-    data: data?.results,
+    data: data?.data,
     columns,
-    pageCount: Math.ceil(data?.count / 10),
+    pageCount: Math.ceil(data?.data.length / 10),
     state: {
       pagination,
     },
@@ -133,9 +134,9 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading })
     handleDeleteError,
   );
 
-  const onRowClick = (data: ChapterType) => {
+  const onRowClick = (data: Chapter) => {
     console.log({ data });
-    router.push(`/course/${courseId}/${moduleId}/${data._id}`);
+    router.push(`/course/${courseId}/${moduleId}/${data.id}`);
   };
 
   return (
@@ -147,13 +148,13 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading })
         <div className="h-4" />
       </div>
 
-      {courseModalState.status && <UserModal />}
+      {chapterModalState.status && <UserModal />}
       {confirmState.status && (
         <ConfirmationModal
           open={confirmState.status}
           onClose={() => setConfirmState({ status: false, data: null })}
-          title={'Delete User'}
-          content={`Are you sure you want to delete this user?`}
+          title={'Delete Chapter'}
+          content={`Are you sure you want to delete this chapter?`}
           primaryAction={{
             label: 'Delete',
             onClick: () => {

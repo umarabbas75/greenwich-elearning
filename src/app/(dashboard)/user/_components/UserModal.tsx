@@ -13,14 +13,7 @@ import PhoneInput2 from '@/components/common/PhoneInput2';
 import ReactSelect from '@/components/common/ReactSelect';
 import Spinner from '@/components/common/Spinner';
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
@@ -201,28 +194,19 @@ const UserModal = () => {
   };
 
   return (
-    <Modal
-      open={userState.status}
-      onClose={() => {}}
-      title={data ? 'Edit User' : 'New User'}
-    >
+    <Modal open={userState.status} onClose={() => {}} title={data ? 'Edit User' : 'New User'}>
       {fetchingUser ? (
         <Spinner />
       ) : (
         <>
-          {(isEditError || isAddError) && (
-            <AlertDestructive error={editError || addError} />
-          )}
+          {(isEditError || isAddError) && <AlertDestructive error={editError || addError} />}
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={control}
                   name="firstName"
-                  render={({
-                    field: { onChange, value },
-                    formState: { errors },
-                  }) => {
+                  render={({ field: { onChange, value }, formState: { errors } }) => {
                     return (
                       <FormItem>
                         <FormLabel>First Name</FormLabel>
@@ -238,10 +222,7 @@ const UserModal = () => {
                 <FormField
                   control={control}
                   name="lastName"
-                  render={({
-                    field: { onChange, value },
-                    formState: { errors },
-                  }) => {
+                  render={({ field: { onChange, value }, formState: { errors } }) => {
                     return (
                       <FormItem>
                         <FormLabel>Last Name</FormLabel>
@@ -258,10 +239,7 @@ const UserModal = () => {
                   <FormField
                     control={control}
                     name="email"
-                    render={({
-                      field: { onChange, value },
-                      formState: { errors },
-                    }) => {
+                    render={({ field: { onChange, value }, formState: { errors } }) => {
                       return (
                         <FormItem>
                           <FormLabel>Email</FormLabel>
@@ -278,34 +256,23 @@ const UserModal = () => {
                 <FormField
                   control={control}
                   name="phone"
-                  render={({
-                    field: { onChange, value },
-                    formState: { errors },
-                  }) => {
+                  render={({ field: { onChange, value }, formState: { errors } }) => {
                     return (
                       <>
                         <div className="space-y-2">
                           <FormLabel>Phone</FormLabel>
                           <PhoneInput2
                             value={value}
-                            onChange={(
-                              value: string,
-                              countryData: CountryData,
-                            ) => {
+                            onChange={(value: string, countryData: CountryData) => {
                               let formattedValue = value;
                               const { dialCode } = countryData;
 
                               if (formattedValue.startsWith(dialCode)) {
-                                const phoneNumberWithoutDialCode =
-                                  formattedValue.substring(dialCode.length);
+                                const phoneNumberWithoutDialCode = formattedValue.substring(dialCode.length);
 
-                                if (
-                                  phoneNumberWithoutDialCode.startsWith('0')
-                                ) {
+                                if (phoneNumberWithoutDialCode.startsWith('0')) {
                                   // Remove leading zero
-                                  formattedValue =
-                                    dialCode +
-                                    phoneNumberWithoutDialCode.substring(1);
+                                  formattedValue = dialCode + phoneNumberWithoutDialCode.substring(1);
                                 }
                               }
                               onChange(formattedValue);
@@ -322,19 +289,12 @@ const UserModal = () => {
                   <FormField
                     control={control}
                     name="password"
-                    render={({
-                      field: { onChange, value },
-                      formState: { errors },
-                    }) => {
+                    render={({ field: { onChange, value }, formState: { errors } }) => {
                       return (
                         <FormItem>
                           <FormLabel>Password</FormLabel>
                           <FormControl>
-                            <Input
-                              type="password"
-                              onChange={onChange}
-                              value={value}
-                            />
+                            <Input type="password" onChange={onChange} value={value} />
                           </FormControl>
 
                           <FormMessage>{errors.password?.message}</FormMessage>
@@ -352,9 +312,7 @@ const UserModal = () => {
                       return (
                         <ReactSelect
                           options={roles}
-                          value={roles.find(
-                            (option: any) => option.value === value,
-                          )} // Find the matching option by value
+                          value={roles.find((option: any) => option.value === value)} // Find the matching option by value
                           onChange={(val: any) => onChange(val?.value)}
                         />
                       );
@@ -387,11 +345,7 @@ const UserModal = () => {
                   Cancel
                 </Button>
 
-                <LoadingButton
-                  loading={addingUser || editingUser}
-                  type="submit"
-                  variant="default"
-                >
+                <LoadingButton loading={addingUser || editingUser} type="submit" variant="default">
                   Submit
                 </LoadingButton>
               </div>

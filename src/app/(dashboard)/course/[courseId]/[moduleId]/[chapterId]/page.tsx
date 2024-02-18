@@ -1,46 +1,47 @@
 'use client';
 
 import { useAtom } from 'jotai';
+import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
 import SearchComponent from '@/components/common/SearchInput';
 import { Button } from '@/components/ui/button';
+import { useApiGet } from '@/lib/dashboard/client/user';
 import { addSectionModalAtom } from '@/store/modals';
 
 import SectionModal from './_components/SectionModal';
 import SectionTable from './_components/SectionTable';
+export type Section = {
+  title: string;
+  description: string;
+  timestamp: string;
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
+export type SectionsDataResponse = {
+  message: string;
+  statusCode: number;
+  data: Section[];
+};
 const Page = () => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
-
+  const params = useParams();
+  const { chapterId } = params || {};
   const [search, setSearch] = useState('');
   //const debouncedSearch = useDebounce(search, 500);
   const [sectionModalState, setSectionModalState] = useAtom(addSectionModalAtom);
 
-  // const { data, isLoading, error, isError } = useApiCall({
-  //   endpoint: `user/auth/${generateQueryString({
-  //     page: pagination.pageIndex,
-  //     search: debouncedSearch,
-  //   })}`,
-  //   queryKey: ['get-user', pagination.pageIndex, debouncedSearch],
-  // });
-  const tempData: any[] = [
-    {
-      title: 'Element 1: Key Environmental Cycles and the Effects of Human Activity on the Environment.',
-      content: '',
-      status: 'active',
-      _id: '3523hdfdfd5j340932',
-    },
-    {
-      title: 'What will be covered in Learning Outcome 1?',
-      content: 'What will be covered in Learning Outcome 1?',
-      status: 'active',
-      _id: 'sdfds4543cddsssdfc2',
-    },
-  ];
+  const { data: sectionsData, isLoading } = useApiGet<SectionsDataResponse, Error>({
+    endpoint: `/courses/module/chapter/allSections/${chapterId}`,
+    queryKey: ['get-sections', chapterId],
+  });
+
+  console.log({ sectionsData, isLoading });
 
   return (
     <div>
@@ -63,20 +64,10 @@ const Page = () => {
         </div>
       </div>
       {/* {isError && <AlertDestructive error={error} />} */}
-      <SectionTable
-        data={{
-          results: tempData,
-          count: 10,
-          previous: null,
-          next: null,
-        }}
-        pagination={pagination}
-        setPagination={setPagination}
-        isLoading={false}
-      />
-      {/* {data?.results?.length > 0 ? (
-        <UserTable
-          data={data ?? []}
+
+      {sectionsData && sectionsData?.data?.length > 0 ? (
+        <SectionTable
+          data={sectionsData}
           pagination={pagination}
           setPagination={setPagination}
           isLoading={isLoading}
@@ -85,10 +76,9 @@ const Page = () => {
         <div className="flex item-center justify-center mt-4">
           <div className="flex flex-col items-center opacity-70">
             <span>NO DATA FOUND</span>
-            <Database />
           </div>
         </div>
-      )} */}
+      )}
 
       {sectionModalState.status && <SectionModal />}
     </div>

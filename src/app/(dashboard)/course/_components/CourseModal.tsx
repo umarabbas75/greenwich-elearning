@@ -1,6 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useAtom } from 'jotai';
 import { useForm } from 'react-hook-form';
+import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 
 import { AlertDestructive } from '@/components/common/FormError';
@@ -12,11 +13,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
-import { useAddUser, useEditUser, useFetchUser } from '@/lib/dashboard/client/user';
+import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
 import { addCourseModalAtom } from '@/store/modals';
 /* const MAX_FILE_SIZE = 102400; */
 
-type UserFormTypes = {
+type CourseFormTypes = {
   title: string;
   description: string;
 };
@@ -24,28 +25,53 @@ type UserFormTypes = {
 const CourseModal = () => {
   const [courseModalState, setCourseModalState] = useAtom(addCourseModalAtom);
   const { toast } = useToast();
-
-  const handleSuccess = () => {
-    closeModal();
-    toast({
-      variant: 'success',
-      // title: 'Success ',
-      description: 'Record addedd successfully',
-    });
-  };
+  const queryClient = useQueryClient();
 
   const {
     mutate: addCourse,
     isLoading: addingCourse,
     isError: isAddError,
     error: addError,
-  } = useAddUser(handleSuccess);
+  } = useApiMutation<any>({
+    endpoint: `/courses`,
+    method: 'post',
+    config: {
+      onSuccess: (res: any) => {
+        console.log({ res });
+
+        queryClient.invalidateQueries({ queryKey: ['get-courses'] });
+        closeModal();
+        toast({
+          variant: 'success',
+          // title: 'Success ',
+          description: 'Record added successfully',
+        });
+      },
+    },
+  });
+
   const {
     mutate: editCourse,
     isLoading: editingCourse,
     isError: isEditError,
     error: editError,
-  } = useEditUser(handleSuccess);
+  } = useApiMutation<any>({
+    endpoint: `/courses/${courseModalState?.data?.id}`,
+    method: 'put',
+    config: {
+      onSuccess: (res: any) => {
+        console.log({ res });
+
+        queryClient.invalidateQueries({ queryKey: ['get-courses'] });
+        closeModal();
+        toast({
+          variant: 'success',
+          // title: 'Success ',
+          description: 'Record added successfully',
+        });
+      },
+    },
+  });
 
   console.log({ addCourse, editCourse });
 
@@ -66,31 +92,33 @@ const CourseModal = () => {
     description: Yup.string().required('description is required'),
   });
 
-  const form = useForm<UserFormTypes>({
+  const form = useForm<CourseFormTypes>({
     defaultValues,
     resolver: yupResolver(validationSchema) as any,
   });
-  const { handleSubmit, control } = form;
+  const { handleSubmit, control, reset } = form;
 
-  const { data, isLoading: fetchingUser } = useFetchUser({
-    variables: {
-      id: courseModalState?.data?.id,
-    },
-    onSuccessCallback: (data: any) => {
-      form.reset({
-        ...data,
-        customer: data?.customer,
-      });
+  const { data, isLoading: fetchingCourse } = useApiGet<any>({
+    endpoint: `/courses/${courseModalState?.data?.id}`,
+    queryKey: ['get-course', courseModalState?.data?.id],
+    config: {
+      enabled: !!courseModalState?.data?.id,
+      onSuccess: (data: any) => {
+        console.log({ data });
+        reset({
+          ...data?.data,
+        });
+      },
     },
   });
 
-  const onSubmit = (values: UserFormTypes) => {
-    console.log('values', values);
+  const onSubmit = (values: CourseFormTypes) => {
+    data ? editCourse(values) : addCourse(values);
   };
 
   return (
     <Modal open={courseModalState.status} onClose={() => {}} title={data ? 'Edit Course' : 'New Course'}>
-      {fetchingUser ? (
+      {fetchingCourse ? (
         <Spinner />
       ) : (
         <>

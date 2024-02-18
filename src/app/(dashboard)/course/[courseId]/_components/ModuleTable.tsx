@@ -1,7 +1,7 @@
 'use client';
 import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { FC } from 'react';
 
 import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
@@ -9,17 +9,17 @@ import TableComponent from '@/components/common/Table';
 import TableActions from '@/components/common/TableActions';
 import { useToast } from '@/components/ui/use-toast';
 import { useDeleteUser } from '@/lib/dashboard/client/user';
-import { confirmationModalAtom, userModalAtom } from '@/store/modals';
+import { addModuleModalAtom, confirmationModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
-import { ModuleData, ModuleType } from '../../../../../../types/course.types';
+import { Module, ModulesDataResponse } from '../page';
 
-import UserModal from './ModuleModal';
+import ModuleModal from './ModuleModal';
 
-const columnHelper = createColumnHelper<ModuleType>();
+const columnHelper = createColumnHelper<Module>();
 
 interface Props {
-  data: ModuleData;
+  data: ModulesDataResponse;
   pagination: Pagination;
   setPagination: any;
   isLoading: boolean;
@@ -27,15 +27,18 @@ interface Props {
 }
 const ModuleTable: FC<Props> = ({ data, pagination, setPagination, isLoading, courseId }) => {
   const router = useRouter();
-  const [courseModalState, setCourseModalState] = useAtom(userModalAtom);
+  const searchParams = useSearchParams();
+
+  console.log({ router, searchParams });
+  const [moduleModalState, setModuleModalState] = useAtom(addModuleModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const { toast } = useToast();
-  const renderActions = (row: ModuleType) => {
+  const renderActions = (row: Module) => {
     return (
       <div className="flex flex-col p-2 gap-1 ">
         <span
           onClick={() => {
-            setCourseModalState({
+            setModuleModalState({
               status: true,
               data: row,
             });
@@ -86,16 +89,16 @@ const ModuleTable: FC<Props> = ({ data, pagination, setPagination, isLoading, co
 
     {
       id: 'actions',
-      cell: (props: CellContext<ModuleType, string>) => (
+      cell: (props: CellContext<Module, string>) => (
         <TableActions>{renderActions(props.row.original)}</TableActions>
       ),
     },
   ];
 
   const table = useReactTable({
-    data: data?.results,
+    data: data?.data,
     columns,
-    pageCount: Math.ceil(data?.count / 10),
+    pageCount: Math.ceil(data?.data?.length / 10),
     state: {
       pagination,
     },
@@ -131,9 +134,9 @@ const ModuleTable: FC<Props> = ({ data, pagination, setPagination, isLoading, co
     handleDeleteError,
   );
 
-  const onRowClick = (data: ModuleType) => {
+  const onRowClick = (data: Module) => {
     console.log({ data });
-    router.push(`/course/${courseId}/${data._id}`);
+    router.push(`/course/${courseId}/${data.id}`);
   };
 
   return (
@@ -145,13 +148,13 @@ const ModuleTable: FC<Props> = ({ data, pagination, setPagination, isLoading, co
         <div className="h-4" />
       </div>
 
-      {courseModalState.status && <UserModal />}
+      {moduleModalState.status && <ModuleModal courseId={courseId} />}
       {confirmState.status && (
         <ConfirmationModal
           open={confirmState.status}
           onClose={() => setConfirmState({ status: false, data: null })}
-          title={'Delete User'}
-          content={`Are you sure you want to delete this user?`}
+          title={'Delete Module'}
+          content={`Are you sure you want to delete this module?`}
           primaryAction={{
             label: 'Delete',
             onClick: () => {

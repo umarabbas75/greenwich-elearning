@@ -1,6 +1,8 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useAtom } from 'jotai';
+import { useParams } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
+import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 
 import { AlertDestructive } from '@/components/common/FormError';
@@ -12,7 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
-import { useAddUser, useEditUser, useFetchUser } from '@/lib/dashboard/client/user';
+import { useApiMutation, useFetchUser } from '@/lib/dashboard/client/user';
 import { addSectionModalAtom } from '@/store/modals';
 
 const ReactQuill = typeof window === 'object' ? require('react-quill') : () => false;
@@ -21,37 +23,61 @@ const ReactQuill = typeof window === 'object' ? require('react-quill') : () => f
 
 type SectionFormTypes = {
   title: string;
-  content: string;
+  description: string;
 };
 
 const SectionModal = () => {
   const [sectionModalState, setSectionModalState] = useAtom(addSectionModalAtom);
   const { toast } = useToast();
-
-  const handleSuccess = () => {
-    closeModal();
-    toast({
-      variant: 'success',
-      // title: 'Success ',
-      description: 'Record addedd successfully',
-    });
-  };
+  const queryClient = useQueryClient();
+  const params = useParams();
+  const { chapterId } = params || {};
 
   const {
-    mutate: addCourse,
-    isLoading: addingCourse,
+    mutate: addSection,
+    isLoading: addingSection,
     isError: isAddError,
     error: addError,
-  } = useAddUser(handleSuccess);
+  } = useApiMutation<any>({
+    endpoint: `/courses/section`,
+    method: 'post',
+    config: {
+      onSuccess: (res: any) => {
+        console.log({ res });
+
+        queryClient.invalidateQueries({ queryKey: ['get-sections'] });
+        closeModal();
+        toast({
+          variant: 'success',
+          // title: 'Success ',
+          description: 'Record added successfully',
+        });
+      },
+    },
+  });
+
   const {
-    mutate: editCourse,
-    isLoading: editingCourse,
+    mutate: editSection,
+    isLoading: editingSection,
     isError: isEditError,
     error: editError,
-  } = useEditUser(handleSuccess);
+  } = useApiMutation<any>({
+    endpoint: `/courses/section/${sectionModalState?.data?.id}`,
+    method: 'put',
+    config: {
+      onSuccess: (res: any) => {
+        console.log({ res });
 
-  console.log({ addCourse, editCourse });
-
+        queryClient.invalidateQueries({ queryKey: ['get-sections'] });
+        closeModal();
+        toast({
+          variant: 'success',
+          // title: 'Success ',
+          description: 'Record added successfully',
+        });
+      },
+    },
+  });
   const closeModal = () => {
     setSectionModalState({
       ...sectionModalState,
@@ -66,7 +92,7 @@ const SectionModal = () => {
   };
   const validationSchema = Yup.object().shape({
     title: Yup.string().required('title is required'),
-    content: Yup.string().required('description is required'),
+    description: Yup.string().required('description is required'),
   });
 
   const form = useForm<SectionFormTypes>({
@@ -88,7 +114,7 @@ const SectionModal = () => {
   });
 
   const onSubmit = (values: SectionFormTypes) => {
-    console.log('values', values);
+    data ? editSection(values) : addSection({ ...values, id: chapterId });
   };
 
   return (
@@ -120,7 +146,7 @@ const SectionModal = () => {
 
                 <Controller
                   control={control}
-                  name={`content`}
+                  name={`description`}
                   render={({ field: { onChange, value } }) => (
                     <ReactQuill
                       id="quill"
@@ -148,7 +174,7 @@ const SectionModal = () => {
                   Cancel
                 </Button>
 
-                <LoadingButton loading={addingCourse || editingCourse} type="submit" variant="default">
+                <LoadingButton loading={addingSection || editingSection} type="submit" variant="default">
                   Submit
                 </LoadingButton>
               </div>

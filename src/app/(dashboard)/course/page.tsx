@@ -5,13 +5,24 @@ import { useState } from 'react';
 
 import SearchComponent from '@/components/common/SearchInput';
 import { Button } from '@/components/ui/button';
+import { useApiGet } from '@/lib/dashboard/client/user';
 import { addCourseModalAtom } from '@/store/modals';
-
-import { CourseType } from '../../../../types/course.types';
 
 import CourseModal from './_components/CourseModal';
 import CourseTable from './_components/CourseTable';
-
+export type Course = {
+  title: string;
+  description: string;
+  timestamp: string;
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+};
+export type CoursesDataResponse = {
+  message: string;
+  statusCode: number;
+  data: Course[];
+};
 const Page = () => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -22,27 +33,11 @@ const Page = () => {
   //const debouncedSearch = useDebounce(search, 500);
   const [courseModalState, setCourseModalState] = useAtom(addCourseModalAtom);
 
-  // const { data, isLoading, error, isError } = useApiCall({
-  //   endpoint: `user/auth/${generateQueryString({
-  //     page: pagination.pageIndex,
-  //     search: debouncedSearch,
-  //   })}`,
-  //   queryKey: ['get-user', pagination.pageIndex, debouncedSearch],
-  // });
-  const tempData: CourseType[] = [
-    {
-      title: 'Nebosh 1',
-      description: 'This is desc for nebosh 1',
-      status: 'active',
-      _id: '123dsf4534we',
-    },
-    {
-      title: 'Nebosh 2',
-      description: 'This is desc for nebosh 2',
-      status: 'active',
-      _id: '123dsf4534we',
-    },
-  ];
+  const { data: coursesData, isLoading } = useApiGet<CoursesDataResponse, Error>({
+    endpoint: `/courses`,
+    queryKey: ['get-courses'],
+  });
+  console.log({ coursesData, isLoading });
 
   return (
     <div>
@@ -65,7 +60,7 @@ const Page = () => {
         </div>
       </div>
       {/* {isError && <AlertDestructive error={error} />} */}
-      <CourseTable
+      {/* <CourseTable
         data={{
           results: tempData,
           count: 10,
@@ -75,10 +70,10 @@ const Page = () => {
         pagination={pagination}
         setPagination={setPagination}
         isLoading={false}
-      />
-      {/* {data?.results?.length > 0 ? (
-        <UserTable
-          data={data ?? []}
+      /> */}
+      {coursesData && coursesData?.data?.length > 0 ? (
+        <CourseTable
+          data={coursesData}
           pagination={pagination}
           setPagination={setPagination}
           isLoading={isLoading}
@@ -87,10 +82,10 @@ const Page = () => {
         <div className="flex item-center justify-center mt-4">
           <div className="flex flex-col items-center opacity-70">
             <span>NO DATA FOUND</span>
-            <Database />
+            {/* <Database /> */}
           </div>
         </div>
-      )} */}
+      )}
 
       {courseModalState.status && <CourseModal />}
     </div>

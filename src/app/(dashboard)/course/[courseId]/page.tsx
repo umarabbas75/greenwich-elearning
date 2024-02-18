@@ -5,14 +5,27 @@ import { useState } from 'react';
 
 import SearchComponent from '@/components/common/SearchInput';
 import { Button } from '@/components/ui/button';
+import { useApiGet } from '@/lib/dashboard/client/user';
 import { addModuleModalAtom } from '@/store/modals';
 
-import CourseModal from './_components/ModuleModal';
-import CourseTable from './_components/ModuleTable';
+import ModuleModal from './_components/ModuleModal';
+import ModuleTable from './_components/ModuleTable';
+export type Module = {
+  title: string;
+  description: string;
+  timestamp: string;
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
+export type ModulesDataResponse = {
+  message: string;
+  statusCode: number;
+  data: Module[];
+};
 const Page = ({ params }: { params: { courseId: string } }) => {
   const courseId = params.courseId;
-  console.log({ courseId });
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
@@ -22,27 +35,12 @@ const Page = ({ params }: { params: { courseId: string } }) => {
   //const debouncedSearch = useDebounce(search, 500);
   const [moduleModalState, setModuleModalState] = useAtom(addModuleModalAtom);
 
-  // const { data, isLoading, error, isError } = useApiCall({
-  //   endpoint: `user/auth/${generateQueryString({
-  //     page: pagination.pageIndex,
-  //     search: debouncedSearch,
-  //   })}`,
-  //   queryKey: ['get-user', pagination.pageIndex, debouncedSearch],
-  // });
-  const tempData: any[] = [
-    {
-      title: 'ED1 - Controlling environmental aspects',
-      description: 'ED1 - Controlling environmental aspects',
-      status: 'active',
-      _id: '3523h5j340932',
-    },
-    {
-      title: 'IDEM2: Environmental regulation',
-      description: 'IDEM2: Environmental regulation',
-      status: 'active',
-      _id: 'df3825jksdfn32',
-    },
-  ];
+  const { data: modulesData, isLoading } = useApiGet<ModulesDataResponse, Error>({
+    endpoint: `/courses/allModules/${courseId}`,
+    queryKey: ['get-modules', courseId],
+  });
+
+  console.log({ modulesData, isLoading });
 
   return (
     <div>
@@ -65,7 +63,7 @@ const Page = ({ params }: { params: { courseId: string } }) => {
         </div>
       </div>
       {/* {isError && <AlertDestructive error={error} />} */}
-      <CourseTable
+      {/* <CourseTable
         data={{
           results: tempData,
           count: 10,
@@ -76,24 +74,25 @@ const Page = ({ params }: { params: { courseId: string } }) => {
         setPagination={setPagination}
         isLoading={false}
         courseId={courseId}
-      />
-      {/* {data?.results?.length > 0 ? (
-        <UserTable
-          data={data ?? []}
+      /> */}
+
+      {modulesData?.data && modulesData?.data?.length > 0 ? (
+        <ModuleTable
+          data={modulesData}
           pagination={pagination}
           setPagination={setPagination}
           isLoading={isLoading}
+          courseId={courseId}
         />
       ) : (
         <div className="flex item-center justify-center mt-4">
           <div className="flex flex-col items-center opacity-70">
             <span>NO DATA FOUND</span>
-            <Database />
           </div>
         </div>
-      )} */}
+      )}
 
-      {moduleModalState.status && <CourseModal />}
+      {moduleModalState.status && <ModuleModal courseId={courseId} />}
     </div>
   );
 };
