@@ -46,6 +46,18 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
           className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
         >
           <Icons iconName="edit" className="w-6 h-6 cursor-pointer" />
+          Assign quiz questions
+        </span>
+        <span
+          onClick={() => {
+            setChapterModalState({
+              status: true,
+              data: row,
+            });
+          }}
+          className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
+        >
+          <Icons iconName="edit" className="w-6 h-6 cursor-pointer" />
           Edit
         </span>
 

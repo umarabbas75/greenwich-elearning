@@ -22,6 +22,7 @@ export type UserData = {
   id: string;
   createdAt: string;
   updatedAt: string;
+  courses: string[];
 };
 
 export type UsersDataResponse = {

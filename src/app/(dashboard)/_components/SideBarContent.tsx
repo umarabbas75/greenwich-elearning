@@ -6,12 +6,14 @@ import React from 'react';
 
 import { Icons } from '@/utils/icon';
 
-import { siderbarmenu } from './menu';
+import { sidebarMenu } from './menu';
 type ValidIconNames = keyof typeof Icons;
 const SideBarContent = () => {
   const { data: session } = useSession();
-
+  const menuItems = sidebarMenu[session?.user.role ?? 'admin'];
   const segment = useSelectedLayoutSegment() ?? '';
+
+  console.log({ menuItems });
 
   return (
     <>
@@ -21,8 +23,8 @@ const SideBarContent = () => {
         </Link>
       </div>
       <nav className="grid items-start gap-2 p-6">
-        {siderbarmenu?.map((item) => {
-          if (item?.link && item?.showInSidebar !== false && item.role.includes(session?.user?.role as any)) {
+        {menuItems?.map((item) => {
+          if (item?.link && item?.showInSidebar !== false) {
             const iconName = item?.icon as ValidIconNames;
 
             return (

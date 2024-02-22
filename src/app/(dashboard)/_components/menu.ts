@@ -1,75 +1,82 @@
-type Role = 'admin' | 'student';
-type Permission = 'create' | 'read' | 'update' | 'delete';
-
-type SidebarMenuItem = {
+type SidebarItem = {
   id: string;
   title: string;
   icon: string;
   link: string;
-  role: Role[];
-  permissions: {
-    admin: Permission[];
-    student: Permission[];
-    //Staff?: Permission[];
-  };
-  showInSidebar?: boolean;
+  role?: string[]; // Optional: role array for conditional rendering based on user role
+  showInSidebar?: boolean; // Optional: to control visibility in the sidebar
 };
 
-export const siderbarmenu: SidebarMenuItem[] = [
-  {
-    id: 'dashboard',
-    title: 'Dashboard',
-    icon: 'dashboard',
-    link: '/',
-    role: ['admin', 'student'],
-    permissions: {
-      admin: ['read', 'update', 'delete', 'create'],
-      student: ['read'],
+type SidebarMenu = {
+  admin: SidebarItem[];
+  student: SidebarItem[];
+};
+
+export const sidebarMenu: SidebarMenu = {
+  admin: [
+    {
+      id: 'dashboard',
+      title: 'Dashboard',
+      icon: 'dashboard',
+      link: '/',
     },
-  },
-  {
-    id: 'user',
-    title: 'User',
-    icon: 'dashboard',
-    link: '/user',
-    role: ['admin', 'student'],
-    permissions: {
-      admin: ['read', 'update', 'delete', 'create'],
-      student: ['read'],
+    {
+      id: 'user',
+      title: 'User',
+      icon: 'dashboard',
+      link: '/user',
     },
-  },
-  {
-    id: 'course',
-    title: 'Course',
-    icon: 'dashboard',
-    link: '/course',
-    role: ['admin', 'student'],
-    permissions: {
-      admin: ['read', 'update', 'delete', 'create'],
-      student: ['read'],
+    {
+      id: 'course',
+      title: 'Course',
+      icon: 'dashboard',
+      link: '/course',
     },
-  },
-  {
-    id: 'settings',
-    title: 'Settings',
-    icon: 'setting',
-    link: '/setting/account',
-    role: ['admin', 'student'],
-    permissions: {
-      admin: ['read', 'update', 'delete', 'create'],
-      student: ['read', 'update', 'delete', 'create'],
+    {
+      id: 'quiz',
+      title: 'Quiz',
+      icon: 'dashboard',
+      link: '/quiz',
     },
-  },
-  {
-    showInSidebar: false,
-    id: 'settings',
-    title: 'Settings',
-    icon: 'setting',
-    link: '/setting/users',
-    role: ['admin'],
-    permissions: {
-      admin: ['read', 'update', 'delete', 'create'],
-      student: [],
+    {
+      id: 'settings',
+      title: 'Settings',
+      icon: 'setting',
+      link: '/setting/account',
     },
-  },
-];
+    {
+      showInSidebar: false,
+      id: 'settings',
+      title: 'Settings',
+      icon: 'setting',
+      link: '/setting/users',
+      role: ['admin'],
+    },
+  ],
+  student: [
+    {
+      id: 'dashboard',
+      title: 'Dashboard',
+      icon: 'dashboard',
+      link: '/',
+    },
+    {
+      id: 'studentCourses',
+      title: 'Courses',
+      icon: 'dashboard',
+      link: '/studentCourses',
+    },
+    {
+      id: 'forums',
+      title: 'Forums',
+      icon: 'dashboard',
+      link: '/forum',
+    },
+    {
+      id: 'assessment',
+      title: 'Assessment',
+      icon: 'dashboard',
+      link: '/assessment',
+    },
+  ],
+};

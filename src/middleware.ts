@@ -2,11 +2,11 @@ import { NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { withAuth } from 'next-auth/middleware';
 
-import { siderbarmenu } from './app/(dashboard)/_components/menu';
-
+import { sidebarMenu } from './app/(dashboard)/_components/menu';
+type RoleType = 'student' | 'admin';
 export default withAuth(
   async function middleware(req) {
-    const token = await getToken({ req });
+    const token: any = await getToken({ req });
 
     const isAuth = !!token;
     const isAuthPage = req.nextUrl.pathname.startsWith('/login');
@@ -17,14 +17,13 @@ export default withAuth(
     }
 
     const pathname = req.nextUrl.pathname; // "/dashboard"
-    console.log('pathnameee', pathname?.split('/')?.[1]);
-    const role = token?.role; // "student"
-    const currentPathAuthorizationSettings = siderbarmenu.find(
-      (item) => item.link === pathname || item.link.startsWith(pathname.split(item.link)[0]),
-    ); // { student: ["read"] }
-    const currentPathPermissions = currentPathAuthorizationSettings?.role?.includes(role as any); // { student: ["read"] }
+    const role: RoleType = token?.role; // "student"
 
-    if (isAuth && !isAuthPage && !currentPathPermissions) {
+    const isAuthorized = sidebarMenu?.[role]?.findIndex((item) => {
+      return item.link === pathname || item.link.startsWith(pathname.split(item.link)[0]);
+    }); // { student: ["read"] }
+
+    if (isAuth && !isAuthPage && isAuthorized === -1) {
       return new NextResponse('You are not authorized!');
     }
 

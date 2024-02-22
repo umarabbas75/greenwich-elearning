@@ -6,7 +6,7 @@ type Props = {
   options: any[];
   getOptionLabel?: (option: any) => string;
   getOptionValue?: (option: any) => string;
-
+  isMulti: boolean;
   className?: string;
   classNamePrefix?: string;
 };
@@ -20,6 +20,7 @@ const ReactSelect = (props: Props) => {
     getOptionValue,
     className = 'my-react-select-container',
     classNamePrefix = 'my-react-select',
+    isMulti = false,
   } = props || {};
   return (
     <Select
@@ -30,6 +31,7 @@ const ReactSelect = (props: Props) => {
       onChange={onChange}
       getOptionLabel={getOptionLabel} // Use 'type' as label
       getOptionValue={getOptionValue} // Use 'value' as value
+      isMulti={isMulti}
     />
   );
 };

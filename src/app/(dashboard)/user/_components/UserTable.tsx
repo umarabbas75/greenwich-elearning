@@ -9,11 +9,12 @@ import TableComponent from '@/components/common/Table';
 import TableActions from '@/components/common/TableActions';
 import { useToast } from '@/components/ui/use-toast';
 import { useDeleteUser } from '@/lib/dashboard/client/user';
-import { confirmationModalAtom, userModalAtom } from '@/store/modals';
+import { assignCoursesModalAtom, confirmationModalAtom, userModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
 import { UserData, UsersDataResponse } from '../page';
 
+import AssignCoursesModal from './AssignCoursesModal';
 import UserModal from './UserModal';
 
 const columnHelper = createColumnHelper<UserData>();
@@ -26,11 +27,24 @@ interface Props {
 }
 const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) => {
   const [userState, setUserState] = useAtom(userModalAtom);
+  const [assignCoursesState, setAssignCoursesState] = useAtom(assignCoursesModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const { toast } = useToast();
   const renderActions = (row: UserData) => {
     return (
       <div className="flex flex-col p-2 gap-1 ">
+        <span
+          onClick={() => {
+            setAssignCoursesState({
+              status: true,
+              data: row,
+            });
+          }}
+          className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
+        >
+          <Icons iconName="edit" className="w-6 h-6 cursor-pointer" />
+          Assign Courses
+        </span>
         <span
           onClick={() => {
             setUserState({
@@ -114,6 +128,12 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
       cell: (props) => <h1>{props.row.original.role}</h1>,
       footer: (props) => props.column.id,
     }),
+    columnHelper.accessor('courses', {
+      id: 'courses',
+      header: 'Courses',
+      cell: () => <h1>courses here</h1>,
+      footer: (props) => props.column.id,
+    }),
     {
       id: 'actions',
       cell: (props: CellContext<UserData, string>) => (
@@ -171,6 +191,7 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
       </div>
 
       {userState.status && <UserModal />}
+      {assignCoursesState.status && <AssignCoursesModal />}
       {confirmState.status && (
         <ConfirmationModal
           open={confirmState.status}

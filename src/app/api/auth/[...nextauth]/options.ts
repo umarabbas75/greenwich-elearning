@@ -28,9 +28,9 @@ export const options = {
           email: email,
           password: password,
         };
-        console.log('api path', `${process.env.NEXT_PUBLIC_API_URI}/users/login`);
+        console.log('api path', `${process.env.NEXT_PUBLIC_API_URI}/auth/login`);
         try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URI}/users/login`, {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URI}/auth/login`, {
             method: 'POST',
             body: JSON.stringify(payload),
             headers: {
@@ -39,7 +39,7 @@ export const options = {
           });
           const user = await res.json();
           const decoded = jwtDecode(user.data.jwt);
-          console.log({ res, user, decoded });
+          console.log('login status', res, user);
           // //adding this temporarily-start
           // return {
           //   ...user,
@@ -68,7 +68,7 @@ export const options = {
             email: user?.email ?? '',
             id: decoded?.sub ?? '',
             photo: user?.photo ?? '',
-            role: user?.role ?? 'admin',
+            role: user?.role ?? 'student',
           } as any;
         } catch (error) {
           if (error instanceof Error) {
