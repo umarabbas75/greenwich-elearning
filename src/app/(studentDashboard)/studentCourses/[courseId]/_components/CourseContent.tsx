@@ -3,20 +3,49 @@ import { useParams } from 'next/navigation';
 import React from 'react';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { useApiGet } from '@/lib/dashboard/client/user';
 
-import courseData from './courseData';
+export type Chapter = {
+  title: string;
+  description: string;
+  timestamp: string;
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
-const CourseContent = () => {
-  const params = useParams();
-  const { courseId } = params || {};
+export type ChaptersDataResponse = {
+  message: string;
+  statusCode: number;
+  data: Chapter[];
+};
+const CourseContent = ({ modulesData }: any) => {
+  const [moduleId, setModuleId] = React.useState<string>();
+
+  const { courseId } = useParams();
   const renderChaptersList = (chapters: any) => {
-    return chapters.map((item: any, index: number) => {
+    console.log({ chapters });
+    return chapters?.map((item: any, index: number) => {
+      console.log('chapter item', item);
       return (
-        <Link key={index} href={`/studentCourses/${courseId}/${item.id}`}>
-          <li>{item.title}</li>
+        <Link className="text-black" key={index} href={`/studentCourses/${courseId}/${item.id}`}>
+          <li className="text-black">{item.title}</li>
         </Link>
       );
     });
+  };
+  const { data: chaptersData, isLoading } = useApiGet<ChaptersDataResponse, Error>({
+    endpoint: `/courses/module/allChapters/${moduleId}`,
+    queryKey: ['get-chapters', moduleId],
+    config: {
+      enabled: !!moduleId,
+    },
+  });
+
+  console.log({ moduleId, chaptersData });
+
+  const setAccordionValue = (e: string) => {
+    setModuleId(e);
   };
 
   return (
@@ -26,13 +55,20 @@ const CourseContent = () => {
         <p className="text-base font-bold">92 Lectures</p>
       </div>
 
-      <Accordion type="single" collapsible className="w-full">
-        {courseData.map((item: any, index: number) => {
+      <Accordion
+        type="single"
+        collapsible
+        className="w-full"
+        value={moduleId}
+        onValueChange={(e) => setAccordionValue(e)}
+      >
+        {modulesData?.data?.map((item: any) => {
           return (
-            <AccordionItem key={index} value={`item-${index + 1}`}>
-              <AccordionTrigger>{item.module}</AccordionTrigger>
+            <AccordionItem key={item.id} value={item.id}>
+              <AccordionTrigger>{item.title}</AccordionTrigger>
               <AccordionContent>
-                <ul className="list-disc">{renderChaptersList(item.chapters)}</ul>
+                {/* <ul className="list-disc">{renderChaptersList(item.chapters)}</ul> */}
+                {isLoading ? 'loading' : renderChaptersList(chaptersData?.data)}
               </AccordionContent>
             </AccordionItem>
           );

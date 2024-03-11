@@ -10,7 +10,7 @@ const OnLoadAnimation = () => {
         <div className="progressBar">
           <span></span>
         </div>
-        <div className="titleBox">Genmark</div>
+        <div className="titleBox">Greenwich</div>
       </div>
     </div>
   );

@@ -77,7 +77,12 @@ const SectionTable: FC<Props> = ({ data, pagination, setPagination, isLoading })
     columnHelper.accessor('description', {
       id: 'description',
       header: 'Description',
-      cell: (props) => <h1>{props.row.original.description}</h1>,
+      cell: (props) => (
+        <div
+          contentEditable="true"
+          dangerouslySetInnerHTML={{ __html: props.row.original.description }}
+        ></div>
+      ),
       footer: (props) => props.column.id,
     }),
 

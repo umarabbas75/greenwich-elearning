@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
 import CredentialsProvider from 'next-auth/providers/credentials';
 export const options = {
   // Configure one or more authentication providers
@@ -28,7 +27,6 @@ export const options = {
           email: email,
           password: password,
         };
-        console.log('api path', `${process.env.NEXT_PUBLIC_API_URI}/auth/login`);
         try {
           const res = await fetch(`${process.env.NEXT_PUBLIC_API_URI}/auth/login`, {
             method: 'POST',
@@ -37,16 +35,16 @@ export const options = {
               'Content-Type': 'application/json',
             },
           });
-          const user = await res.json();
-          const decoded = jwtDecode(user.data.jwt);
-          console.log('login status', res, user);
+          const userData = await res.json();
+
+          console.log('login status', userData);
           // //adding this temporarily-start
           // return {
           //   ...user,
           //   access: '123345dfg4354r23c2d423x',
           //   refresh: '35434c4d435364554',
-          //   first_name: user?.first_name ?? 'umar',
-          //   last_name: user?.last_name ?? 'abbas',
+          //   firstName: user?.firstName ?? 'umar',
+          //   lastName: user?.lastName ?? 'abbas',
           //   email: user?.email ?? 'umarabbas75@gmail.com',
           //   id: user?.id ?? '12345',
           //   photo:
@@ -56,19 +54,18 @@ export const options = {
           // } as any;
           // //adding this temporarily-end
           if (!res.ok) {
-            throw new Error(user.detail ?? 'Something went wrong');
+            throw new Error('Something went wrong');
           }
-          console.log({ user });
           return {
-            ...user,
-            access: user?.data.jwt,
-            refresh: user?.refresh ?? '',
-            first_name: user?.first_name ?? '',
-            last_name: user?.last_name ?? '',
-            email: user?.email ?? '',
-            id: decoded?.sub ?? '',
-            photo: user?.photo ?? '',
-            role: user?.role ?? 'student',
+            ...userData.data.user,
+            access: userData?.data.jwt,
+            refresh: userData?.data?.refresh ?? '',
+            firstName: userData?.data?.user?.firstName ?? '',
+            lastName: userData?.data?.user?.lastName ?? '',
+            email: userData?.data?.user?.email ?? '',
+            id: userData?.data?.user?.id ?? '',
+            photo: userData?.data?.user?.photo ?? '',
+            role: userData?.data?.user?.role ?? '',
           } as any;
         } catch (error) {
           if (error instanceof Error) {
@@ -95,10 +92,10 @@ export const options = {
   },
   callbacks: {
     async jwt({ token, user, account, session, trigger }: any) {
-      if (trigger === 'update' && session?.first_name && session?.last_name) {
+      if (trigger === 'update' && session?.firstName && session?.lastName) {
         const formData = new FormData();
-        formData.append('first_name', session.first_name);
-        formData.append('last_name', session.last_name);
+        formData.append('firstName', session.firstName);
+        formData.append('lastName', session.lastName);
 
         try {
           const axiosOptions = {
@@ -113,17 +110,14 @@ export const options = {
 
           const res = await axios(axiosOptions);
 
-          console.log('resss', res);
-
           if (res.status === 200) {
-            token.first_name = session.first_name;
-            token.last_name = session.last_name;
+            token.firstName = session.firstName;
+            token.lastName = session.lastName;
           } else {
             //console.error('Failed to update user');
           }
         } catch (error) {
           //console.error('Error updating user:', error);
-          console.log('errror', error);
         }
       }
       if (trigger === 'update' && session.photo) {
@@ -133,7 +127,6 @@ export const options = {
         token.access = session.access;
         token.refresh = session.refresh;
       }
-      console.log({ token });
       if (account && user) {
         return {
           ...token,
@@ -145,7 +138,6 @@ export const options = {
     },
 
     async session({ session, token }: any) {
-      console.log('token', token);
       session.user = token;
 
       return session;

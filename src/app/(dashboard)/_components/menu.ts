@@ -9,7 +9,7 @@ type SidebarItem = {
 
 type SidebarMenu = {
   admin: SidebarItem[];
-  student: SidebarItem[];
+  user: SidebarItem[];
 };
 
 export const sidebarMenu: SidebarMenu = {
@@ -53,7 +53,7 @@ export const sidebarMenu: SidebarMenu = {
       role: ['admin'],
     },
   ],
-  student: [
+  user: [
     {
       id: 'dashboard',
       title: 'Dashboard',

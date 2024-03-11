@@ -3,8 +3,8 @@ type Pagination = {
   pageSize: number;
 };
 type UserName = {
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
 };
 type PasswordChange = {
   new_password: string;

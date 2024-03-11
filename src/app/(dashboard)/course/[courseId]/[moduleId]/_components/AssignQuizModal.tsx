@@ -5,7 +5,6 @@ import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 
-import { Course } from '@/app/(dashboard)/course/page';
 import { AlertDestructive } from '@/components/common/FormError';
 import LoadingButton from '@/components/common/LoadingButton';
 import Modal from '@/components/common/Modal';
@@ -16,16 +15,16 @@ import { Form, FormLabel } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
 import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
-import { assignCoursesModalAtom } from '@/store/modals';
+import { assignQuizzesModalAtom } from '@/store/modals';
 
-import { CoursesDataResponse } from '../../course/page';
 /* const MAX_FILE_SIZE = 102400; */
 type UserFormTypes = {
   courses?: string[] | undefined;
 };
 
-const AssignCoursesModal = () => {
-  const [assignCoursesState, setAssignCoursesState] = useAtom(assignCoursesModalAtom);
+const AssignQuizModal = () => {
+  const [assignQuizesState, setAssignQuizesState] = useAtom(assignQuizzesModalAtom);
+
   const { data: session } = useSession();
   console.log({ session });
   const { toast } = useToast();
@@ -56,8 +55,8 @@ const AssignCoursesModal = () => {
   console.log({ assignCourse });
 
   const closeModal = () => {
-    setAssignCoursesState({
-      ...assignCoursesState,
+    setAssignQuizesState({
+      ...assignQuizesState,
       status: false,
       data: null,
     });
@@ -81,22 +80,23 @@ const AssignCoursesModal = () => {
   } = form;
   console.log({ errors });
 
-  const { data: coursesData, isLoading } = useApiGet<CoursesDataResponse, Error>({
-    endpoint: `/courses`,
-    queryKey: ['get-courses'],
+  const { data: coursesData, isLoading } = useApiGet<any, Error>({
+    endpoint: `/quizzes`,
+    queryKey: ['get-quizzes'],
   });
+  console.log('quizzes123', coursesData);
 
   const onSubmit = (values: UserFormTypes) => {
     console.log({ values });
     const payload = {
       courseId: (values.courses?.[0] as any).id,
-      userId: assignCoursesState?.data.id,
+      userId: assignQuizesState?.data.id,
     };
     assignCourse(payload);
   };
 
   return (
-    <Modal open={assignCoursesState.status} onClose={() => {}} title={'Assign Courses'}>
+    <Modal open={assignQuizesState.status} onClose={() => {}} title={'Assign Quizes'}>
       {isLoading ? (
         <Spinner />
       ) : (
@@ -106,7 +106,7 @@ const AssignCoursesModal = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <FormLabel>Courses</FormLabel>
+                  <FormLabel>Quizzes</FormLabel>
                   {coursesData && (
                     <Controller
                       name="courses"
@@ -115,14 +115,24 @@ const AssignCoursesModal = () => {
                         return (
                           <ReactSelect
                             isMulti={true}
-                            options={coursesData.data ?? []}
+                            options={
+                              coursesData.data.map((item) => {
+                                return {
+                                  label: item.question,
+                                  value: item.id,
+                                };
+                              }) ?? []
+                            }
                             value={value} // Find the matching option by value
-                            onChange={(val: Course) => {
+                            onChange={(val: any) => {
                               console.log({ val });
                               onChange(val);
                             }}
-                            getOptionLabel={(val: Course) => val.title}
-                            getOptionValue={(val: Course) => val.id}
+                            // getOptionLabel={(val: any) => {
+                            //   console.log('valllll', val);
+                            //   return val;
+                            // }}
+                            // getOptionValue={(val: any) => val.id}
                           />
                         );
                       }}
@@ -148,4 +158,4 @@ const AssignCoursesModal = () => {
   );
 };
 
-export default AssignCoursesModal;
+export default AssignQuizModal;

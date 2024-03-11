@@ -4,15 +4,15 @@ declare module 'next-auth' {
   /**
    * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
    */
-  type Role = 'admin' | 'student';
+  type Role = 'admin' | 'user';
   interface Session {
     user: {
       expiry: string;
       tenant_uid: string;
       access: string;
       refresh: string;
-      first_name: string;
-      last_name: string;
+      firstName: string;
+      lastName: string;
       email: string;
       id: string;
       photo: string;

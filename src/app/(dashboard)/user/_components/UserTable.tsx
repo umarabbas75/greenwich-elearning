@@ -9,13 +9,19 @@ import TableComponent from '@/components/common/Table';
 import TableActions from '@/components/common/TableActions';
 import { useToast } from '@/components/ui/use-toast';
 import { useDeleteUser } from '@/lib/dashboard/client/user';
-import { assignCoursesModalAtom, confirmationModalAtom, userModalAtom } from '@/store/modals';
+import {
+  assignCoursesModalAtom,
+  confirmationModalAtom,
+  userModalAtom,
+  viewUserCoursesModal,
+} from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
 import { UserData, UsersDataResponse } from '../page';
 
 import AssignCoursesModal from './AssignCoursesModal';
 import UserModal from './UserModal';
+import ViewUserCoursesModal from './ViewUserCoursesModal';
 
 const columnHelper = createColumnHelper<UserData>();
 
@@ -27,6 +33,7 @@ interface Props {
 }
 const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) => {
   const [userState, setUserState] = useAtom(userModalAtom);
+  const [userCoursesState, setUserCoursesState] = useAtom(viewUserCoursesModal);
   const [assignCoursesState, setAssignCoursesState] = useAtom(assignCoursesModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const { toast } = useToast();
@@ -131,7 +138,19 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
     columnHelper.accessor('courses', {
       id: 'courses',
       header: 'Courses',
-      cell: () => <h1>courses here</h1>,
+      cell: (props) => (
+        <h1
+          className="cursor-pointer "
+          onClick={() => {
+            setUserCoursesState({
+              status: true,
+              data: props.row.original,
+            });
+          }}
+        >
+          View
+        </h1>
+      ),
       footer: (props) => props.column.id,
     }),
     {
@@ -191,6 +210,7 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
       </div>
 
       {userState.status && <UserModal />}
+      {userCoursesState.status && <ViewUserCoursesModal />}
       {assignCoursesState.status && <AssignCoursesModal />}
       {confirmState.status && (
         <ConfirmationModal

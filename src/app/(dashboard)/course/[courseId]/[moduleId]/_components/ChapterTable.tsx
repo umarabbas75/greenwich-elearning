@@ -9,11 +9,12 @@ import TableComponent from '@/components/common/Table';
 import TableActions from '@/components/common/TableActions';
 import { useToast } from '@/components/ui/use-toast';
 import { useDeleteUser } from '@/lib/dashboard/client/user';
-import { addChapterModalAtom, confirmationModalAtom } from '@/store/modals';
+import { addChapterModalAtom, assignQuizzesModalAtom, confirmationModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
 import { Chapter, ChaptersDataResponse } from '../page';
 
+import AssignQuizModal from './AssignQuizModal';
 import UserModal from './ChapterModal';
 
 const columnHelper = createColumnHelper<Chapter>();
@@ -31,6 +32,7 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
   const { courseId } = params || {};
   console.log({ courseId, moduleId });
   const [chapterModalState, setChapterModalState] = useAtom(addChapterModalAtom);
+  const [assignQuizesState, setAssignQuizesState] = useAtom(assignQuizzesModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const { toast } = useToast();
   const renderActions = (row: Chapter) => {
@@ -38,7 +40,7 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
       <div className="flex flex-col p-2 gap-1 ">
         <span
           onClick={() => {
-            setChapterModalState({
+            setAssignQuizesState({
               status: true,
               data: row,
             });
@@ -161,6 +163,7 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
       </div>
 
       {chapterModalState.status && <UserModal />}
+      {assignQuizesState.status && <AssignQuizModal />}
       {confirmState.status && (
         <ConfirmationModal
           open={confirmState.status}

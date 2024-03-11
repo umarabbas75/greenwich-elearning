@@ -311,6 +311,7 @@ const UserModal = () => {
                     render={({ field: { onChange, value } }) => {
                       return (
                         <ReactSelect
+                          isMulti={false}
                           options={roles}
                           value={roles.find((option: any) => option.value === value)} // Find the matching option by value
                           onChange={(val: any) => onChange(val?.value)}

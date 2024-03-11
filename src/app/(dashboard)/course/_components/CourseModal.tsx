@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useAtom } from 'jotai';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 
@@ -16,10 +16,14 @@ import { useToast } from '@/components/ui/use-toast';
 import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
 import { addCourseModalAtom } from '@/store/modals';
 /* const MAX_FILE_SIZE = 102400; */
+const ReactQuill = typeof window === 'object' ? require('react-quill') : () => false;
 
 type CourseFormTypes = {
   title: string;
   description: string;
+  image: string;
+  overview: string;
+  assessment: string;
 };
 
 const CourseModal = () => {
@@ -142,22 +146,94 @@ const CourseModal = () => {
                     );
                   }}
                 />
+
                 <FormField
                   control={control}
-                  name="description"
+                  name="image"
                   render={({ field: { onChange, value }, formState: { errors } }) => {
                     return (
                       <FormItem>
-                        <FormLabel>Description</FormLabel>
+                        <FormLabel>Image</FormLabel>
                         <FormControl>
                           <Input onChange={onChange} value={value} />
                         </FormControl>
 
-                        <FormMessage>{errors.description?.message}</FormMessage>
+                        <FormMessage>{errors.image?.message}</FormMessage>
                       </FormItem>
                     );
                   }}
                 />
+                <div className="col-span-2">
+                  <FormField
+                    control={control}
+                    name="description"
+                    render={({ field: { onChange, value }, formState: { errors } }) => {
+                      return (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Input onChange={onChange} value={value} />
+                          </FormControl>
+
+                          <FormMessage>{errors.description?.message}</FormMessage>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                </div>
+                <div className="col-span-2">
+                  <FormLabel className="mb-3 block">Overview</FormLabel>
+
+                  <Controller
+                    control={control}
+                    name={`overview`}
+                    render={({ field: { onChange, value } }) => (
+                      <ReactQuill
+                        id="quill"
+                        modules={{
+                          toolbar: [
+                            [{ header: [1, 2, false] }],
+                            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+                            [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
+                            ['link', 'image'],
+                            ['clean'],
+                          ],
+                        }}
+                        value={value}
+                        onChange={(data: string) => {
+                          onChange(data);
+                        }}
+                      />
+                    )}
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <FormLabel className="mb-3 block">Assessment</FormLabel>
+
+                  <Controller
+                    control={control}
+                    name={`assessment`}
+                    render={({ field: { onChange, value } }) => (
+                      <ReactQuill
+                        id="quill"
+                        modules={{
+                          toolbar: [
+                            [{ header: [1, 2, false] }],
+                            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+                            [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
+                            ['link', 'image'],
+                            ['clean'],
+                          ],
+                        }}
+                        value={value}
+                        onChange={(data: string) => {
+                          onChange(data);
+                        }}
+                      />
+                    )}
+                  />
+                </div>
               </div>
 
               <div className="flex items-center justify-end gap-2">

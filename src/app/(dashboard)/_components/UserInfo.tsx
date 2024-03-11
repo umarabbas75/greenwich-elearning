@@ -65,8 +65,8 @@ const UserInfo = () => {
 
           <div className="flex flex-col gap-0">
             <span className="font-bold text-lg text-black">
-              {session?.user?.first_name}
-              {session?.user?.last_name}
+              {session?.user?.firstName}
+              {session?.user?.lastName}
             </span>
             <span className="text-sm text-accent">{session?.user?.email}</span>
           </div>

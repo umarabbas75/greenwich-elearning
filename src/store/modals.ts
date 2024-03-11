@@ -10,6 +10,7 @@ const createModalAtom = () => {
 };
 
 export const userModalAtom = createModalAtom();
+export const viewUserCoursesModal = createModalAtom();
 export const confirmationModalAtom = createModalAtom();
 export const sessionExpireModalAtom = createModalAtom();
 export const sideBarDrawerAtom = createModalAtom();
@@ -18,6 +19,7 @@ export const addModuleModalAtom = createModalAtom();
 export const addChapterModalAtom = createModalAtom();
 export const addSectionModalAtom = createModalAtom();
 export const assignCoursesModalAtom = createModalAtom();
+export const assignQuizzesModalAtom = createModalAtom();
 
 export const currenySignAtom = atom({
   currencySign: '€',

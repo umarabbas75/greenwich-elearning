@@ -17,20 +17,20 @@ const UpdateNameForm = ({ isEdit }: { isEdit: boolean }) => {
   const [loading, setLoading] = useState(false);
 
   const defaultValues = {
-    first_name: session?.user?.first_name ?? '',
-    last_name: session?.user?.last_name ?? '',
+    firstName: session?.user?.firstName ?? '',
+    lastName: session?.user?.lastName ?? '',
   };
 
   useEffect(() => {
     form.reset({
-      first_name: session?.user?.first_name ?? '',
-      last_name: session?.user?.last_name ?? '',
+      firstName: session?.user?.firstName ?? '',
+      lastName: session?.user?.lastName ?? '',
     });
   }, [session]);
 
   const validationSchema = Yup.object().shape({
-    first_name: Yup.string().required('first_name is required'),
-    last_name: Yup.string().required('last_name is required'),
+    firstName: Yup.string().required('firstName is required'),
+    lastName: Yup.string().required('lastName is required'),
   });
   const form = useForm<UserName>({
     defaultValues,
@@ -42,8 +42,8 @@ const UpdateNameForm = ({ isEdit }: { isEdit: boolean }) => {
     console.log('formvalues', values);
     setLoading(true);
     await update({
-      first_name: values.first_name,
-      last_name: values.last_name,
+      firstName: values.firstName,
+      lastName: values.lastName,
     });
     setLoading(false);
     toast({
@@ -67,7 +67,7 @@ const UpdateNameForm = ({ isEdit }: { isEdit: boolean }) => {
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={control}
-                name="first_name"
+                name="firstName"
                 render={({ field: { onChange, value }, formState: { errors } }) => {
                   return (
                     <FormItem>
@@ -76,14 +76,14 @@ const UpdateNameForm = ({ isEdit }: { isEdit: boolean }) => {
                         <Input disabled={!isEdit} onChange={onChange} value={value} />
                       </FormControl>
 
-                      <FormMessage>{errors.first_name?.message}</FormMessage>
+                      <FormMessage>{errors.firstName?.message}</FormMessage>
                     </FormItem>
                   );
                 }}
               />
               <FormField
                 control={control}
-                name="last_name"
+                name="lastName"
                 render={({ field: { onChange, value }, formState: { errors } }) => {
                   return (
                     <FormItem>
@@ -92,7 +92,7 @@ const UpdateNameForm = ({ isEdit }: { isEdit: boolean }) => {
                         <Input disabled={!isEdit} onChange={onChange} value={value} />
                       </FormControl>
 
-                      <FormMessage>{errors.last_name?.message}</FormMessage>
+                      <FormMessage>{errors.lastName?.message}</FormMessage>
                     </FormItem>
                   );
                 }}

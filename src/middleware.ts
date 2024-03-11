@@ -3,7 +3,7 @@ import { getToken } from 'next-auth/jwt';
 import { withAuth } from 'next-auth/middleware';
 
 import { sidebarMenu } from './app/(dashboard)/_components/menu';
-type RoleType = 'student' | 'admin';
+type RoleType = 'user' | 'admin';
 export default withAuth(
   async function middleware(req) {
     const token: any = await getToken({ req });

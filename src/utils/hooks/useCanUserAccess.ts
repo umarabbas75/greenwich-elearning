@@ -16,7 +16,7 @@ type Props = {
     | 'settings';
   access: Permission[];
 };
-type Role = 'admin' | 'student';
+type Role = 'admin' | 'user';
 type Permission = 'create' | 'read' | 'update' | 'delete';
 
 type MenuItem = {
