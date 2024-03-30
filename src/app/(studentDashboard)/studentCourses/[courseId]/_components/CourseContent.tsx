@@ -28,7 +28,11 @@ const CourseContent = ({ modulesData }: any) => {
     return chapters?.map((item: any, index: number) => {
       console.log('chapter item', item);
       return (
-        <Link className="text-black" key={index} href={`/studentCourses/${courseId}/${item.id}`}>
+        <Link
+          className="text-black"
+          key={index}
+          href={{ pathname: `/studentCourses/${courseId}/${item.id}`, query: { chapterName: item.title } }}
+        >
           <li className="text-black">{item.title}</li>
         </Link>
       );

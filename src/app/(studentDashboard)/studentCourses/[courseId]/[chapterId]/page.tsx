@@ -1,49 +1,74 @@
 'use client';
 import { useAtom } from 'jotai';
-import { useParams } from 'next/navigation';
-import { useSession } from 'next-auth/react';
-import React from 'react';
+import { useParams, useSearchParams } from 'next/navigation';
+import React, { useEffect } from 'react';
 import { useQueryClient } from 'react-query';
 
-import { SectionsDataResponse } from '@/app/(dashboard)/course/[courseId]/[moduleId]/[chapterId]/page';
 import { AlertDestructive } from '@/components/common/FormError';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
-import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
-import { selectedSectionAtom } from '@/store/course';
+import { useApiMutation } from '@/lib/dashboard/client/user';
+import { selectedAnswerAtom, selectedSectionAtom } from '@/store/course';
 
 import ProgressSection from './_components/ProgressSection';
+import Question from './_components/Question';
 import SideBarAllSection from './_components/SideBarAllSection';
+import useGetSectionListData from './utils/useSectionsListContent';
 
 const Page = () => {
   const params = useParams();
+  const search = useSearchParams();
   const { courseId, chapterId } = params;
-  const { data: userData } = useSession();
-  console.log({ courseId, chapterId });
   const queryClient = useQueryClient();
+  const chapterName = search.get('chapterName');
 
-  const { data: sectionsData, isLoading } = useApiGet<SectionsDataResponse, Error>({
-    endpoint: `/courses/module/chapter/allSections/${chapterId}`,
-    queryKey: ['get-sections', chapterId],
-  });
+  const { sectionsData, isLoading } = useGetSectionListData({ chapterId });
+
   const [selectedItem, setSelectedItem] = useAtom(selectedSectionAtom);
-  console.log({ sectionsData, isLoading, selectedItem });
+  const [selectedAnswer] = useAtom(selectedAnswerAtom);
+
+  console.log({ selectedAnswer });
+
+  useEffect(() => {
+    return () => {
+      setSelectedItem(null);
+    };
+  }, []);
+
+  // const { mutate: updateLastSeenSection } = useApiMutation<any>({
+  //   endpoint: `/section/updateLastSeen`,
+  //   method: 'post',
+  // });
+
   const {
     mutate: updateProgress,
     isLoading: updatingProgress,
     isError: isUpdateError,
     error: updateError,
   } = useApiMutation<any>({
-    endpoint: `/courses/updateUserCourse/Progress`,
+    endpoint: `/courses/updateUserChapter/Progress`,
     method: 'put',
     config: {
       onSuccess: (res: any) => {
         console.log({ res });
-        const selectedIndex = sectionsData?.data.findIndex((item) => item.id === selectedItem?.id);
-        const nextItem = sectionsData?.data[(selectedIndex ?? 0) + 1];
-        console.log({ selectedIndex, nextItem }, sectionsData?.data?.[nextItem ?? 0]);
+        const selectedIndex = sectionsData?.findIndex((item: any) => item.id === selectedItem?.id);
+        const nextItem = sectionsData?.[(selectedIndex ?? 0) + 1];
+        // updateLastSeenSection();
         setSelectedItem(nextItem);
-        queryClient.invalidateQueries({ queryKey: ['get-course-progress'] });
+        console.log('invalidate queries', [
+          'get-course-progress',
+          'get-assign-quizzes-answers',
+          'get-sections-list',
+        ]);
+        queryClient.removeQueries({
+          queryKey: ['get-course-progress'],
+        });
+        queryClient.removeQueries({
+          queryKey: ['get-assign-quizzes-answers'],
+        });
+        queryClient.removeQueries({
+          queryKey: ['get-sections-list'],
+        });
 
         toast({
           variant: 'success',
@@ -54,43 +79,92 @@ const Page = () => {
     },
   });
 
+  const {
+    mutate: checkQuizAnswer,
+    isLoading: checkingQuizAnswer,
+    isError: isCheckQuizError,
+    error: checkQuizError,
+  } = useApiMutation<any>({
+    endpoint: `/quizzes/checkQuiz`,
+    method: 'post',
+    config: {
+      onSuccess: (res: any) => {
+        console.log({ res });
+        const selectedIndex = sectionsData?.findIndex((item: any) => item.id === selectedItem?.id);
+        const nextItem = sectionsData?.[(selectedIndex ?? 0) + 1];
+        // updateLastSeenSection();
+        setSelectedItem(nextItem);
+        queryClient.invalidateQueries({
+          queryKey: ['get-course-progress', 'get-assign-quizzes-answers', 'get-course-progress'],
+        });
+
+        toast({
+          variant: 'success',
+          // title: 'Success ',
+          description: 'Progress saved!',
+        });
+      },
+    },
+  });
+  console.log({ sectionsData, selectedItem, isCheckQuizError, checkQuizError });
+
   const updateCourseProgress = () => {
+    if (selectedItem.question) {
+      if (!selectedAnswer) {
+        return toast({
+          variant: 'destructive',
+          title: 'Error ',
+          description: 'kindly select at least one option',
+        });
+      }
+      return checkQuizAnswer({
+        quizId: selectedItem?.id,
+        chapterId: chapterId,
+        answer: selectedAnswer,
+      });
+    }
+
     const payload = {
-      userId: userData?.user.id,
+      // userId: userData?.user.id,
       courseId: courseId,
       chapterId: chapterId,
+      sectionId: selectedItem?.id,
     };
     updateProgress(payload);
   };
   return (
     <div className="flex gap-4 min-h-full">
-      <div className="flex-1 p-4 rounded-xl border bg-white">
-        {/* <p>
-          1.4 - Pollution Risks with Fuel Extraction - Oil and Gas Drilling. In the drilling process, water
-          and chemicals are used to force liquids or gaseous fossil fuels to flow to the surface. OilRig Oil
-          Rig Platform, Russia (Photo: David Mark, Pixabay). The waste water from this process can then
-          contain heavy metals, radioactive materials as well as hydrocarbons, this makes the water difficult
-          to safely dispose of. Hydraulic fracturing “Fracking” uses more water and chemicals to fracture the
-          rocks open to release the gas stores. This method creates more waste water than drilling due to the
-          large volume of water and chemicals used in the process. Typically drilling and fracking for shale
-          gas typically requires 3-6 billion gallons of water per well and a further 15,000-65,000 gallons of
-          chemicals. One report sponsored by the US Government found that “from 2005-2009, 14 oil and gas
-          companies used 780 million gallons of hydraulic fracturing products, containing 750 chemicals and
-          other components. Researchers could only track 353 of these chemicals and found 25% could cause
-          cancers or other mutation and about half could severely damage neurological, cardiovascular,
-          endocrine and immune
-        </p> */}
-        <div contentEditable="true" dangerouslySetInnerHTML={{ __html: selectedItem?.description }}></div>
-        <div className="flex justify-between my-4">
-          <Button variant="secondary">Prev</Button>
-          <Button onClick={() => updateCourseProgress()}>{updatingProgress ? 'updating...' : 'Next'}</Button>
-        </div>
-        <ProgressSection />
+      {isLoading ? (
+        'loading...'
+      ) : (
+        <>
+          <div className="flex-1 p-4 rounded-xl border bg-white">
+            <div className="flex justify-between pb-4  border-b border-gray-300">
+              <p className="text-2xl text-primary">{chapterName}</p>
+            </div>
 
-        {isUpdateError && <AlertDestructive error={updateError} />}
-      </div>
+            {selectedItem?.question ? (
+              <Question questionData={selectedItem} />
+            ) : (
+              <div
+                contentEditable="true"
+                dangerouslySetInnerHTML={{ __html: selectedItem?.description }}
+              ></div>
+            )}
+            <div className="flex justify-between my-4">
+              <Button variant="secondary">Prev</Button>
+              <Button onClick={() => updateCourseProgress()}>
+                {updatingProgress || checkingQuizAnswer ? 'updating...' : 'Next'}
+              </Button>
+            </div>
+            <ProgressSection />
 
-      <SideBarAllSection allSections={sectionsData?.data} />
+            {isUpdateError && <AlertDestructive error={updateError} />}
+          </div>
+
+          <SideBarAllSection allSections={sectionsData} />
+        </>
+      )}
     </div>
   );
 };

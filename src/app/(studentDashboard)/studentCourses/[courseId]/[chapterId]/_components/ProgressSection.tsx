@@ -9,7 +9,7 @@ const ProgressSection = () => {
   const { data: userData } = useSession();
 
   const { data: courseProgress, isLoading } = useApiGet<any, Error>({
-    endpoint: `/courses/getUserCourseProgress/${userData?.user.id}/${courseId}`,
+    endpoint: `/courses/getUserChapterProgress/${userData?.user.id}/${courseId}`,
     queryKey: ['get-course-progress', courseId, userData?.user.id],
   });
   console.log({ courseProgress });

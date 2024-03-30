@@ -19,24 +19,25 @@ import { assignQuizzesModalAtom } from '@/store/modals';
 
 /* const MAX_FILE_SIZE = 102400; */
 type UserFormTypes = {
-  courses?: string[] | undefined;
+  quizzes?: string[] | undefined;
 };
 
 const AssignQuizModal = () => {
   const [assignQuizesState, setAssignQuizesState] = useAtom(assignQuizzesModalAtom);
 
   const { data: session } = useSession();
-  console.log({ session });
+  console.log({ session, assignQuizesState });
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const {
-    mutate: assignCourse,
-    isLoading: assigningCourse,
+    mutate: assignQuiz,
+    isLoading: assigningQuiz,
     isError: isAssignError,
     error: assignError,
   } = useApiMutation<any>({
-    endpoint: `/courses/assignCourse`,
-    method: 'post',
+    endpoint: `/quizzes/assignQuiz`,
+    method: 'put',
+    sendDataInParams: true,
     config: {
       onSuccess: (res: any) => {
         console.log({ res });
@@ -52,7 +53,7 @@ const AssignQuizModal = () => {
     },
   });
 
-  console.log({ assignCourse });
+  console.log({ assignQuiz });
 
   const closeModal = () => {
     setAssignQuizesState({
@@ -63,10 +64,10 @@ const AssignQuizModal = () => {
   };
 
   const defaultValues = {
-    courses: [],
+    quizzes: [],
   };
   const validationSchema = Yup.object().shape({
-    courses: Yup.array().required('courses is required'),
+    quizzes: Yup.array().required('quizzes is required'),
   });
 
   const form = useForm<UserFormTypes>({
@@ -80,19 +81,19 @@ const AssignQuizModal = () => {
   } = form;
   console.log({ errors });
 
-  const { data: coursesData, isLoading } = useApiGet<any, Error>({
+  const { data: quizzesData, isLoading } = useApiGet<any, Error>({
     endpoint: `/quizzes`,
     queryKey: ['get-quizzes'],
   });
-  console.log('quizzes123', coursesData);
+  console.log('quizzes123', quizzesData);
 
   const onSubmit = (values: UserFormTypes) => {
     console.log({ values });
     const payload = {
-      courseId: (values.courses?.[0] as any).id,
-      userId: assignQuizesState?.data.id,
+      quizId: (values.quizzes?.[0] as any).value,
+      chapterId: assignQuizesState?.data?.id,
     };
-    assignCourse(payload);
+    assignQuiz(payload);
   };
 
   return (
@@ -107,16 +108,16 @@ const AssignQuizModal = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <FormLabel>Quizzes</FormLabel>
-                  {coursesData && (
+                  {quizzesData && (
                     <Controller
-                      name="courses"
+                      name="quizzes"
                       control={control}
                       render={({ field: { onChange, value } }) => {
                         return (
                           <ReactSelect
                             isMulti={true}
                             options={
-                              coursesData.data.map((item) => {
+                              quizzesData.data.map((item: any) => {
                                 return {
                                   label: item.question,
                                   value: item.id,
@@ -146,7 +147,7 @@ const AssignQuizModal = () => {
                   Cancel
                 </Button>
 
-                <LoadingButton loading={assigningCourse} type="submit" variant="default">
+                <LoadingButton loading={assigningQuiz} type="submit" variant="default">
                   Submit
                 </LoadingButton>
               </div>

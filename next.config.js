@@ -7,6 +7,7 @@ const nextConfig = {
       'genmark.blob.core.windows.net',
       'encrypted-tbn0.gstatic.com',
       'avatar.iran.liara.run',
+      'imgur.com',
     ],
   },
 };

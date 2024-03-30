@@ -9,13 +9,19 @@ import TableComponent from '@/components/common/Table';
 import TableActions from '@/components/common/TableActions';
 import { useToast } from '@/components/ui/use-toast';
 import { useDeleteUser } from '@/lib/dashboard/client/user';
-import { addChapterModalAtom, assignQuizzesModalAtom, confirmationModalAtom } from '@/store/modals';
+import {
+  addChapterModalAtom,
+  assignQuizzesModalAtom,
+  confirmationModalAtom,
+  viewAssignedQuizzesModal,
+} from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
 import { Chapter, ChaptersDataResponse } from '../page';
 
 import AssignQuizModal from './AssignQuizModal';
 import UserModal from './ChapterModal';
+import ViewAssignQuizzesModal from './ViewAssignQuizzesModal';
 
 const columnHelper = createColumnHelper<Chapter>();
 
@@ -30,8 +36,8 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
   const router = useRouter();
   const params = useParams();
   const { courseId } = params || {};
-  console.log({ courseId, moduleId });
   const [chapterModalState, setChapterModalState] = useAtom(addChapterModalAtom);
+  const [viewAssignQuizModalState, setViewAssignQuizModalState] = useAtom(viewAssignedQuizzesModal);
   const [assignQuizesState, setAssignQuizesState] = useAtom(assignQuizzesModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const { toast } = useToast();
@@ -100,6 +106,25 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
       cell: (props) => <h1>{props.row.original.description}</h1>,
       footer: (props) => props.column.id,
     }),
+    columnHelper.accessor('quizzes', {
+      id: 'quizzes',
+      header: 'Quizzes',
+      cell: (props) => (
+        <h1
+          className="cursor-pointer "
+          onClick={(e) => {
+            e.stopPropagation();
+            setViewAssignQuizModalState({
+              status: true,
+              data: props.row.original,
+            });
+          }}
+        >
+          View
+        </h1>
+      ),
+      footer: (props) => props.column.id,
+    }),
 
     {
       id: 'actions',
@@ -164,6 +189,7 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
 
       {chapterModalState.status && <UserModal />}
       {assignQuizesState.status && <AssignQuizModal />}
+      {viewAssignQuizModalState.status && <ViewAssignQuizzesModal />}
       {confirmState.status && (
         <ConfirmationModal
           open={confirmState.status}

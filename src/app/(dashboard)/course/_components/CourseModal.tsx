@@ -117,7 +117,12 @@ const CourseModal = () => {
   });
 
   const onSubmit = (values: CourseFormTypes) => {
-    data ? editCourse(values) : addCourse(values);
+    if (data) {
+      const { id, ...rest } = values;
+      editCourse(rest);
+    } else {
+      addCourse(values);
+    }
   };
 
   return (

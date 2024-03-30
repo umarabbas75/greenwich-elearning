@@ -37,7 +37,8 @@ const AssignCoursesModal = () => {
     error: assignError,
   } = useApiMutation<any>({
     endpoint: `/courses/assignCourse`,
-    method: 'post',
+    method: 'put',
+    sendDataInParams: true,
     config: {
       onSuccess: (res: any) => {
         console.log({ res });
@@ -89,8 +90,8 @@ const AssignCoursesModal = () => {
   const onSubmit = (values: UserFormTypes) => {
     console.log({ values });
     const payload = {
-      courseId: (values.courses?.[0] as any).id,
       userId: assignCoursesState?.data.id,
+      courseId: (values.courses?.[0] as any).id,
     };
     assignCourse(payload);
   };

@@ -17,6 +17,7 @@ export type Chapter = {
   id: string;
   createdAt: string;
   updatedAt: string;
+  quizzes: string;
 };
 
 export type ChaptersDataResponse = {
@@ -31,17 +32,13 @@ const Page = ({ params }: { params: { moduleId: string } }) => {
   });
   const moduleId = params.moduleId;
 
-  console.log({ moduleId });
-
   const [search, setSearch] = useState('');
   //const debouncedSearch = useDebounce(search, 500);
   const [chapterModalState, setChapterModalState] = useAtom(addChapterModalAtom);
-  console.log({ chapterModalState });
   const { data: chaptersData, isLoading } = useApiGet<ChaptersDataResponse, Error>({
     endpoint: `/courses/module/allChapters/${moduleId}`,
     queryKey: ['get-chapters', moduleId],
   });
-  console.log({ chaptersData, isLoading });
 
   return (
     <div>
@@ -58,7 +55,7 @@ const Page = ({ params }: { params: { moduleId: string } }) => {
                 })
               }
             >
-              Add Chapterss
+              Add Elements
             </Button>
           </div>
         </div>

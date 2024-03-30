@@ -13,8 +13,6 @@ const SideBarContent = () => {
   const menuItems = sidebarMenu[session?.user.role ?? 'admin'];
   const segment = useSelectedLayoutSegment() ?? '';
 
-  console.log({ menuItems });
-
   return (
     <>
       <div className="h-20 flex justify-center items-center border-b border-dashed border-gray-500">

@@ -2,7 +2,7 @@
 //import { usePathname } from 'next/navigation';
 
 import { useAtom } from 'jotai';
-import { useParams, usePathname, useSelectedLayoutSegments } from 'next/navigation';
+import { useParams, useSelectedLayoutSegments } from 'next/navigation';
 import React from 'react';
 
 import SessionExpireModal from '@/components/common/Modal/SessionExpireModal';
@@ -16,8 +16,7 @@ import UserInfo from './UserInfo';
 const Topbar = () => {
   const segments = useSelectedLayoutSegments();
   const params = useParams();
-  const pathname = usePathname();
-  console.log({ segments, params, pathname });
+  // const pathname = usePathname();
   const [sideBarDrawer, setSideBarDrawer] = useAtom(sideBarDrawerAtom);
   const renderBreadcrumb = (segment: any) => {
     // const paramKey = Object.keys(params).find((key) => params[key] === segment);

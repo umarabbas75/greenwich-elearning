@@ -4,17 +4,14 @@ import React from 'react';
 import { Progress } from '@/components/ui/progress';
 
 const SingleCourse = ({ item }: any) => {
-  console.log({ item });
+  console.log({ item }, item.image);
   return (
-    <Link href={`/studentCourses/${item.id}`}>
-      <div className="bg-gray-200 rounded-sm p-4 col-span-1 cursor-pointer">
+    <div className="bg-gray-200 rounded-sm p-4 col-span-1 cursor-pointer updateUserCourse/Progress">
+      <Link href={`/studentCourses/${item.id}`}>
         <img
-          src={
-            // item.image ??
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQndNXkaf-VfA4Z5F93giOWSCECKi55XyznyMfbtKDvZbl17hARsVYjlpgFuflqssIH72U&usqp=CAU'
-          }
+          src="https://i.postimg.cc/3rLTwmM0/nebosh.jpg"
           alt="course"
-          className="rounded-sm w-full mb-3"
+          className="rounded-sm w-64 h-64 mb-3"
         />
         <div className="flex justify-between items-center mb-4">
           <p>23 Lesson</p>
@@ -45,8 +42,8 @@ const SingleCourse = ({ item }: any) => {
           <Progress value={33} />
           (33%)
         </div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 };
 

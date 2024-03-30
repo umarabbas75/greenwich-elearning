@@ -63,17 +63,21 @@ const SideBarAllSection = ({ allSections }: any) => {
       <p className="font-bold font-lg mb-8">Lesson Menu</p>
       <ul className="list-disc">
         {allSections?.map((item: any) => {
-          return (
-            <li
-              key={item.id}
-              className="text-blue-500 cursor-pointer hover:decoration-dashed"
-              onClick={() => {
-                setSelectedItem(item);
-              }}
-            >
-              {item.title}
-            </li>
-          );
+          if (!item.question) {
+            return (
+              <li
+                key={item.id}
+                className={`text-blue-500 cursor-pointer hover:decoration-dashed ${
+                  item.isCompleted ? 'line-through' : ''
+                }`}
+                onClick={() => {
+                  setSelectedItem(item);
+                }}
+              >
+                {item.title}
+              </li>
+            );
+          }
         })}
       </ul>
     </div>

@@ -1,11 +1,5 @@
 import { AxiosRequestConfig } from 'axios';
-import {
-  UseMutationOptions,
-  UseQueryOptions,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from 'react-query';
+import { UseMutationOptions, UseQueryOptions, useMutation, useQuery, useQueryClient } from 'react-query';
 
 import generateQueryString from '@/utils/generateQueryString';
 import useAxiosAuth from '@/utils/hooks/useAxiosAuth';
@@ -42,35 +36,23 @@ const fetchUser = (axiosAuth: any, id: any) => {
 export const useFetchUserList = ({ page, search }: any) => {
   const axiosAuth = useAxiosAuth();
   const query = generateQueryString({ page, search });
-  return useQuery(
-    ['user-list', page, search],
-    () => fetchUserList(axiosAuth, query),
-    {
-      keepPreviousData: true,
-    },
-  );
+  return useQuery(['user-list', page, search], () => fetchUserList(axiosAuth, query), {
+    keepPreviousData: true,
+  });
 };
 
-export const useFetchUser = ({
-  variables,
-  onSuccessCallback,
-  onErrorCallback,
-}: any) => {
+export const useFetchUser = ({ variables, onSuccessCallback, onErrorCallback }: any) => {
   const axiosAuth = useAxiosAuth();
-  return useQuery(
-    ['user', variables?.id],
-    () => fetchUser(axiosAuth, variables?.id),
-    {
-      enabled: variables?.id ? true : false,
+  return useQuery(['user', variables?.id], () => fetchUser(axiosAuth, variables?.id), {
+    enabled: variables?.id ? true : false,
 
-      onSuccess: (data) => {
-        onSuccessCallback && onSuccessCallback(data);
-      },
-      onError: (error) => {
-        onErrorCallback && onErrorCallback(error); // Call the error callback
-      },
+    onSuccess: (data) => {
+      onSuccessCallback && onSuccessCallback(data);
     },
-  );
+    onError: (error) => {
+      onErrorCallback && onErrorCallback(error); // Call the error callback
+    },
+  });
 };
 
 export const useAddUser = (onSuccessCallback: any, onErrorCallback?: any) => {
@@ -130,10 +112,7 @@ export const useDeleteUser = (onSuccessCallback: any, onErrorCallback: any) => {
 
   return mutation;
 };
-export const useUpdateImage = ({
-  onSuccess: onSuccess,
-  onError: onError,
-}: any) => {
+export const useUpdateImage = ({ onSuccess: onSuccess, onError: onError }: any) => {
   const axiosAuth = useAxiosAuth();
   const mutation = useMutation({
     mutationFn: ({ formData, id }: any) => {
@@ -149,10 +128,7 @@ export const useUpdateImage = ({
 
   return mutation;
 };
-export const useUpdatePassword = ({
-  onSuccess: onSuccess,
-  onError: onError,
-}: any) => {
+export const useUpdatePassword = ({ onSuccess: onSuccess, onError: onError }: any) => {
   const axiosAuth = useAxiosAuth();
   const mutation = useMutation({
     mutationFn: ({ formData }: any) => {
@@ -186,13 +162,9 @@ export function useApiGet<TData = any, TError = any>({
     ...config,
   };
 
-  const query = useQuery<TData, TError>(
-    queryKey || [endpoint],
-    () => axiosAuth.get(endpoint, axiosConfig),
-    {
-      ...queryOptions,
-    },
-  );
+  const query = useQuery<TData, TError>(queryKey || [endpoint], () => axiosAuth.get(endpoint, axiosConfig), {
+    ...queryOptions,
+  });
 
   return query;
 }
@@ -203,21 +175,37 @@ type ApiMutationCallProps<TData = any, TError = any> = {
   config?: UseQueryOptions<TData, TError>;
   queryKey?: any[];
   axiosConfig?: AxiosRequestConfig;
+  sendDataInParams?: boolean;
 };
 
 export function useApiMutation<TData = any, TError = any>({
   endpoint,
-  method = 'post',
+  method,
   config = {},
   axiosConfig = {},
+  sendDataInParams = false,
 }: ApiMutationCallProps<TData, TError>) {
   const axiosAuth = useAxiosAuth();
   const queryOptions = {
     ...config,
   };
 
+  console.log({ method });
   const mutation = useMutation<TData, TError, any, any>(
-    (data: any) => axiosAuth[method](endpoint, data, axiosConfig),
+    (params: any) => {
+      let url = endpoint;
+      if (sendDataInParams) {
+        // Construct URL with query params
+        const queryString = Object.values(params)
+          .map((key) => `/${key}`)
+          .join('');
+        console.log({ queryString });
+        url += `${queryString}`;
+        return axiosAuth[method](url, {}, axiosConfig); // No data in the body, sending empty object
+      }
+      console.log({ method, endpoint });
+      return axiosAuth[method](url, params, axiosConfig); // No data in the body, sending empty object
+    },
     {
       ...queryOptions,
     } as UseMutationOptions<TData, TError>,
