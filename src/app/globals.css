@@ -241,3 +241,110 @@ html {
   background: transparent !important;
   border: none !important;
 }
+
+
+
+
+/* -------------------------------------------------------------------------
+  VERTICAL STEPPERS
+-------------------------------------------------------------------------- */
+
+/* Steps */
+.step {
+  position: relative;
+  min-height: 4em;
+  color: grey;
+}
+/* .step + .step {
+  margin-top: 1.9rem
+} */
+.step > div:first-child {
+  position: static;
+  height: 0;
+}
+.step > div:not(:first-child) {
+  margin-left: 1.5em;
+  padding-left: 1em;
+}
+.step.step-active {
+  color: #4285f4;
+  background-color: #d3d3d3b3;
+}
+/* .step.step-active .circle {
+  background-color: transparent;
+  border: 1px solid  #4285f4;
+
+} */
+
+/* Circle */
+.circle {
+  background: #0069B4;
+  position: relative;
+  width: 1.5em;
+  height: 1.5em;
+  line-height: 1.5em;
+  border-radius: 100%;
+  color: #fff;
+  text-align: center;
+}/* Circle */
+.step.step-incomplete .circle {
+  background: transparent;
+  border-color: gray;
+  border-width: 1px;
+  position: relative;
+  width: 1.5em;
+  height: 1.5em;
+  line-height: 1.5em;
+  border-radius: 100%;
+  color: #fff;
+  text-align: center;
+}
+
+/* Vertical Line */
+.circle:after {
+  content: ' ';
+  position: absolute;
+  display: block;
+  top: 10px;
+  right: 50%;
+  bottom: 1px;
+  left: 50%;
+  height: 60%;
+  width: 2px;
+  transform: scale(1, 2);
+  transform-origin: 50% -100%;
+  background-color: #0069B4;
+  z-index: 1;
+}
+.step.step-active .circle:after, .step.step-incomplete  .circle:after{
+  content: ' ';
+  position: absolute;
+  display: block;
+  top: 10px;
+  right: 50%;
+  bottom: 1px;
+  left: 50%;
+  height: 60%;
+  width: 2px;
+  transform: scale(1, 2);
+  transform-origin: 50% -100%;
+  background-color: gray;
+  z-index: 1;
+}
+.step:last-child .circle:after {
+  display: none
+}
+
+.step:first-child .circle:after {
+  height: 60%;
+  z-index: 1;
+}
+
+/* Stepper Titles */
+.title {
+  line-height: 1.5em;
+  font-weight: bold;
+}
+.caption {
+  font-size: 0.8em;
+}

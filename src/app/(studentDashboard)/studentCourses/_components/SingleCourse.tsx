@@ -4,17 +4,22 @@ import React from 'react';
 import { Progress } from '@/components/ui/progress';
 
 const SingleCourse = ({ item }: any) => {
-  console.log({ item }, item.image);
+  console.log({ item });
   return (
     <div className="bg-gray-200 rounded-sm p-4 col-span-1 cursor-pointer updateUserCourse/Progress">
-      <Link href={`/studentCourses/${item.id}`}>
+      <Link
+        href={{
+          pathname: `/studentCourses/${item.id}`,
+          query: { percentage: item.percentage, id: item.id, title: item.title },
+        }}
+      >
         <img
           src="https://i.postimg.cc/3rLTwmM0/nebosh.jpg"
           alt="course"
           className="rounded-sm w-64 h-64 mb-3"
         />
         <div className="flex justify-between items-center mb-4">
-          <p>23 Lesson</p>
+          <p>{item?.totalSections} Lesson</p>
           <p>1 hr 30 min</p>
         </div>
         <p className="font-bold text-lg">{item.title}</p>
@@ -22,25 +27,13 @@ const SingleCourse = ({ item }: any) => {
         <hr className="h-px my-4 bg-gray-900 border-0 dark:bg-gray-700" />
         <div className="flex items-center justify-between mb-4">
           <p>{item?.description}</p>
-          {/* <div className="flex items-center gap-2">
-            <img
-              src="https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg"
-              className="w-8 rounded-full"
-              alt=""
-            />
-            <span className="font-bold text-sm">Tayyab Shah</span>
-          </div>
-          <div className="flex gap-0">
-            <Icons iconName="star" className="w-6 h-6 cursor-pointer text-accent" />
-            <Icons iconName="star" className="w-6 h-6 cursor-pointer text-accent" />
-            <Icons iconName="star" className="w-6 h-6 cursor-pointer text-yellow-500" />
-            <Icons iconName="star" className="w-6 h-6 cursor-pointer text-yellow-500" />
-            <Icons iconName="star" className="w-6 h-6 cursor-pointer text-yellow-500" />
-          </div> */}
         </div>
-        <div className="flex items-center gap-1">
-          <Progress value={33} />
-          (33%)
+        <div className="flex flex-col items-start gap-1">
+          <Progress value={item.percentage} className="h-2" />
+          <div className="mt-0 text-sm flex gap-1 items-center">
+            <span className="font-semibold">{parseInt(item.percentage)}%</span>
+            <span>complete</span>
+          </div>
         </div>
       </Link>
     </div>

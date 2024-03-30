@@ -35,11 +35,6 @@ const Page = () => {
     };
   }, []);
 
-  // const { mutate: updateLastSeenSection } = useApiMutation<any>({
-  //   endpoint: `/section/updateLastSeen`,
-  //   method: 'post',
-  // });
-
   const {
     mutate: updateProgress,
     isLoading: updatingProgress,
@@ -55,11 +50,7 @@ const Page = () => {
         const nextItem = sectionsData?.[(selectedIndex ?? 0) + 1];
         // updateLastSeenSection();
         setSelectedItem(nextItem);
-        console.log('invalidate queries', [
-          'get-course-progress',
-          'get-assign-quizzes-answers',
-          'get-sections-list',
-        ]);
+
         queryClient.removeQueries({
           queryKey: ['get-course-progress'],
         });
@@ -72,7 +63,6 @@ const Page = () => {
 
         toast({
           variant: 'success',
-          // title: 'Success ',
           description: 'Progress saved!',
         });
       },
@@ -133,12 +123,13 @@ const Page = () => {
     updateProgress(payload);
   };
   return (
-    <div className="flex gap-4 min-h-full">
+    <div className="flex gap-4 min-h-full p-4">
       {isLoading ? (
         'loading...'
       ) : (
         <>
-          <div className="flex-1 p-4 rounded-xl border bg-white">
+          <SideBarAllSection allSections={sectionsData} />
+          <div className="flex-1 p-4 rounded-xl border bg-white h-[95vh] overflow-hidden overflow-y-auto">
             <div className="flex justify-between pb-4  border-b border-gray-300">
               <p className="text-2xl text-primary">{chapterName}</p>
             </div>
@@ -147,6 +138,7 @@ const Page = () => {
               <Question questionData={selectedItem} />
             ) : (
               <div
+                className="text-sm"
                 contentEditable="true"
                 dangerouslySetInnerHTML={{ __html: selectedItem?.description }}
               ></div>
@@ -161,8 +153,6 @@ const Page = () => {
 
             {isUpdateError && <AlertDestructive error={updateError} />}
           </div>
-
-          <SideBarAllSection allSections={sectionsData} />
         </>
       )}
     </div>

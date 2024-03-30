@@ -2,15 +2,16 @@ import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import React from 'react';
 
+import ProgressBar from '@/components/common/Progress';
 import { useApiGet } from '@/lib/dashboard/client/user';
 
 const ProgressSection = () => {
-  const { courseId } = useParams();
+  const { courseId, chapterId } = useParams();
   const { data: userData } = useSession();
 
   const { data: courseProgress, isLoading } = useApiGet<any, Error>({
-    endpoint: `/courses/getUserChapterProgress/${userData?.user.id}/${courseId}`,
-    queryKey: ['get-course-progress', courseId, userData?.user.id],
+    endpoint: `/courses/getUserChapterProgress/${userData?.user.id}/${courseId}/${chapterId}`,
+    queryKey: ['get-course-progress', courseId, userData?.user.id, chapterId],
   });
   console.log({ courseProgress });
   return (
@@ -29,18 +30,3 @@ const ProgressSection = () => {
 };
 
 export default ProgressSection;
-
-const ProgressBar = ({ percentage }: any) => {
-  const normalizedPercentage = Math.min(100, Math.max(0, percentage));
-
-  return (
-    <div className="relative w-full h-6 bg-gray-300 rounded-full overflow-hidden">
-      <div
-        className="h-full bg-orange-500 text-white font-bold text-center absolute left-0"
-        style={{ width: `${normalizedPercentage}%` }}
-      >
-        <div className="absolute inset-0 flex items-center justify-center">{`${normalizedPercentage}%`}</div>
-      </div>
-    </div>
-  );
-};

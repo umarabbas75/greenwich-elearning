@@ -40,8 +40,8 @@ const useGetSectionListData = ({ chapterId }: any) => {
     isLoading: courseProgressLoading,
     isSuccess: courseProgressSuccess,
   } = useApiGet<any, Error>({
-    endpoint: `/courses/getUserChapterProgress/${userData?.user.id}/${courseId}`,
-    queryKey: ['get-course-progress', courseId, userData?.user.id],
+    endpoint: `/courses/getUserChapterProgress/${userData?.user.id}/${courseId}/${chapterId}`,
+    queryKey: ['get-course-progress', courseId, userData?.user.id, chapterId],
   });
   console.log({
     quizAnswersList,

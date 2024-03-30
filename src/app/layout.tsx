@@ -36,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           async
         ></script>
       </head>
-      <body className={`${oepnsans.className}  dark:bg-[#0d1117]`}>
+      <body className={`${oepnsans.className}  dark:bg-[#0d1117] h-full`}>
         <JotaiProvider>
           <QueryProvider>
             <NextThemeProvider attribute="class" defaultTheme="system" enableSystem>

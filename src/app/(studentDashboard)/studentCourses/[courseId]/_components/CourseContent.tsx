@@ -1,5 +1,6 @@
+'use client';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import React from 'react';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -22,6 +23,12 @@ export type ChaptersDataResponse = {
 const CourseContent = ({ modulesData }: any) => {
   const [moduleId, setModuleId] = React.useState<string>();
 
+  const search = useSearchParams();
+  const percentage: any = (search as any).get(['percentage']);
+  const title: any = (search as any).get(['title']);
+
+  console.log({ percentage, title });
+
   const { courseId } = useParams();
   const renderChaptersList = (chapters: any) => {
     console.log({ chapters });
@@ -31,7 +38,10 @@ const CourseContent = ({ modulesData }: any) => {
         <Link
           className="text-black"
           key={index}
-          href={{ pathname: `/studentCourses/${courseId}/${item.id}`, query: { chapterName: item.title } }}
+          href={{
+            pathname: `/studentCourse/${courseId}/${item.id}`,
+            query: { chapterName: item.title, courseName: title, coursePercentage: percentage },
+          }}
         >
           <li className="text-black">{item.title}</li>
         </Link>
