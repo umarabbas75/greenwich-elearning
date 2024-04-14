@@ -67,7 +67,7 @@ const AssignQuizModal = () => {
     quizzes: [],
   };
   const validationSchema = Yup.object().shape({
-    quizzes: Yup.array().required('quizzes is required'),
+    quizzes: Yup.object().required('quizzes is required'),
   });
 
   const form = useForm<UserFormTypes>({
@@ -90,14 +90,14 @@ const AssignQuizModal = () => {
   const onSubmit = (values: UserFormTypes) => {
     console.log({ values });
     const payload = {
-      quizId: (values.quizzes?.[0] as any).value,
+      quizId: (values.quizzes as any).value,
       chapterId: assignQuizesState?.data?.id,
     };
     assignQuiz(payload);
   };
 
   return (
-    <Modal open={assignQuizesState.status} onClose={() => {}} title={'Assign Quizes'}>
+    <Modal open={assignQuizesState.status} onClose={() => {}} title={'Assign Quizzes'}>
       {isLoading ? (
         <Spinner />
       ) : (
@@ -105,41 +105,39 @@ const AssignQuizModal = () => {
           {isAssignError && <AlertDestructive error={assignError} />}
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <FormLabel>Quizzes</FormLabel>
-                  {quizzesData && (
-                    <Controller
-                      name="quizzes"
-                      control={control}
-                      render={({ field: { onChange, value } }) => {
-                        return (
-                          <ReactSelect
-                            isMulti={true}
-                            options={
-                              quizzesData.data.map((item: any) => {
-                                return {
-                                  label: item.question,
-                                  value: item.id,
-                                };
-                              }) ?? []
-                            }
-                            value={value} // Find the matching option by value
-                            onChange={(val: any) => {
-                              console.log({ val });
-                              onChange(val);
-                            }}
-                            // getOptionLabel={(val: any) => {
-                            //   console.log('valllll', val);
-                            //   return val;
-                            // }}
-                            // getOptionValue={(val: any) => val.id}
-                          />
-                        );
-                      }}
-                    />
-                  )}
-                </div>
+              <div className="space-y-2">
+                <FormLabel>Quizzes</FormLabel>
+                {quizzesData && (
+                  <Controller
+                    name="quizzes"
+                    control={control}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <ReactSelect
+                          isMulti={false}
+                          options={
+                            quizzesData.data.map((item: any) => {
+                              return {
+                                label: item.question,
+                                value: item.id,
+                              };
+                            }) ?? []
+                          }
+                          value={value} // Find the matching option by value
+                          onChange={(val: any) => {
+                            console.log({ val });
+                            onChange(val);
+                          }}
+                          // getOptionLabel={(val: any) => {
+                          //   console.log('valllll', val);
+                          //   return val;
+                          // }}
+                          // getOptionValue={(val: any) => val.id}
+                        />
+                      );
+                    }}
+                  />
+                )}
               </div>
 
               <div className="flex items-center justify-end gap-2">

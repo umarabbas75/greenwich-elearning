@@ -2,7 +2,6 @@
 //import { usePathname } from 'next/navigation';
 
 import { useAtom } from 'jotai';
-import { useParams, useSelectedLayoutSegments } from 'next/navigation';
 import React from 'react';
 
 import SessionExpireModal from '@/components/common/Modal/SessionExpireModal';
@@ -14,25 +13,25 @@ import ThemeToggler from './ThemeToggler';
 import UserInfo from './UserInfo';
 
 const Topbar = () => {
-  const segments = useSelectedLayoutSegments();
-  const params = useParams();
+  // const segments = useSelectedLayoutSegments();
+  // const params = useParams();
   // const pathname = usePathname();
   const [sideBarDrawer, setSideBarDrawer] = useAtom(sideBarDrawerAtom);
-  const renderBreadcrumb = (segment: any) => {
-    // const paramKey = Object.keys(params).find((key) => params[key] === segment);
+  // const renderBreadcrumb = (segment: any) => {
+  //   // const paramKey = Object.keys(params).find((key) => params[key] === segment);
 
-    // Check if the segment is present in the params object
-    if (params && params[segment]) {
-      // If present, render the corresponding key from the params object
-      return params[segment];
-    } else {
-      // If not present, render the segment itself
-      return segment;
-    }
-  };
+  //   // Check if the segment is present in the params object
+  //   if (params && params[segment]) {
+  //     // If present, render the corresponding key from the params object
+  //     return params[segment];
+  //   } else {
+  //     // If not present, render the segment itself
+  //     return segment;
+  //   }
+  // };
   return (
     <nav className="flex justify-between items-center h-20 px-9  shadow-app-header">
-      <>
+      <div className="flex items-center">
         <div
           onClick={() => {
             setSideBarDrawer({
@@ -44,15 +43,15 @@ const Topbar = () => {
         >
           <Icons iconName="menu" className="h-6 w-6 cursor-pointer text-accent" />
         </div>
-        <div>
+        {/* <div>
           {segments.map((segment, index) => (
             <span key={index}>
               {renderBreadcrumb(segment)}
               {index < segments.length - 1 && ' > '}
             </span>
           ))}
-        </div>
-      </>
+        </div> */}
+      </div>
       <div className="flex gap-2 items-center">
         <div className="dark-icon border rounded  p-2 text-accent transition duration-300  hover:bg-dark-icon-hover hover:text-primary">
           <Icons iconName="notification" className="h-6 w-6 cursor-pointer text-accent" />

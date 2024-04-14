@@ -14,7 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
-import { useApiMutation, useFetchUser } from '@/lib/dashboard/client/user';
+import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
 import { addSectionModalAtom } from '@/store/modals';
 
 const ReactQuill = typeof window === 'object' ? require('react-quill') : () => false;
@@ -62,7 +62,7 @@ const SectionModal = () => {
     isError: isEditError,
     error: editError,
   } = useApiMutation<any>({
-    endpoint: `/courses/section/${sectionModalState?.data?.id}`,
+    endpoint: `/courses/section/update/${sectionModalState?.data?.id}`,
     method: 'put',
     config: {
       onSuccess: (res: any) => {
@@ -101,15 +101,17 @@ const SectionModal = () => {
   });
   const { handleSubmit, control } = form;
 
-  const { data, isLoading: fetchingUser } = useFetchUser({
-    variables: {
-      id: sectionModalState?.data?.id,
-    },
-    onSuccessCallback: (data: any) => {
-      form.reset({
-        ...data,
-        customer: data?.customer,
-      });
+  const { data, isLoading: fetchingChapter } = useApiGet<any>({
+    endpoint: `/courses/section/${sectionModalState?.data?.id}`,
+    queryKey: ['get-chapter', sectionModalState?.data?.id],
+    config: {
+      enabled: !!sectionModalState?.data?.id,
+      onSuccess: (data: any) => {
+        console.log({ data });
+        form.reset({
+          ...data?.data,
+        });
+      },
     },
   });
 
@@ -118,8 +120,13 @@ const SectionModal = () => {
   };
 
   return (
-    <Modal open={sectionModalState.status} onClose={() => {}} title={data ? 'Edit Section' : 'New Section'}>
-      {fetchingUser ? (
+    <Modal
+      className="md:!min-w-[55rem]"
+      open={sectionModalState.status}
+      onClose={() => {}}
+      title={data ? 'Edit Lesson' : 'New Lesson'}
+    >
+      {fetchingChapter ? (
         <Spinner />
       ) : (
         <>
@@ -159,7 +166,7 @@ const SectionModal = () => {
                           ['clean'],
                         ],
                       }}
-                      style={{ minHeight: '200px' }}
+                      // style={{ minHeight: '200px' }}
                       value={value}
                       onChange={(data: string) => {
                         onChange(data);

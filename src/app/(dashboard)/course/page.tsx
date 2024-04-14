@@ -17,6 +17,8 @@ export type Course = {
   id: string;
   createdAt: string;
   updatedAt: string;
+  image: string;
+  duration:string
 };
 export type CoursesDataResponse = {
   message: string;

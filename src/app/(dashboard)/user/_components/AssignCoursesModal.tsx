@@ -68,7 +68,7 @@ const AssignCoursesModal = () => {
     courses: [],
   };
   const validationSchema = Yup.object().shape({
-    courses: Yup.array().required('courses is required'),
+    courses: Yup.object().required('courses is required'),
   });
 
   const form = useForm<UserFormTypes>({
@@ -91,13 +91,14 @@ const AssignCoursesModal = () => {
     console.log({ values });
     const payload = {
       userId: assignCoursesState?.data.id,
-      courseId: (values.courses?.[0] as any).id,
+      courseId: values.courses.id,
     };
     assignCourse(payload);
   };
+  console.log({errors})
 
   return (
-    <Modal open={assignCoursesState.status} onClose={() => {}} title={'Assign Courses'}>
+    <Modal open={assignCoursesState.status} onClose={() => {}} title={'Assign Course'}>
       {isLoading ? (
         <Spinner />
       ) : (
@@ -105,31 +106,29 @@ const AssignCoursesModal = () => {
           {isAssignError && <AlertDestructive error={assignError} />}
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <FormLabel>Courses</FormLabel>
-                  {coursesData && (
-                    <Controller
-                      name="courses"
-                      control={control}
-                      render={({ field: { onChange, value } }) => {
-                        return (
-                          <ReactSelect
-                            isMulti={true}
-                            options={coursesData.data ?? []}
-                            value={value} // Find the matching option by value
-                            onChange={(val: Course) => {
-                              console.log({ val });
-                              onChange(val);
-                            }}
-                            getOptionLabel={(val: Course) => val.title}
-                            getOptionValue={(val: Course) => val.id}
-                          />
-                        );
-                      }}
-                    />
-                  )}
-                </div>
+              <div className="space-y-2">
+                <FormLabel>Courses</FormLabel>
+                {coursesData && (
+                  <Controller
+                    name="courses"
+                    control={control}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <ReactSelect
+                          isMulti={false}
+                          options={coursesData.data ?? []}
+                          value={value} // Find the matching option by value
+                          onChange={(val: Course) => {
+                            console.log({ val });
+                            onChange(val);
+                          }}
+                          getOptionLabel={(val: Course) => val.title}
+                          getOptionValue={(val: Course) => val.id}
+                        />
+                      );
+                    }}
+                  />
+                )}
               </div>
 
               <div className="flex items-center justify-end gap-2">

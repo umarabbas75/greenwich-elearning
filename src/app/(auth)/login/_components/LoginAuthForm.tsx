@@ -37,7 +37,7 @@ export const LoginAuthForm = () => {
         //   'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4',
         // ),
         //title: 'Error',
-        description: res?.error,
+        description: 'Incorrect email/password',
       });
     }
     setIsLoading(false);
@@ -48,7 +48,9 @@ export const LoginAuthForm = () => {
     <form onSubmit={onSubmit}>
       <div className="grid gap-6">
         <div className="grid gap-1">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="text-white text-md">
+            Your email
+          </Label>
           <Input
             id="email"
             // placeholder="name@example.com"
@@ -56,6 +58,7 @@ export const LoginAuthForm = () => {
             autoCapitalize="none"
             autoComplete="email"
             autoCorrect="off"
+            className="bg-transparent text-white"
             disabled={isLoading}
             value={state.email}
             onChange={(e) => {
@@ -64,7 +67,9 @@ export const LoginAuthForm = () => {
           />
         </div>
         <div className="grid gap-1">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password" className="text-white text-md">
+            Your password
+          </Label>
           <Input
             id="password"
             // placeholder="name@example.com"
@@ -72,6 +77,7 @@ export const LoginAuthForm = () => {
             autoCapitalize="none"
             autoComplete="email"
             autoCorrect="off"
+            className="bg-transparent text-white"
             disabled={isLoading}
             value={state.password}
             onChange={(e) => {

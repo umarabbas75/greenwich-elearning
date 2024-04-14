@@ -93,7 +93,7 @@ const UserModal = () => {
       value: 'user',
     },
     {
-      label: 'admin',
+      label: 'Admin',
       value: 'admin',
     },
   ];

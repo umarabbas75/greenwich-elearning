@@ -18,6 +18,8 @@ module.exports = {
       colors: {
         border: 'var(--border)',
         input: 'var(--input)',
+        themeGreen: '#344e41',
+        themeBlue: '#0057B0',
         ring: 'var(--ring)',
         background: 'var(--background)',
         foreground: 'var(--foreground)',

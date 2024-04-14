@@ -80,6 +80,7 @@ const SectionTable: FC<Props> = ({ data, pagination, setPagination, isLoading })
       cell: (props) => (
         <div
           contentEditable="true"
+          className="line-clamp-3"
           dangerouslySetInnerHTML={{ __html: props.row.original.description }}
         ></div>
       ),
@@ -136,7 +137,7 @@ const SectionTable: FC<Props> = ({ data, pagination, setPagination, isLoading })
   return (
     <>
       <div className="p-2 border rounded">
-        <p className="pl-2 font-medium mb-4">Sections</p>
+        <p className="pl-2 font-medium mb-4">Lessons</p>
         {isLoading ? 'loading...' : <TableComponent table={table} />}
 
         <div className="h-4" />

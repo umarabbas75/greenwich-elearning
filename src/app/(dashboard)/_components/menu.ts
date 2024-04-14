@@ -23,19 +23,19 @@ export const sidebarMenu: SidebarMenu = {
     {
       id: 'user',
       title: 'User',
-      icon: 'dashboard',
+      icon: 'user',
       link: '/user',
     },
     {
       id: 'course',
       title: 'Course',
-      icon: 'dashboard',
+      icon: 'book',
       link: '/course',
     },
     {
       id: 'quiz',
       title: 'Quiz',
-      icon: 'dashboard',
+      icon: 'bulb',
       link: '/quiz',
     },
     {

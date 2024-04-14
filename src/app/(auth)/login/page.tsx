@@ -13,14 +13,21 @@ export const metadata: Metadata = {
 const page = () => {
   return (
     <>
-      <div className="lg:p-8">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[550px]">
+      <div className="lg:p-8 relative h-full bg-themeGreen flex items-center justify-center">
+        <Image
+          src="/assets/images/greenwich_logo.png"
+          className="absolute top-10 left-10"
+          width={80}
+          height={140}
+          alt="Greenwich logo"
+        />
+        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[450px]">
           <div className="flex flex-col space-y-2 text-center">
-            <div className="grid justify-center mb-4">
-              <Image src="/assets/images/greenwich_logo.png" width={150} height={180} alt="Greenwich logo" />
-            </div>
-            <h1 className="text-2xl font-semibold tracking-tight">Sign In</h1>
-            <p className="text-sm text-muted-foreground">Enter your email below to login into your account</p>
+            <div className="grid justify-center mb-4"></div>
+
+            <p className="text-2xl text-white">
+              Awesome, ready to get going? Just login below and you’re on your way...
+            </p>
           </div>
           <LoginAuthForm />
           <p className="text-right text-sm text-muted-foreground">
@@ -30,8 +37,8 @@ const page = () => {
           </p>
         </div>
       </div>
-      <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
-        <Image src="/assets/images/bg-image.jpg" fill={true} alt="Genmark login picture" />
+      <div className="relative hidden h-full flex-col bg-white p-10 md:flex justify-center items-center text-white dark:border-r lg:flex">
+        <Image src="/assets/images/loginVector.svg" width="500" height="500" alt="Greenwich login picture" />
       </div>
     </>
   );

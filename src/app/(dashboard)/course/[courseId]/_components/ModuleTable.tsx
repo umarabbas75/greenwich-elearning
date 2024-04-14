@@ -1,14 +1,15 @@
 'use client';
 import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { FC } from 'react';
+import { useQueryClient } from 'react-query';
 
 import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
 import TableComponent from '@/components/common/Table';
 import TableActions from '@/components/common/TableActions';
 import { useToast } from '@/components/ui/use-toast';
-import { useDeleteUser } from '@/lib/dashboard/client/user';
+import { useApiMutation } from '@/lib/dashboard/client/user';
 import { addModuleModalAtom, confirmationModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
@@ -27,9 +28,6 @@ interface Props {
 }
 const ModuleTable: FC<Props> = ({ data, pagination, setPagination, isLoading, courseId }) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-
-  console.log({ router, searchParams });
   const [moduleModalState, setModuleModalState] = useAtom(addModuleModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const { toast } = useToast();
@@ -108,31 +106,36 @@ const ModuleTable: FC<Props> = ({ data, pagination, setPagination, isLoading, co
     debugTable: true,
   });
 
-  const handleDeleteSuccess = () => {
-    setConfirmState({
-      ...confirmState,
-      status: false,
-      data: null,
-    });
-    setConfirmState({ status: false, data: null });
-    toast({
-      variant: 'success',
-      title: 'Success ',
-      description: 'Data deleted successfully',
-    });
-  };
-  const handleDeleteError = (data: any) => {
-    toast({
-      variant: 'destructive',
-      title: 'Error ',
-      description: data?.response?.data?.type?.[0] ?? 'Some error occured',
-    });
-  };
+  const queryClient = useQueryClient();
 
-  const { mutate: deleteUser, isLoading: deletingUser } = useDeleteUser(
-    handleDeleteSuccess,
-    handleDeleteError,
-  );
+  const { mutate: deleteModule, isLoading: deletingModule } = useApiMutation({
+    method: 'delete',
+    endpoint: `/courses/module/${confirmState?.data?.id}`,
+    config: {
+      onSuccess: () => {
+        setConfirmState({
+          ...confirmState,
+          status: false,
+          data: null,
+        });
+        toast({
+          variant: 'success',
+          title: 'Success ',
+          description: 'Data deleted successfully',
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['get-modules', courseId],
+        });
+      },
+      onError: (data) => {
+        toast({
+          variant: 'destructive',
+          title: 'Error ',
+          description: data?.response?.data?.type?.[0] ?? 'Some error occured',
+        });
+      },
+    },
+  });
 
   const onRowClick = (data: Module) => {
     console.log({ data });
@@ -158,10 +161,10 @@ const ModuleTable: FC<Props> = ({ data, pagination, setPagination, isLoading, co
           primaryAction={{
             label: 'Delete',
             onClick: () => {
-              deleteUser(confirmState.data.id);
+              deleteModule(confirmState.data.id);
               //setConfirmState({ status: false, data: null });
             },
-            loading: deletingUser,
+            loading: deletingModule,
           }}
           secondaryAction={{
             label: 'Cancel',

@@ -17,23 +17,37 @@ import { useSearchParams } from 'next/navigation';
 const SideBarAllSection = ({ allSections }: any) => {
   const [selectedItem, setSelectedItem] = useAtom(selectedSectionAtom);
   const search = useSearchParams();
+  // const [collapsible, setCollapsible] = useState(false);
   const chapterName = search.get('chapterName');
+  const completedSections = allSections.filter((item: any) => item?.isCompleted);
+  const totalSections = allSections.filter((item: any) => item?.title);
+  console.log({ allSections });
+  const percentage = (completedSections.length * 100) / totalSections?.length;
   return (
     <div className="max-w-sm w-96 right-0 bottom-0 top-0 overflow-y-scroll max-h-[95vh]">
       <div className="flex flex-col gap-6">
         <ProgressCourse />
         <div>
-          <Accordion type="single" collapsible className="w-full">
+          <Accordion
+            // onChange={() => {
+            //   setCollapsible(!collapsible);
+            // }}
+            type="single"
+            collapsible
+            // collapsible={collapsible}
+            className="w-full"
+            defaultValue="item-1"
+          >
             <AccordionItem value="item-1">
               <AccordionTrigger className="border-b border-gray-500 w-full text-left pb-3 ">
-                <div className="flex gap-2">
-                  <div className="w-6 h-6 min-w-[1.5rem]">
-                    <CircularProgressbar value={20} />
+                <div className="flex gap-2 items-center">
+                  <div className="w-10 h-10 min-w-[2.5rem]">
+                    <CircularProgressbar text={`${percentage}%`} value={percentage} />
                   </div>
                   <span className="line-clamp-1">{chapterName}</span>
                 </div>
                 <div className="flex items-center gap-4">
-                  1/2
+                  {completedSections.length}/{totalSections?.length}
                   <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
                 </div>
               </AccordionTrigger>
@@ -53,6 +67,7 @@ const SideBarAllSection = ({ allSections }: any) => {
                               setSelectedItem(item);
                             }}
                           >
+                            {/* {item.id === selectedItem?.id && <div className="active-bg"></div>} */}
                             <div>
                               <div className="circle flex items-center justify-center">
                                 {item.isCompleted && <Check className="h-4 w-4" />}

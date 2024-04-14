@@ -12,6 +12,7 @@ import Spinner from '@/components/common/Spinner';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
 import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
@@ -119,7 +120,7 @@ const ChapterModal = () => {
   };
 
   return (
-    <Modal open={chapterModalState.status} onClose={() => {}} title={data ? 'Edit Chapter' : 'New Chapter'}>
+    <Modal open={chapterModalState.status} onClose={() => {}} title={data ? 'Edit Element' : 'New Element'}>
       {fetchingChapter ? (
         <Spinner />
       ) : (
@@ -127,40 +128,38 @@ const ChapterModal = () => {
           {(isEditError || isAddError) && <AlertDestructive error={editError || addError} />}
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={control}
-                  name="title"
-                  render={({ field: { onChange, value }, formState: { errors } }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                          <Input onChange={onChange} value={value} />
-                        </FormControl>
+              <FormField
+                control={control}
+                name="title"
+                render={({ field: { onChange, value }, formState: { errors } }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input onChange={onChange} value={value} />
+                      </FormControl>
 
-                        <FormMessage>{errors.title?.message}</FormMessage>
-                      </FormItem>
-                    );
-                  }}
-                />
-                <FormField
-                  control={control}
-                  name="description"
-                  render={({ field: { onChange, value }, formState: { errors } }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel>Description</FormLabel>
-                        <FormControl>
-                          <Input onChange={onChange} value={value} />
-                        </FormControl>
+                      <FormMessage>{errors.title?.message}</FormMessage>
+                    </FormItem>
+                  );
+                }}
+              />
+              <FormField
+                control={control}
+                name="description"
+                render={({ field: { onChange, value }, formState: { errors } }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea onChange={onChange} value={value} />
+                      </FormControl>
 
-                        <FormMessage>{errors.description?.message}</FormMessage>
-                      </FormItem>
-                    );
-                  }}
-                />
-              </div>
+                      <FormMessage>{errors.description?.message}</FormMessage>
+                    </FormItem>
+                  );
+                }}
+              />
 
               <div className="flex items-center justify-end gap-2">
                 <Button variant={'outline'} onClick={closeModal}>

@@ -23,7 +23,7 @@ type Props = {
 const ConfirmationModal: FC<Props> = ({ open, onClose, title, content, primaryAction, secondaryAction }) => {
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="min-w-[90%] md:min-w-[55rem]  md:m-0">
+      <DialogContent className="  md:m-0">
         <DialogHeader className="pb-3">
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>

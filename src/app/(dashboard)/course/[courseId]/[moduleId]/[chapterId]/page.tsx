@@ -58,7 +58,7 @@ const Page = () => {
                 })
               }
             >
-              Add Sections
+              Add Lessons
             </Button>
           </div>
         </div>

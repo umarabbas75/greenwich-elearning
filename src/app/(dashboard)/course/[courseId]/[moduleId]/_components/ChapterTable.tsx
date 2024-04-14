@@ -111,7 +111,7 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
       header: 'Quizzes',
       cell: (props) => (
         <h1
-          className="cursor-pointer "
+          className="cursor-pointer text-themeBlue"
           onClick={(e) => {
             e.stopPropagation();
             setViewAssignQuizModalState({
@@ -181,7 +181,7 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
   return (
     <>
       <div className="p-2 border rounded">
-        <p className="pl-2 font-medium mb-4">Chapters</p>
+        <p className="pl-2 font-medium mb-4">Elements</p>
         {isLoading ? 'loading...' : <TableComponent table={table} onRowClick={onRowClick} />}
 
         <div className="h-4" />

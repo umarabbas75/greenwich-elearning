@@ -1,14 +1,14 @@
 'use client';
 import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
-import Image from 'next/image';
 import { FC } from 'react';
+import { useQueryClient } from 'react-query';
 
 import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
 import TableComponent from '@/components/common/Table';
 import TableActions from '@/components/common/TableActions';
 import { useToast } from '@/components/ui/use-toast';
-import { useDeleteUser } from '@/lib/dashboard/client/user';
+import { useApiMutation } from '@/lib/dashboard/client/user';
 import {
   assignCoursesModalAtom,
   confirmationModalAtom,
@@ -36,6 +36,7 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
   const [userCoursesState, setUserCoursesState] = useAtom(viewUserCoursesModal);
   const [assignCoursesState, setAssignCoursesState] = useAtom(assignCoursesModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
+  const queryClient = useQueryClient();
   const { toast } = useToast();
   const renderActions = (row: UserData) => {
     return (
@@ -49,7 +50,7 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
           }}
           className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
         >
-          <Icons iconName="edit" className="w-6 h-6 cursor-pointer" />
+          <Icons iconName="book" className="w-6 h-6 cursor-pointer" />
           Assign Courses
         </span>
         <span
@@ -80,6 +81,7 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
       </div>
     );
   };
+  console.log({ userState, confirmState });
 
   const columns = [
     // Accessor Columns
@@ -88,7 +90,7 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
       cell: (props) => {
         return (
           <h1 className="flex  flex-col justify-center w-fit text-center items-center">
-            {props.row.original.photo ? (
+            {/* {props.row.original.photo ? (
               <Image
                 src={props.row.original.photo}
                 alt="genset type"
@@ -96,9 +98,9 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
                 height={50}
                 className="rounded-full"
               />
-            ) : (
-              <Icons iconName="avatar" className="h-12 w-12" />
-            )}
+            ) : ( */}
+            <Icons iconName="avatar" className="h-12 w-12" />
+            {/* )} */}
           </h1>
         );
       },
@@ -132,7 +134,9 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
     columnHelper.accessor('role', {
       id: 'role',
       header: 'Role',
-      cell: (props) => <h1>{props.row.original.role}</h1>,
+      cell: (props) => (
+        <h1 className="uppercase">{props.row.original.role === 'user' ? 'STUDENT' : 'ADMIN'}</h1>
+      ),
       footer: (props) => props.column.id,
     }),
     columnHelper.accessor('courses', {
@@ -140,7 +144,7 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
       header: 'Courses',
       cell: (props) => (
         <h1
-          className="cursor-pointer "
+          className="cursor-pointer text-themeBlue"
           onClick={() => {
             setUserCoursesState({
               status: true,
@@ -174,31 +178,34 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
     debugTable: true,
   });
 
-  const handleDeleteSuccess = () => {
-    setConfirmState({
-      ...confirmState,
-      status: false,
-      data: null,
-    });
-    setConfirmState({ status: false, data: null });
-    toast({
-      variant: 'success',
-      title: 'Success ',
-      description: 'Data deleted successfully',
-    });
-  };
-  const handleDeleteError = (data: any) => {
-    toast({
-      variant: 'destructive',
-      title: 'Error ',
-      description: data?.response?.data?.type?.[0] ?? 'Some error occured',
-    });
-  };
-
-  const { mutate: deleteUser, isLoading: deletingUser } = useDeleteUser(
-    handleDeleteSuccess,
-    handleDeleteError,
-  );
+  const { mutate: deleteUser, isLoading: deletingUser } = useApiMutation({
+    method: 'delete',
+    endpoint: `/users/${confirmState?.data?.id}`,
+    config: {
+      onSuccess: () => {
+        setConfirmState({
+          ...confirmState,
+          status: false,
+          data: null,
+        });
+        toast({
+          variant: 'success',
+          title: 'Success ',
+          description: 'Data deleted successfully',
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['get-users'],
+        });
+      },
+      onError: (data) => {
+        toast({
+          variant: 'destructive',
+          title: 'Error ',
+          description: data?.response?.data?.type?.[0] ?? 'Some error occured',
+        });
+      },
+    },
+  });
 
   return (
     <>

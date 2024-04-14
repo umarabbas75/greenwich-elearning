@@ -1,13 +1,26 @@
+import { useAtom } from 'jotai';
 import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
 import { useApiGet } from '@/lib/dashboard/client/user';
+import { selectedSectionAtom } from '@/store/course';
 
 const useGetSectionListData = ({ chapterId }: any) => {
+  const [_, setSelectedItem] = useAtom(selectedSectionAtom);
+  console.log({ setSelectedItem });
   const [mergedData, setMergedData] = useState<any>([]);
   const { data: userData } = useSession();
   const { courseId } = useParams();
+  const {
+    data: lastSeenSection,
+    isLoading: lastSeenSectionLoading,
+    isSuccess: lastSeenSectionSuccess,
+  } = useApiGet<any, Error>({
+    endpoint: `/courses/section/getLastSeen/${userData?.user.id}/${chapterId}`,
+    queryKey: ['last-seen-section', userData?.user.id, chapterId],
+  });
+
   const {
     data: quizAnswersList,
     isLoading: quizAnswersListLoading,
@@ -56,7 +69,17 @@ const useGetSectionListData = ({ chapterId }: any) => {
     ) {
       const allSections = allSectionsList?.data;
       const completedSections = courseProgressData?.data?.courseProgressData;
-      console.log({ courseProgressData });
+      console.log({ lastSeenSection });
+
+      if (!lastSeenSection.data) {
+        const firstSection = allSections?.[0];
+        setSelectedItem(firstSection);
+      } else if (lastSeenSection.data.id) {
+        const lastItem = allSections.find((item: any) => item.id === lastSeenSection.data.sectionId);
+        console.log({ lastItem });
+        setSelectedItem(lastItem);
+      }
+
       allSections.forEach((section: any) => {
         // Check if the section ID exists in completedSections
         const isCompleted = completedSections?.some(
@@ -70,14 +93,24 @@ const useGetSectionListData = ({ chapterId }: any) => {
       const mergedArray = insertQuizzes(allSections, shuffledQuizzes);
       setMergedData([...mergedArray]);
     }
-  }, [quizAnswersListSuccess, allSectionsListSuccess, assignedQuizzesListSuccess, courseProgressSuccess]);
+  }, [
+    quizAnswersListSuccess,
+    allSectionsListSuccess,
+    assignedQuizzesListSuccess,
+    courseProgressSuccess,
+    lastSeenSectionSuccess,
+  ]);
 
   console.log({ mergedData });
 
   return {
     sectionsData: mergedData,
     isLoading:
-      allSectionsListLoading || quizAnswersListLoading || courseProgressLoading || assignedQuizzesListLoading,
+      allSectionsListLoading ||
+      quizAnswersListLoading ||
+      courseProgressLoading ||
+      assignedQuizzesListLoading ||
+      lastSeenSectionLoading,
   };
 };
 

@@ -13,7 +13,7 @@ const PhoneInput2 = ({ country, onChange, value, message }: Props) => {
   return (
     <div>
       <PhoneInput
-        country={country ?? 'nl'}
+        country={country ?? 'pk'}
         onChange={onChange}
         value={value}
         countryCodeEditable={false}

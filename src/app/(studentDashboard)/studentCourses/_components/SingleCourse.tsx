@@ -13,14 +13,10 @@ const SingleCourse = ({ item }: any) => {
           query: { percentage: item.percentage, id: item.id, title: item.title },
         }}
       >
-        <img
-          src="https://i.postimg.cc/3rLTwmM0/nebosh.jpg"
-          alt="course"
-          className="rounded-sm w-64 h-64 mb-3"
-        />
+        <img src={item?.image} alt="course" className="rounded-sm w-64 h-64 mb-3 object-cover" />
         <div className="flex justify-between items-center mb-4">
-          <p>{item?.totalSections} Lesson</p>
-          <p>1 hr 30 min</p>
+          <p>{item?.totalSections} Lessons</p>
+          <p>{item?.duration}</p>
         </div>
         <p className="font-bold text-lg">{item.title}</p>
 

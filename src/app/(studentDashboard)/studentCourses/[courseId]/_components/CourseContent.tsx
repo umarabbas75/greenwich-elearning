@@ -40,7 +40,7 @@ const CourseContent = ({ modulesData }: any) => {
           key={index}
           href={{
             pathname: `/studentCourse/${courseId}/${item.id}`,
-            query: { chapterName: item.title, courseName: title, coursePercentage: percentage },
+            query: { chapterName: item.title, courseName: title, coursePercentage: percentage, courseId },
           }}
         >
           <li className="text-black">{item.title}</li>

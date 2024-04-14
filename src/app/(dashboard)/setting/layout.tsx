@@ -20,7 +20,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <TabsList className="grid w-[400px] grid-cols-2">
           <TabsTrigger value="account">Account</TabsTrigger>
 
-          <TabsTrigger value="users">Portal User</TabsTrigger>
+          {/* <TabsTrigger value="users">Portal User</TabsTrigger> */}
         </TabsList>
       )}
       {children}

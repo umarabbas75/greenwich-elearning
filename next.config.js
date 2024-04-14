@@ -1,14 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: [
-      'res.cloudinary.com',
-      '0e65-39-32-186-190.ngrok-free.app',
-      'genmark.blob.core.windows.net',
-      'encrypted-tbn0.gstatic.com',
-      'avatar.iran.liara.run',
-      'imgur.com',
-    ],
+    domains: ['i.postimg.cc', 'imgur.com', 'postimg.cc', 'www.google.com'],
   },
 };
 

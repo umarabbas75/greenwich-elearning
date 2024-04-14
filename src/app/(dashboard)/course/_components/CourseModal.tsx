@@ -24,6 +24,7 @@ type CourseFormTypes = {
   image: string;
   overview: string;
   assessment: string;
+  duration: string;
 };
 
 const CourseModal = () => {
@@ -94,6 +95,7 @@ const CourseModal = () => {
   const validationSchema = Yup.object().shape({
     title: Yup.string().required('title is required'),
     description: Yup.string().required('description is required'),
+    image: Yup.string().required(' image url  is required').url('invalid url'),
   });
 
   const form = useForm<CourseFormTypes>({
@@ -116,9 +118,10 @@ const CourseModal = () => {
     },
   });
 
-  const onSubmit = (values: CourseFormTypes) => {
+  const onSubmit = (values: any) => {
     if (data) {
       const { id, ...rest } = values;
+      console.log({ id });
       editCourse(rest);
     } else {
       addCourse(values);
@@ -126,7 +129,12 @@ const CourseModal = () => {
   };
 
   return (
-    <Modal open={courseModalState.status} onClose={() => {}} title={data ? 'Edit Course' : 'New Course'}>
+    <Modal
+      className="md:!min-w-[45rem]"
+      open={courseModalState.status}
+      onClose={() => {}}
+      title={data ? 'Edit Course' : 'New Course'}
+    >
       {fetchingCourse ? (
         <Spinner />
       ) : (
@@ -168,24 +176,38 @@ const CourseModal = () => {
                     );
                   }}
                 />
-                <div className="col-span-2">
-                  <FormField
-                    control={control}
-                    name="description"
-                    render={({ field: { onChange, value }, formState: { errors } }) => {
-                      return (
-                        <FormItem>
-                          <FormLabel>Description</FormLabel>
-                          <FormControl>
-                            <Input onChange={onChange} value={value} />
-                          </FormControl>
+                <FormField
+                  control={control}
+                  name="description"
+                  render={({ field: { onChange, value }, formState: { errors } }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Input onChange={onChange} value={value} />
+                        </FormControl>
 
-                          <FormMessage>{errors.description?.message}</FormMessage>
-                        </FormItem>
-                      );
-                    }}
-                  />
-                </div>
+                        <FormMessage>{errors.description?.message}</FormMessage>
+                      </FormItem>
+                    );
+                  }}
+                />
+                <FormField
+                  control={control}
+                  name="duration"
+                  render={({ field: { onChange, value }, formState: { errors } }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel>Duration</FormLabel>
+                        <FormControl>
+                          <Input onChange={onChange} value={value} />
+                        </FormControl>
+
+                        <FormMessage>{errors.description?.message}</FormMessage>
+                      </FormItem>
+                    );
+                  }}
+                />
                 <div className="col-span-2">
                   <FormLabel className="mb-3 block">Overview</FormLabel>
 

@@ -28,13 +28,15 @@ const SideBarContent = () => {
             return (
               <Link key={item?.id} href={item?.link}>
                 <span
-                  className={`sidenav-icon flex items-center gap-2 rounded-md px-3 py-2  font-medium text-muted  hover:text-white hover:bg-gray-800  transition-colors duration-100 ease-in ${
+                  className={`sidenav-icon flex items-center gap-2 rounded-md px-3 py-2  font-medium text-muted  hover:text-white hover:bg-primary  transition-colors duration-100 ease-in ${
                     segment === item.link.split('/')?.[1]
-                      ? 'bg-gray-800 text-white  active-icon'
+                      ? 'bg-primary text-white  active-icon'
                       : 'bg-transparent'
                   }`}
                 >
-                  <Icons iconName={iconName} className="mr-2 h-8 w-8 " /> {/* Dynamic icon */}
+                  <div className="w-8">
+                    <Icons iconName={iconName} className="mr-2 h-8 w-8 " /> {/* Dynamic icon */}
+                  </div>
                   <span>{item?.title}</span>
                 </span>
               </Link>

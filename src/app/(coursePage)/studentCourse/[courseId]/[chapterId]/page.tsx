@@ -10,7 +10,6 @@ import { toast } from '@/components/ui/use-toast';
 import { useApiMutation } from '@/lib/dashboard/client/user';
 import { selectedAnswerAtom, selectedSectionAtom } from '@/store/course';
 
-import ProgressSection from './_components/ProgressSection';
 import Question from './_components/Question';
 import SideBarAllSection from './_components/SideBarAllSection';
 import useGetSectionListData from './utils/useSectionsListContent';
@@ -26,6 +25,14 @@ const Page = () => {
 
   const [selectedItem, setSelectedItem] = useAtom(selectedSectionAtom);
   const [selectedAnswer] = useAtom(selectedAnswerAtom);
+  console.log({ selectedItem });
+  const {
+    mutate: updateLastSeenSection,
+    //isLoading: editingCourse,
+  } = useApiMutation<any>({
+    endpoint: `/courses/section/updateLastSeen/`,
+    method: 'post',
+  });
 
   console.log({ selectedAnswer });
 
@@ -34,6 +41,16 @@ const Page = () => {
       setSelectedItem(null);
     };
   }, []);
+
+  useEffect(() => {
+    if (selectedItem?.id && chapterId) {
+      const payload = {
+        chapterId: chapterId,
+        sectionId: selectedItem?.id,
+      };
+      updateLastSeenSection(payload);
+    }
+  }, [selectedItem, chapterId]);
 
   const {
     mutate: updateProgress,
@@ -129,27 +146,29 @@ const Page = () => {
       ) : (
         <>
           <SideBarAllSection allSections={sectionsData} />
-          <div className="flex-1 p-4 rounded-xl border bg-white h-[95vh] overflow-hidden overflow-y-auto">
+          <div className="flex-1 p-4 rounded-xl border bg-white h-[95vh] overflow-hidden overflow-y-auto flex flex-col">
             <div className="flex justify-between pb-4  border-b border-gray-300">
-              <p className="text-2xl text-primary">{chapterName}</p>
+              <p className="text-xl text-primary max-w-[70%]">{chapterName}</p>
             </div>
 
-            {selectedItem?.question ? (
-              <Question questionData={selectedItem} />
-            ) : (
-              <div
-                className="text-sm"
-                contentEditable="true"
-                dangerouslySetInnerHTML={{ __html: selectedItem?.description }}
-              ></div>
-            )}
-            <div className="flex justify-between my-4">
+            <div className="flex-1 overflow-y-auto mt-4 px-8">
+              {selectedItem?.question ? (
+                <Question questionData={selectedItem} />
+              ) : (
+                <div
+                  className="text-[15px]"
+                  contentEditable="true"
+                  dangerouslySetInnerHTML={{ __html: selectedItem?.description }}
+                ></div>
+              )}
+            </div>
+
+            <div className="flex justify-center gap-4 py-4 border-t border-gray-300">
               <Button variant="secondary">Prev</Button>
               <Button onClick={() => updateCourseProgress()}>
-                {updatingProgress || checkingQuizAnswer ? 'updating...' : 'Next'}
+                {updatingProgress || checkingQuizAnswer ? 'updating...' : 'Save and continue'}
               </Button>
             </div>
-            <ProgressSection />
 
             {isUpdateError && <AlertDestructive error={updateError} />}
           </div>

@@ -17,7 +17,7 @@ html {
     --popover: #ffffff;
     --popover-foreground: #232323;
 
-    --primary: #f17f0e;
+    --primary: #637C8F;
     --primary-foreground: #f8fafc;
 
     --secondary: #f1f5f9;
@@ -96,7 +96,7 @@ html {
   }
   /* this is for the react-phone-input-2 */
   .custom-phone-input {
-    @apply dark:bg-background w-full h-14 pr-4 pl-16 py-2 rounded-md  border-2  !important;
+    @apply dark:bg-background w-full h-10 pr-4 pl-16 py-2 rounded-md  border-2  !important;
   }
   .custom-phone-input + .flag-dropdown .selected-flag {
     @apply dark:bg-background !important;
@@ -113,7 +113,7 @@ html {
 
   /* this is for the react-select */
   .my-react-select-container .my-react-select__control {
-    @apply bg-white p-2 dark:bg-background border-2 dark:border-2 dark:border-white border-neutral-300  hover:border-neutral-400 dark:hover:border-neutral-500;
+    @apply bg-white dark:bg-background border-2 dark:border-2 dark:border-white border-neutral-300  hover:border-neutral-400 dark:hover:border-neutral-500;
   }
 
   .my-react-select-container .my-react-select__control--is-focused {
@@ -135,7 +135,7 @@ html {
   .my-react-select-container .my-react-select__input-container,
   .my-react-select-container .my-react-select__placeholder,
   .my-react-select-container .my-react-select__single-value {
-    @apply text-neutral-600 dark:text-neutral-200;
+    @apply text-neutral-600 dark:text-neutral-200 ;
   }
 }
 
@@ -347,4 +347,8 @@ html {
 }
 .caption {
   font-size: 0.8em;
+}
+.ql-container{
+  height: auto !important;
+  min-height: 100px !important;
 }

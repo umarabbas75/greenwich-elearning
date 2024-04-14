@@ -1,14 +1,16 @@
 'use client';
 import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
+import { useQueryClient } from 'react-query';
 
 import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
 import TableComponent from '@/components/common/Table';
 import TableActions from '@/components/common/TableActions';
 import { useToast } from '@/components/ui/use-toast';
-import { useDeleteUser } from '@/lib/dashboard/client/user';
+import { useApiMutation } from '@/lib/dashboard/client/user';
 import { addCourseModalAtom, confirmationModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
@@ -64,6 +66,21 @@ const CourseTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) 
   const columns = [
     // Accessor Columns
 
+    columnHelper.accessor('image', {
+      header: 'Image',
+      cell: (props) => {
+        return (
+          <Image
+            src={props.row.original.image}
+            alt="course"
+            width={50}
+            height={50}
+            className="rounded-full"
+          />
+        );
+      },
+      footer: (props) => props.column.id,
+    }),
     columnHelper.accessor('title', {
       header: 'Title',
       cell: (props) => {
@@ -80,6 +97,12 @@ const CourseTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) 
       id: 'description',
       header: 'Description',
       cell: (props) => <h1>{props.row.original.description}</h1>,
+      footer: (props) => props.column.id,
+    }),
+    columnHelper.accessor('duration', {
+      id: 'duration',
+      header: 'Duration',
+      cell: (props) => <h1>{props.row.original.duration}</h1>,
       footer: (props) => props.column.id,
     }),
 
@@ -103,33 +126,36 @@ const CourseTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) 
     manualPagination: true,
     debugTable: true,
   });
+  const queryClient = useQueryClient();
 
-  const handleDeleteSuccess = () => {
-    setConfirmState({
-      ...confirmState,
-      status: false,
-      data: null,
-    });
-    setConfirmState({ status: false, data: null });
-    toast({
-      variant: 'success',
-      title: 'Success ',
-      description: 'Data deleted successfully',
-    });
-  };
-  const handleDeleteError = (data: any) => {
-    toast({
-      variant: 'destructive',
-      title: 'Error ',
-      description: data?.response?.data?.type?.[0] ?? 'Some error occured',
-    });
-  };
-
-  const { mutate: deleteUser, isLoading: deletingUser } = useDeleteUser(
-    handleDeleteSuccess,
-    handleDeleteError,
-  );
-
+  const { mutate: deleteCourse, isLoading: deletingCourse } = useApiMutation({
+    method: 'delete',
+    endpoint: `/courses/${confirmState?.data?.id}`,
+    config: {
+      onSuccess: () => {
+        setConfirmState({
+          ...confirmState,
+          status: false,
+          data: null,
+        });
+        toast({
+          variant: 'success',
+          title: 'Success ',
+          description: 'Data deleted successfully',
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['get-courses'],
+        });
+      },
+      onError: (data) => {
+        toast({
+          variant: 'destructive',
+          title: 'Error ',
+          description: data?.response?.data?.type?.[0] ?? 'Some error occurred',
+        });
+      },
+    },
+  });
   const onRowClick = (data: Course) => {
     console.log({ data });
     router.push(`/course/${data.id}`);
@@ -154,10 +180,10 @@ const CourseTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) 
           primaryAction={{
             label: 'Delete',
             onClick: () => {
-              deleteUser(confirmState.data.id);
+              deleteCourse(confirmState.data.id);
               //setConfirmState({ status: false, data: null });
             },
-            loading: deletingUser,
+            loading: deletingCourse,
           }}
           secondaryAction={{
             label: 'Cancel',

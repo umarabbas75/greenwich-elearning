@@ -2,12 +2,13 @@
 import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
 import { FC } from 'react';
+import { useQueryClient } from 'react-query';
 
 import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
 import TableComponent from '@/components/common/Table';
 import TableActions from '@/components/common/TableActions';
 import { useToast } from '@/components/ui/use-toast';
-import { useDeleteUser } from '@/lib/dashboard/client/user';
+import { useApiMutation } from '@/lib/dashboard/client/user';
 import { confirmationModalAtom, userModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
@@ -117,36 +118,41 @@ const UserTable: FC<any> = ({ data, pagination, setPagination, isLoading }) => {
     debugTable: true,
   });
 
-  const handleDeleteSuccess = () => {
-    setConfirmState({
-      ...confirmState,
-      status: false,
-      data: null,
-    });
-    setConfirmState({ status: false, data: null });
-    toast({
-      variant: 'success',
-      title: 'Success ',
-      description: 'Data deleted successfully',
-    });
-  };
-  const handleDeleteError = (data: any) => {
-    toast({
-      variant: 'destructive',
-      title: 'Error ',
-      description: data?.response?.data?.type?.[0] ?? 'Some error occured',
-    });
-  };
+  const queryClient = useQueryClient();
 
-  const { mutate: deleteUser, isLoading: deletingUser } = useDeleteUser(
-    handleDeleteSuccess,
-    handleDeleteError,
-  );
+  const { mutate: deleteQuiz, isLoading: deletingQuiz } = useApiMutation({
+    method: 'delete',
+    endpoint: `/quizzes/${confirmState?.data?.id}`,
+    config: {
+      onSuccess: () => {
+        setConfirmState({
+          ...confirmState,
+          status: false,
+          data: null,
+        });
+        toast({
+          variant: 'success',
+          title: 'Success ',
+          description: 'Data deleted successfully',
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['get-quizzes'],
+        });
+      },
+      onError: (data) => {
+        toast({
+          variant: 'destructive',
+          title: 'Error ',
+          description: data?.response?.data?.type?.[0] ?? 'Some error occurred',
+        });
+      },
+    },
+  });
 
   return (
     <>
       <div className="p-2 border rounded">
-        <p className="pl-2 font-medium mb-4">Users</p>
+        <p className="pl-2 font-medium mb-4">Quizzes</p>
         {isLoading ? 'loading...' : <TableComponent table={table} />}
 
         <div className="h-4" />
@@ -158,14 +164,14 @@ const UserTable: FC<any> = ({ data, pagination, setPagination, isLoading }) => {
           open={confirmState.status}
           onClose={() => setConfirmState({ status: false, data: null })}
           title={'Delete User'}
-          content={`Are you sure you want to delete this user?`}
+          content={`Are you sure you want to delete this quiz?`}
           primaryAction={{
             label: 'Delete',
             onClick: () => {
-              deleteUser(confirmState.data.id);
+              deleteQuiz(confirmState.data.id);
               //setConfirmState({ status: false, data: null });
             },
-            loading: deletingUser,
+            loading: deletingQuiz,
           }}
           secondaryAction={{
             label: 'Cancel',
