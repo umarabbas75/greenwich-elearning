@@ -7,6 +7,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useApiGet } from '@/lib/dashboard/client/user';
 
 import ActiveCourses from './_components/ActiveCourses';
+import CompletedCourses from './_components/CompletedCourses';
 
 const Page = () => {
   const router = useRouter();
@@ -32,13 +33,21 @@ const Page = () => {
         }}
       >
         <TabsList className="grid w-[400px] grid-cols-2">
-          <TabsTrigger value="active">Enrolled Courses</TabsTrigger>
+          <TabsTrigger value="active">Active Courses</TabsTrigger>
 
           <TabsTrigger value="completed">Completed Courses</TabsTrigger>
         </TabsList>
 
-        {(type == 'active' || !type) && <ActiveCourses assignedCourses={assignedCourses} />}
-        {type == 'completed' && <div>completed</div>}
+        {(type == 'active' || !type) && (
+          <ActiveCourses
+            assignedCourses={assignedCourses?.data?.filter((item: any) => item?.percentage !== 100)}
+          />
+        )}
+        {type == 'completed' && (
+          <CompletedCourses
+            assignedCourses={assignedCourses?.data?.filter((item: any) => item?.percentage === 100)}
+          />
+        )}
       </Tabs>
     </div>
   );

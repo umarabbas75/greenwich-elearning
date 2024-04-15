@@ -2,7 +2,7 @@ import React from 'react';
 
 import SingleCourse from './SingleCourse';
 
-const ActiveCourses = ({ assignedCourses }: any) => {
+const CompletedCourses = ({ assignedCourses }: any) => {
   return (
     <div className="grid grid-cols-4 gap-4 mt-4">
       {assignedCourses?.map((item: any) => {
@@ -13,4 +13,4 @@ const ActiveCourses = ({ assignedCourses }: any) => {
   );
 };
 
-export default ActiveCourses;
+export default CompletedCourses;

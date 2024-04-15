@@ -63,20 +63,14 @@ export const sidebarMenu: SidebarMenu = {
     {
       id: 'studentCourses',
       title: 'Courses',
-      icon: 'dashboard',
+      icon: 'book',
       link: '/studentCourses',
     },
     {
       id: 'forums',
-      title: 'Forums',
-      icon: 'dashboard',
+      title: 'Forum',
+      icon: 'forum',
       link: '/forum',
-    },
-    {
-      id: 'assessment',
-      title: 'Assessment',
-      icon: 'dashboard',
-      link: '/assessment',
     },
   ],
 };

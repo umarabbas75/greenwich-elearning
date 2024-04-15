@@ -6,6 +6,8 @@ import React from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useApiGet } from '@/lib/dashboard/client/user';
 
+import { ModulesDataResponse } from '../page';
+
 export type Chapter = {
   title: string;
   description: string;
@@ -20,7 +22,14 @@ export type ChaptersDataResponse = {
   statusCode: number;
   data: Chapter[];
 };
-const CourseContent = ({ modulesData }: any) => {
+const CourseContent = () => {
+  const params = useParams();
+  const { courseId } = params;
+  const { data: modulesData, isLoading: isModuleLoading } = useApiGet<ModulesDataResponse, Error>({
+    endpoint: `/courses/allModules/${courseId}`,
+    queryKey: ['get-modules', courseId],
+  });
+
   const [moduleId, setModuleId] = React.useState<string>();
 
   const search = useSearchParams();
@@ -29,18 +38,21 @@ const CourseContent = ({ modulesData }: any) => {
 
   console.log({ percentage, title });
 
-  const { courseId } = useParams();
   const renderChaptersList = (chapters: any) => {
     console.log({ chapters });
-    return chapters?.map((item: any, index: number) => {
-      console.log('chapter item', item);
+    return chapters?.map((item: any, index: number, arr: any) => {
+      console.log('chapter item', arr[index + 1]);
       return (
         <Link
           className="text-black"
           key={index}
           href={{
             pathname: `/studentCourse/${courseId}/${item.id}`,
-            query: { chapterName: item.title, courseName: title, coursePercentage: percentage, courseId },
+            query: {
+              chapterName: item.title,
+              courseId,
+              moduleId,
+            },
           }}
         >
           <li className="text-black">{item.title}</li>
@@ -64,30 +76,36 @@ const CourseContent = ({ modulesData }: any) => {
 
   return (
     <div className="p-4 font-sans rounded-xl border bg-white">
-      <div className="flex items-center justify-between">
-        <h1 className="text-primary text-xl font-bold mb-3">Overview</h1>
-        <p className="text-base font-bold">92 Lectures</p>
-      </div>
+      {isModuleLoading ? (
+        'loading'
+      ) : (
+        <>
+          <div className="flex items-center justify-between">
+            <h1 className="text-primary text-xl font-bold mb-3">Content</h1>
+            <p className="text-base font-bold">{modulesData?.data?.length} Modules</p>
+          </div>
 
-      <Accordion
-        type="single"
-        collapsible
-        className="w-full"
-        value={moduleId}
-        onValueChange={(e) => setAccordionValue(e)}
-      >
-        {modulesData?.data?.map((item: any) => {
-          return (
-            <AccordionItem key={item.id} value={item.id}>
-              <AccordionTrigger>{item.title}</AccordionTrigger>
-              <AccordionContent>
-                {/* <ul className="list-disc">{renderChaptersList(item.chapters)}</ul> */}
-                {isLoading ? 'loading' : renderChaptersList(chaptersData?.data)}
-              </AccordionContent>
-            </AccordionItem>
-          );
-        })}
-      </Accordion>
+          <Accordion
+            type="single"
+            collapsible
+            className="w-full"
+            value={moduleId}
+            onValueChange={(e) => setAccordionValue(e)}
+          >
+            {modulesData?.data?.map((item: any) => {
+              return (
+                <AccordionItem key={item.id} value={item.id}>
+                  <AccordionTrigger>{item.title}</AccordionTrigger>
+                  <AccordionContent>
+                    {/* <ul className="list-disc">{renderChaptersList(item.chapters)}</ul> */}
+                    {isLoading ? 'loading' : renderChaptersList(chaptersData?.data)}
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
+        </>
+      )}
     </div>
   );
 };

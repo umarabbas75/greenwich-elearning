@@ -22,7 +22,7 @@ const SingleCourse = ({ item }: any) => {
 
         <hr className="h-px my-4 bg-gray-900 border-0 dark:bg-gray-700" />
         <div className="flex items-center justify-between mb-4">
-          <p>{item?.description}</p>
+          <p className="line-clamp-2">{item?.description}</p>
         </div>
         <div className="flex flex-col items-start gap-1">
           <Progress value={item.percentage} className="h-2" />
