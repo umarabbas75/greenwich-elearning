@@ -1,12 +1,12 @@
-export type Status = 'Offline' | 'Running' | 'Active' | 'Inactive' | 'Working' | 'ERROR' | 'Stop';
+// export type Status = 'Offline' | 'Running' | 'Active' | 'Inactive' | 'Working' | 'ERROR' | 'Stop';
 
-type StatusColorMap = {
-  [key in Status]: string;
-};
+// type StatusColorMap = {
+//   [key in Status]: string;
+// };
 
-const statusColorMap: StatusColorMap = {
-  Offline: '#ffbb77',
-  Running: '#d6ecb9',
+const statusColorMap: any = {
+  inActive: '#ffbb77',
+  active: '#d6ecb9',
   Active: '#d6ecb9',
   Inactive: 'gray',
   Working: '#76d4ff',
@@ -14,7 +14,7 @@ const statusColorMap: StatusColorMap = {
   Stop: '#ff0000',
 };
 
-const getStatusColor = (status: Status): string => {
+const getStatusColor = (status: any): string => {
   return statusColorMap[status] || 'gray';
 };
 

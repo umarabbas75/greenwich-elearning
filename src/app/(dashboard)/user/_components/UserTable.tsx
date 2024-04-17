@@ -87,7 +87,7 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
     // Accessor Columns
     columnHelper.accessor('photo', {
       header: 'Photo',
-      cell: (props) => {
+      cell: () => {
         return (
           <h1 className="flex  flex-col justify-center w-fit text-center items-center">
             {/* {props.row.original.photo ? (

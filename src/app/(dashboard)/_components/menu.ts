@@ -52,6 +52,12 @@ export const sidebarMenu: SidebarMenu = {
       link: '/setting/users',
       role: ['admin'],
     },
+    {
+      id: 'forums',
+      title: 'Forum',
+      icon: 'forum',
+      link: '/forum',
+    },
   ],
   user: [
     {

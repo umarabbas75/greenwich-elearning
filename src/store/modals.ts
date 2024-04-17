@@ -10,9 +10,11 @@ const createModalAtom = () => {
 };
 
 export const userModalAtom = createModalAtom();
+export const forumModalAtom = createModalAtom();
 export const viewUserCoursesModal = createModalAtom();
 export const viewAssignedQuizzesModal = createModalAtom();
 export const confirmationModalAtom = createModalAtom();
+export const updateStatusModalAtom = createModalAtom();
 export const sessionExpireModalAtom = createModalAtom();
 export const sideBarDrawerAtom = createModalAtom();
 export const addCourseModalAtom = createModalAtom();
