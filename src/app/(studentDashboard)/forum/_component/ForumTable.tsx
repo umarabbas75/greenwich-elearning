@@ -1,6 +1,8 @@
 'use client';
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
@@ -8,7 +10,6 @@ import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
 import StatusComp from '@/components/common/Status';
 import TableComponent from '@/components/common/Table';
 import TableActions from '@/components/common/TableActions';
-import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { useApiMutation } from '@/lib/dashboard/client/user';
 import { confirmationModalAtom, forumModalAtom, updateStatusModalAtom } from '@/store/modals';
@@ -23,9 +24,11 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
   const [forumState, setForumState] = useAtom(forumModalAtom);
   const [selectedForumThread, setSelectedForumThread] = useState('');
   const queryClient = useQueryClient();
+  const { data: userData } = useSession();
+
   const [updateStatusState, setUpdateStatusState] = useAtom(updateStatusModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
-
+  const router = useRouter();
   const { mutate: changeForumStatus, isLoading: changingForumStatus } = useApiMutation<any>({
     endpoint: `/forum-thread/update/${selectedForumThread}`,
     method: 'put',
@@ -98,6 +101,7 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
             });
           }}
         >
+          <Icons iconName="toggle" />
           {changingForumStatus ? 'loading...' : data.status === 'inActive' ? 'Activate' : 'Deactivate'}
         </span>
 
@@ -136,17 +140,17 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
 
   const columns = [
     // Accessor Columns
-    columnHelper.accessor('favorite', {
-      header: '',
-      cell: () => {
-        return (
-          <div className="cursor-pointer group">
-            <Icons iconName="star" className=" group-hover:opacity-100" />
-          </div>
-        );
-      },
-      footer: (props) => props.column.id,
-    }),
+    // columnHelper.accessor('favorite', {
+    //   header: '',
+    //   cell: () => {
+    //     return (
+    //       <div className="cursor-pointer group">
+    //         <Icons iconName="star" className=" group-hover:opacity-100" />
+    //       </div>
+    //     );
+    //   },
+    //   footer: (props) => props.column.id,
+    // }),
     columnHelper.accessor('title', {
       header: 'Title',
       cell: (props) => {
@@ -177,20 +181,30 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
     columnHelper.accessor('lastPostBy', {
       id: 'lastPostBy',
       header: 'Last post',
-      cell: (props) => <h1>{props.row.original.lastPostBy}</h1>,
+      cell: (props) => (
+        <h1>
+          {props.row.original.ForumComment?.[props.row.original.ForumComment?.length - 1]?.user?.firstName}
+        </h1>
+      ),
       footer: (props) => props.column.id,
     }),
 
     columnHelper.accessor('lastPostDate', {
       id: 'lastPostDate',
       header: 'Last post date',
-      cell: (props) => <h1>{props.row.original.lastPostDate}</h1>,
+      cell: (props) => (
+        <h1>
+          {formatDate(
+            props.row.original.ForumComment?.[props.row.original.ForumComment?.length - 1]?.createdAt,
+          )}
+        </h1>
+      ),
       footer: (props) => props.column.id,
     }),
     columnHelper.accessor('numOfReplies', {
       id: 'numOfReplies',
       header: 'Replies',
-      cell: (props) => <h1>{props.row.original.numOfReplies}</h1>,
+      cell: (props) => <h1>{props.row.original?.ForumComment?.length}</h1>,
       footer: (props) => props.column.id,
     }),
     columnHelper.accessor('status', {
@@ -201,7 +215,8 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
     }),
     {
       id: 'actions',
-      cell: (props: any) => <TableActions>{renderActions(props.row.original)}</TableActions>,
+      cell: (props: any) =>
+        userData?.user?.role === 'admin' && <TableActions>{renderActions(props.row.original)}</TableActions>,
     },
   ];
 
@@ -217,32 +232,20 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
     manualPagination: true,
     debugTable: true,
   });
+  const onRowClick = (data: any) => {
+    router.push(`/forum/${data.id}`);
+  };
 
   return (
     <>
+      {forumState.status && <ForumModal />}
+
       <div className=" border rounded bg-white p-4 pt-0">
-        <div className="flex justify-between items-center">
-          <p className="pl-2  my-8 font-medium  text-3xl">News & Announcements Forum</p>
-          <Button
-            onClick={() => {
-              setForumState({
-                data: null,
-                status: true,
-              });
-            }}
-          >
-            Add New Thread
-          </Button>
-        </div>
-        <p className="text-gray-600 mb-4">
-          This forum will contain news items and important announcements (often concerning examinations).
-          Please check this forum regularly for up-to-date information.
-        </p>
-        {isLoading ? 'loading...' : <TableComponent table={table} />}
+        {isLoading ? 'loading...' : <TableComponent table={table} onRowClick={onRowClick} />}
 
         <div className="h-4" />
       </div>
-      {forumState.status && <ForumModal />}
+
       {updateStatusState.status && (
         <ConfirmationModal
           open={updateStatusState.status}

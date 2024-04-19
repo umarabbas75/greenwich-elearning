@@ -1,13 +1,21 @@
 'use client';
 
+import { useAtom } from 'jotai';
 import Error from 'next/error';
+import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { useApiGet } from '@/lib/dashboard/client/user';
+import { forumModalAtom } from '@/store/modals';
 
+import ForumModal from './_component/ForumModal';
 import ForumTable from './_component/ForumTable';
 
 const Page = () => {
+  const [forumState, setForumState] = useAtom(forumModalAtom);
+  const { data: userData } = useSession();
+
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
@@ -21,9 +29,25 @@ const Page = () => {
 
   return (
     <div>
-      <div className="grid grid-cols-2 my-2 mr-2 items-center">
-        <div className="col-span-2 md:col-span-1 flex justify-start"></div>
+      <div className="flex justify-between items-center">
+        <p className="pl-2  my-8 font-medium  text-3xl">News & Announcements Forum</p>
+        {userData?.user?.role === 'admin' && (
+          <Button
+            onClick={() => {
+              setForumState({
+                data: null,
+                status: true,
+              });
+            }}
+          >
+            Add New Thread
+          </Button>
+        )}
       </div>
+      <p className="text-gray-600 mb-4">
+        This forum will contain news items and important announcements (often concerning examinations). Please
+        check this forum regularly for up-to-date information.
+      </p>
       {/* {isError && <AlertDestructive error={error} />} */}
 
       {forumThreads && forumThreads.data && forumThreads.data.length > 0 ? (
@@ -40,6 +64,8 @@ const Page = () => {
           </div>
         </div>
       )}
+
+      {forumState.status && <ForumModal />}
     </div>
   );
 };

@@ -100,7 +100,7 @@ const ForumModal = () => {
 
   const { data, isLoading: fetchingForum } = useApiGet<any>({
     endpoint: `/forum-thread/${forumState?.data?.id}`,
-    queryKey: ['get-user', forumState?.data?.id],
+    queryKey: ['get-forum-thread', forumState?.data?.id],
     config: {
       enabled: !!forumState?.data?.id,
       onSuccess: (data: any) => {
@@ -115,7 +115,11 @@ const ForumModal = () => {
 
   const onSubmit = (values: any) => {
     console.log('values', values);
-    data ? editForum(values) : addForum(values);
+    const payload = {
+      title: values?.title,
+      content: values?.content,
+    };
+    data ? editForum(payload) : addForum(payload);
   };
 
   return (
