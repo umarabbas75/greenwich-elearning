@@ -42,10 +42,97 @@ export const Icons = ({
     | 'cancel'
     | 'forum'
     | 'toggle'
+    | 'discussion'
+    | 'close'
+    | 'reply'
     | 'book'
     | 'setting';
 } & { fill?: string } & IconProps) => {
   const icons = {
+    reply: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
+        width="24px"
+        height="24px"
+        viewBox="0 0 24 24"
+        version="1.1"
+        {...props}
+      >
+        <title>Stockholm-icons / Communication / Reply</title>
+        <desc>Created with Sketch.</desc>
+        <defs></defs>
+        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+          <rect x="0" y="0" width="24" height="24"></rect>
+          <path
+            d="M21.4451171,17.7910156 C21.4451171,16.9707031 21.6208984,13.7333984 19.0671874,11.1650391 C17.3484374,9.43652344 14.7761718,9.13671875 11.6999999,9 L11.6999999,4.69307548 C11.6999999,4.27886191 11.3642135,3.94307548 10.9499999,3.94307548 C10.7636897,3.94307548 10.584049,4.01242035 10.4460626,4.13760526 L3.30599678,10.6152626 C2.99921905,10.8935795 2.976147,11.3678924 3.2544639,11.6746702 C3.26907199,11.6907721 3.28437331,11.7062312 3.30032452,11.7210037 L10.4403903,18.333467 C10.7442966,18.6149166 11.2188212,18.596712 11.5002708,18.2928057 C11.628669,18.1541628 11.6999999,17.9721616 11.6999999,17.7831961 L11.6999999,13.5 C13.6531249,13.5537109 15.0443703,13.6779456 16.3083984,14.0800781 C18.1284272,14.6590944 19.5349747,16.3018455 20.5280411,19.0083314 L20.5280247,19.0083374 C20.6363903,19.3036749 20.9175496,19.5 21.2321404,19.5 L21.4499999,19.5 C21.4499999,19.0068359 21.4451171,18.2255859 21.4451171,17.7910156 Z"
+            fill="darkgray"
+            fill-rule="nonzero"
+          ></path>
+        </g>
+      </svg>
+    ),
+    close: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
+        width="24px"
+        height="24px"
+        viewBox="0 0 24 24"
+        version="1.1"
+        {...props}
+      >
+        <title>Stockholm-icons / Navigation / Close</title>
+        <desc>Created with Sketch.</desc>
+        <defs></defs>
+        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+          <g
+            transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) translate(4.000000, 4.000000)"
+            fill="#000000"
+          >
+            <rect x="0" y="7" width="16" height="2" rx="1"></rect>
+            <rect
+              opacity="0.3"
+              transform="translate(8.000000, 8.000000) rotate(-270.000000) translate(-8.000000, -8.000000) "
+              x="0"
+              y="7"
+              width="16"
+              height="2"
+              rx="1"
+            ></rect>
+          </g>
+        </g>
+      </svg>
+    ),
+    discussion: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
+        viewBox="0 0 24 24"
+        version="1.1"
+        {...props}
+      >
+        <title>Stockholm-icons / Communication / Chat6</title>
+        <desc>Created with Sketch.</desc>
+        <defs></defs>
+        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+          <rect x="0" y="0" width="24" height="24"></rect>
+          <path
+            opacity="0.3"
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M14.4862 18L12.7975 21.0566C12.5304 21.54 11.922 21.7153 11.4386 21.4483C11.2977 21.3704 11.1777 21.2597 11.0887 21.1255L9.01653 18H5C3.34315 18 2 16.6569 2 15V6C2 4.34315 3.34315 3 5 3H19C20.6569 3 22 4.34315 22 6V15C22 16.6569 20.6569 18 19 18H14.4862Z"
+            fill="darkgray"
+          ></path>
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M6 7H15C15.5523 7 16 7.44772 16 8C16 8.55228 15.5523 9 15 9H6C5.44772 9 5 8.55228 5 8C5 7.44772 5.44772 7 6 7ZM6 11H11C11.5523 11 12 11.4477 12 12C12 12.5523 11.5523 13 11 13H6C5.44772 13 5 12.5523 5 12C5 11.4477 5.44772 11 6 11Z"
+            fill="darkgray"
+          ></path>
+        </g>
+      </svg>
+    ),
     toggle: (
       <svg
         xmlns="http://www.w3.org/2000/svg"

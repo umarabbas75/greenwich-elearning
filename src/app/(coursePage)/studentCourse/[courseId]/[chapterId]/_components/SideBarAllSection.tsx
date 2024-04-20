@@ -78,7 +78,7 @@ const SideBarAllSection = ({ allSections }: any) => {
                               </div>
                             </div>
                             <div>
-                              <div className="title line-clamp-1">{item.title}</div>
+                              <div className="title text-normal line-clamp-1">{item.title}</div>
                             </div>
                           </div>
                         </>

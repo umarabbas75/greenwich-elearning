@@ -14,6 +14,7 @@ export const forumModalAtom = createModalAtom();
 export const viewUserCoursesModal = createModalAtom();
 export const viewAssignedQuizzesModal = createModalAtom();
 export const confirmationModalAtom = createModalAtom();
+export const createNewPostModalAtom = createModalAtom();
 export const updateStatusModalAtom = createModalAtom();
 export const sessionExpireModalAtom = createModalAtom();
 export const sideBarDrawerAtom = createModalAtom();

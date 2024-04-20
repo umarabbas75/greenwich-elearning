@@ -18,11 +18,11 @@ const SingleCourse = ({ item }: any) => {
           <p>{item?.totalSections} Lessons</p>
           <p>{item?.duration}</p>
         </div>
-        <p className="font-bold text-lg">{item.title}</p>
+        <p className="font-bold text-base line-clamp-2">{item.title}</p>
 
         <hr className="h-px my-4 bg-gray-900 border-0 dark:bg-gray-700" />
         <div className="flex items-center justify-between mb-4">
-          <p className="line-clamp-2">{item?.description}</p>
+          <p className="line-clamp-2 text-sm">{item?.description}</p>
         </div>
         <div className="flex flex-col items-start gap-1">
           <Progress value={item.percentage} className="h-2" />

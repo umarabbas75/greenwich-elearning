@@ -44,6 +44,7 @@ const ProgressCourse = () => {
         <div className="mt-4">
           <ProgressBar percentage={parseInt(courseData?.percentage)} className="h-1" />
           <div className="mt-1 flex gap-1 items-center">
+            Course is
             <span className=" font-semibold">{parseInt(courseData?.percentage ?? 0).toFixed(0)}%</span>
             <span>complete</span>
           </div>
