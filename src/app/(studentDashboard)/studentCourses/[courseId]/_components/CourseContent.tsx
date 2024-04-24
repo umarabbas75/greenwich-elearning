@@ -82,7 +82,7 @@ const CourseContent = () => {
         <>
           <div className="flex items-center justify-between">
             <h1 className="text-primary text-xl font-bold mb-3">Content</h1>
-            <p className="text-base font-bold">{modulesData?.data?.length} Modules</p>
+            <p className="text-base font-bold">{modulesData?.data?.length} Units</p>
           </div>
 
           <Accordion

@@ -70,7 +70,7 @@ const ViewUserCoursesModal = () => {
     columnHelper.accessor('percentage', {
       id: 'percentage',
       header: 'Completed',
-      cell: (props) => <h1>{props.row.original.percentage}%</h1>,
+      cell: (props) => <h1>{props.row.original.percentage?.toFixed(2)}%</h1>,
       footer: (props) => props.column.id,
     }),
 

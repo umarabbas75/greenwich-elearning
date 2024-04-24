@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import CourseContent from './_components/CourseContent';
+import Grades from './_components/Grades';
 
 export type Module = {
   title: string;
@@ -33,14 +34,16 @@ const Page = () => {
           setType(route);
         }}
       >
-        <TabsList className="grid w-[400px] grid-cols-3 mb-4">
+        <TabsList className="grid w-[600px] grid-cols-4 mb-4">
           <TabsTrigger value="content">Content</TabsTrigger>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="assessment">Assessment</TabsTrigger>
+          <TabsTrigger value="grades">Grades</TabsTrigger>
         </TabsList>
 
         {type == 'content' && <CourseContent />}
         {type === 'overview' && <CourseOverview />}
+        {type === 'grades' && <Grades />}
       </Tabs>
     </div>
   );

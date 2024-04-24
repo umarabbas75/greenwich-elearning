@@ -12,6 +12,7 @@ export default function QueryProvider({ children }: any) {
           queries: {
             refetchOnWindowFocus: false, // default: true
             select: defaultSelect,
+            keepPreviousData: true,
           },
         },
         //mutationCache,

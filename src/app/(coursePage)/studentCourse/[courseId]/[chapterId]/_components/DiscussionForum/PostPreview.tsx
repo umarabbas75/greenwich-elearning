@@ -35,7 +35,6 @@ const PostPreview = ({ onClick, item }: any) => {
   //     },
   //   },
   // });
-  console.log({ confirmState });
 
   const { mutate: deletePost, isLoading: deletingPost } = useApiMutation({
     method: 'delete',

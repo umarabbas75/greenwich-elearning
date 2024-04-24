@@ -17,7 +17,6 @@ import { Icons } from '@/utils/icon';
 import { getNameInitials } from '@/utils/utils';
 
 const PostDetails = ({ showPostDetails, setShowPostDetails, setShowDiscussion }: any) => {
-  console.log({ showPostDetails });
   const queryClient = useQueryClient();
   const { courseId } = useParams();
   const [comment, setComment] = useState('');
@@ -32,6 +31,7 @@ const PostDetails = ({ showPostDetails, setShowPostDetails, setShowDiscussion }:
       enabled: !!showPostDetails?.id,
     },
   });
+  console.log({ fetchingPostComments });
 
   const { mutate: replyOnPost, isLoading: replyingOnPost } = useApiMutation({
     method: 'post',
@@ -93,7 +93,6 @@ const PostDetails = ({ showPostDetails, setShowPostDetails, setShowDiscussion }:
     },
   });
 
-  console.log({ postComments, fetchingPostComments });
   return (
     <div>
       <div className="flex justify-between mb-6">

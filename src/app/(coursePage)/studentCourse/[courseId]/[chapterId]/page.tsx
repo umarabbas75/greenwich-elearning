@@ -27,9 +27,6 @@ const Page = () => {
   const chapterName = search.get('chapterName');
 
   const { data: userData } = useSession();
-  console.log({ courseId });
-
-  // const { sectionsData, isLoading } = useGetSectionListData({ chapterId });
 
   const {
     data: sectionsData,
@@ -45,7 +42,21 @@ const Page = () => {
     },
   });
 
-  const { data: allPosts, isLoading: postsLoading } = useApiGet<any, Error>({
+  let trueCount = 0;
+  let falseCount = 0;
+
+  sectionsData?.forEach((item: any) => {
+    // eslint-disable-next-line no-prototype-builtins
+    if ((item as any)?.hasOwnProperty('isCorrect')) {
+      if (item?.isCorrect === true) {
+        trueCount++;
+      } else {
+        falseCount++;
+      }
+    }
+  });
+
+  const { data: allPosts } = useApiGet<any, Error>({
     endpoint: `/courses/posts/${courseId}`,
     queryKey: ['posts', courseId],
     config: {
@@ -54,27 +65,23 @@ const Page = () => {
       },
     },
   });
-  console.log({ allPosts, postsLoading });
 
   const {
     data: lastSeenSection,
-    isLoading: lastSeenSectionLoading,
+
     isSuccess: lastSeenSectionSuccess,
   } = useApiGet<any, Error>({
     endpoint: `/courses/section/getLastSeen/${userData?.user.id}/${chapterId}`,
     queryKey: ['last-seen-section', userData?.user.id, chapterId],
   });
-  console.log({ lastSeenSectionLoading });
 
   useEffect(() => {
     if (allSectionsListSuccess && lastSeenSectionSuccess) {
-      console.log('testtt log', { lastSeenSection, sectionsData });
       if (!lastSeenSection?.data?.id) {
         const firstSection = sectionsData?.[0];
         setSelectedItem(firstSection);
       } else if (lastSeenSection.data.id) {
         const lastItem = sectionsData?.find((item: any) => item.id === lastSeenSection.data.sectionId);
-        console.log({ lastItem });
         setSelectedItem(lastItem);
       }
     }
@@ -85,7 +92,6 @@ const Page = () => {
 
   const lastSection = sectionsData?.[sectionsData?.length - 1];
 
-  console.log({ selectedItem, isLoading });
   const {
     mutate: updateLastSeenSection,
     //isLoading: editingCourse,
@@ -93,8 +99,6 @@ const Page = () => {
     endpoint: `/courses/section/updateLastSeen/`,
     method: 'post',
   });
-
-  console.log({ selectedAnswer });
 
   useEffect(() => {
     return () => {
@@ -121,11 +125,9 @@ const Page = () => {
     endpoint: `/courses/updateUserChapter/Progress`,
     method: 'put',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
+      onSuccess: () => {
         const selectedIndex = sectionsData?.findIndex((item: any) => item.id === selectedItem?.id);
         const isLastSection = lastSection?.id === selectedItem?.id;
-        console.log({ isLastSection });
         if (!isLastSection) {
           const nextItem = sectionsData?.[(selectedIndex ?? 0) + 1];
           setSelectedItem(nextItem);
@@ -149,17 +151,11 @@ const Page = () => {
     },
   });
 
-  const {
-    mutate: checkQuizAnswer,
-    isLoading: checkingQuizAnswer,
-    isError: isCheckQuizError,
-    error: checkQuizError,
-  } = useApiMutation<any>({
+  const { mutate: checkQuizAnswer, isLoading: checkingQuizAnswer } = useApiMutation<any>({
     endpoint: `/quizzes/checkQuiz`,
     method: 'post',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
+      onSuccess: () => {
         const selectedIndex = sectionsData?.findIndex((item: any) => item.id === selectedItem?.id);
         const nextItem = sectionsData?.[(selectedIndex ?? 0) + 1];
         setSelectedItem(nextItem);
@@ -175,7 +171,6 @@ const Page = () => {
       },
     },
   });
-  console.log({ sectionsData, selectedItem, isCheckQuizError, checkQuizError });
 
   const updateCourseProgress = () => {
     if (selectedItem.question) {
@@ -235,11 +230,16 @@ const Page = () => {
                 ) : selectedItem?.question ? (
                   <Question questionData={selectedItem} />
                 ) : (
-                  <div
-                    className="text-[15px]"
-                    contentEditable="true"
-                    dangerouslySetInnerHTML={{ __html: selectedItem?.description }}
-                  ></div>
+                  <div>
+                    <p className="mb-4">
+                      You have earned {trueCount} point(s) out of {trueCount + falseCount} point(s) thus far.
+                    </p>
+                    <div
+                      className="text-[15px]"
+                      contentEditable="true"
+                      dangerouslySetInnerHTML={{ __html: selectedItem?.description }}
+                    ></div>
+                  </div>
                 )}
               </div>
 
