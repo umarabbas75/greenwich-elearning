@@ -36,8 +36,7 @@ export const options = {
             },
           });
           const userData = await res.json();
-
-          console.log('login status', userData);
+          console.log({ userData }, userData?.data?.user);
           // //adding this temporarily-start
           // return {
           //   ...user,
@@ -68,6 +67,7 @@ export const options = {
             role: userData?.data?.user?.role ?? '',
           } as any;
         } catch (error) {
+          console.log('login error', error);
           if (error instanceof Error) {
             //  fetch(
             //   `${process.env.NEXT_PUBLIC_API_URI}/api/login/`,
@@ -93,17 +93,17 @@ export const options = {
   callbacks: {
     async jwt({ token, user, account, session, trigger }: any) {
       if (trigger === 'update' && session?.firstName && session?.lastName) {
-        const formData = new FormData();
-        formData.append('firstName', session.firstName);
-        formData.append('lastName', session.lastName);
+        const payload = {
+          firstName: session.firstName,
+          lastName: session?.lastName,
+        };
 
         try {
           const axiosOptions = {
-            method: 'patch', // Use lower case for HTTP methods in Axios
-            url: `${process.env.NEXT_PUBLIC_API_URI}/api/users/${token.id}/`,
-            data: formData, // Use 'data' instead of 'body' for FormData in Axios
+            method: 'put', // Use lower case for HTTP methods in Axios
+            url: `${process.env.NEXT_PUBLIC_API_URI}/users/${token.id}`,
+            data: payload, // Use 'data' instead of 'body' for FormData in Axios
             headers: {
-              'Content-Type': 'multipart/form-data', // Set the content type for FormData
               Authorization: `Bearer ${token.access}`, // Add custom headers here
             },
           };
@@ -117,6 +117,7 @@ export const options = {
             //console.error('Failed to update user');
           }
         } catch (error) {
+          console.log({ error });
           //console.error('Error updating user:', error);
         }
       }

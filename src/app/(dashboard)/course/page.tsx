@@ -18,7 +18,7 @@ export type Course = {
   createdAt: string;
   updatedAt: string;
   image: string;
-  duration:string
+  duration: string;
 };
 export type CoursesDataResponse = {
   message: string;
@@ -39,7 +39,6 @@ const Page = () => {
     endpoint: `/courses`,
     queryKey: ['get-courses'],
   });
-  console.log({ coursesData, isLoading });
 
   return (
     <div>

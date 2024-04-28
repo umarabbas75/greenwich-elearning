@@ -8,6 +8,7 @@ import JotaiProvider from './providers/jotai';
 import NextAuthProvider from './providers/nextauth';
 import QueryProvider from './providers/queryCientProvider';
 import NextThemeProvider from './providers/theme';
+import 'react-loading-skeleton/dist/skeleton.css';
 const oepnsans = Open_Sans({
   weight: ['400', '500', '600', '700', '800'],
   subsets: ['latin'],

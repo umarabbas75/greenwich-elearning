@@ -3,7 +3,6 @@ import React from 'react';
 import SingleQuestion from './SingleQuestion';
 
 const Question = ({ questionData }: any) => {
-  console.log({ questionData });
   return (
     <div className="mt-12">
       <h1 className="text-xl ">{questionData.question}</h1>

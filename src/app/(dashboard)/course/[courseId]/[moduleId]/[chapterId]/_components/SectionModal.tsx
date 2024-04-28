@@ -42,9 +42,7 @@ const SectionModal = () => {
     endpoint: `/courses/section`,
     method: 'post',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-sections'] });
         closeModal();
         toast({
@@ -65,9 +63,7 @@ const SectionModal = () => {
     endpoint: `/courses/section/update/${sectionModalState?.data?.id}`,
     method: 'put',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-sections'] });
         closeModal();
         toast({
@@ -107,7 +103,6 @@ const SectionModal = () => {
     config: {
       enabled: !!sectionModalState?.data?.id,
       onSuccess: (data: any) => {
-        console.log({ data });
         form.reset({
           ...data?.data,
         });

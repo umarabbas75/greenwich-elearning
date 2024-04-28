@@ -13,14 +13,11 @@ const Page = () => {
   const router = useRouter();
   const params = useSearchParams();
   const type = params.get('type');
-  console.log({ type });
   const { data: session } = useSession();
-  const { data: assignedCourses, isLoading } = useApiGet<any, Error>({
+  const { data: assignedCourses } = useApiGet<any, Error>({
     endpoint: `/courses/getAllAssignedCourses/${session?.user.id}`,
     queryKey: ['get-sections', session?.user.id],
   });
-
-  console.log({ assignedCourses, isLoading });
 
   return (
     <div>
@@ -28,7 +25,6 @@ const Page = () => {
         defaultValue={type ?? 'active'}
         className="w-full"
         onValueChange={(route) => {
-          console.log({ route });
           router.push(`/studentCourses?type=${route}`);
         }}
       >

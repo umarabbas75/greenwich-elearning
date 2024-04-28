@@ -1,66 +1,38 @@
+import ReactPDF from '@react-pdf/renderer';
+import { Document } from '@react-pdf/renderer';
 import { useAtom } from 'jotai';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import StatusComponent from '@/components/common/StatusComponent';
+import { Button } from '@/components/ui/button';
 import { useApiGet } from '@/lib/dashboard/client/user';
 import { courseProgressAtom } from '@/store/course';
 
-const Grades = () => {
+import PDFReport from './PDFReport';
+
+const Grades = ({ courseIdProp }: { courseIdProp?: any } = {}) => {
   const { courseId } = useParams();
+  const courseIdParam = courseId ?? courseIdProp;
   const [courseProgressState, setCourseProgressState] = useAtom(courseProgressAtom);
   const [grades, setGrades] = useState<any>([]);
-  // Sample data array
-  //   const data = [
-  //     {
-  //       element: 'Element 1',
-  //       report: [
-  //         {
-  //           name: 'John Doe',
-  //           status: 'read',
-  //           age: 30,
-  //           location: 'New York',
-  //           occupation: 'Software Engineer',
-  //           test: '123s',
-  //           grade: '123',
-  //         },
-  //         {
-  //           name: 'Jane Smith',
-  //           status: 'completed',
-  //           age: 25,
-  //           location: 'Los Angeles',
-  //           occupation: 'Graphic Designer',
-  //         },
-  //         { name: 'Michael Johnson', status: 'notOpened', age: 35, location: 'Chicago', occupation: 'Teacher' },
-  //       ],
-  //     },
-  //     {
-  //       element: 'Element 2',
-  //       report: [
-  //         { name: 'John Doe', age: 30, location: 'New York', occupation: 'Software Engineer' },
-  //         { name: 'Jane Smith', age: 25, location: 'Los Angeles', occupation: 'Graphic Designer' },
-  //         { name: 'Michael Johnson', age: 35, location: 'Chicago', occupation: 'Teacher' },
-  //       ],
-  //     },
-  //   ];
 
-  // Sample column headers
   const columns = [
     'Grade Name',
     'Status',
     'Progress',
-    'Contribution to total Course',
+    'Contribution',
     'Quiz Correct',
     'Quiz Attempted',
     'Grade',
   ];
 
   useApiGet<any, Error>({
-    endpoint: `/courses/report/${courseId}`,
-    queryKey: ['get-chapters', courseId],
+    endpoint: `/courses/report/${courseIdParam}`,
+    queryKey: ['get-chapters', courseIdParam],
     config: {
-      enabled: !!courseId,
+      enabled: !!courseIdParam,
       select: (res) => res?.data?.data,
       keepPreviousData: true,
       onSuccess: (res) => {
@@ -111,7 +83,6 @@ const Grades = () => {
         }, 0);
         setCourseProgressState(totalProgress);
 
-        console.log({ updatedData, totalProgress });
         setGrades(updatedData);
       },
     },
@@ -124,7 +95,7 @@ const Grades = () => {
             NEBOSH International Diploma in Environmental Management- course report
           </h2>
         </div> */}
-        <ReportHeader courseProgressState={courseProgressState} />
+        <ReportHeader courseProgressState={courseProgressState} columns={columns} grades={grades} />
         <div className="py-4 overflow-x-auto">
           <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
             <table className="min-w-full leading-normal">
@@ -180,7 +151,7 @@ const Grades = () => {
 
 export default Grades;
 
-const ReportHeader = ({ courseProgressState }: any) => {
+const ReportHeader = ({ courseProgressState, columns, grades }: any) => {
   const session = useSession();
   const search = useSearchParams();
   const courseName = search.get('title');
@@ -189,6 +160,42 @@ const ReportHeader = ({ courseProgressState }: any) => {
   const instituteName = 'Greenwich Training and consulting';
   const instituteAddress = 'I-8/4, Islamabad';
   const today = new Date().toLocaleDateString();
+
+  const getNewDocument = async () => {
+    return new Promise((resolve) => {
+      resolve(
+        <Document>
+          <PDFReport
+            session={session}
+            courseName={courseName}
+            courseProgressState={courseProgressState}
+            instituteName={instituteName}
+            instituteAddress={instituteAddress}
+            today={today}
+            columns={columns}
+            grades={grades}
+          />
+        </Document>,
+      );
+    });
+  };
+  const [pdfData, setPdfData] = useState<any>({
+    blob: '',
+    url: '',
+  });
+  useEffect(() => {
+    const preparePDF = async () => {
+      const document: any = await getNewDocument();
+      const blob = await ReactPDF.pdf(document).toBlob();
+
+      const url = URL.createObjectURL(blob);
+      setPdfData({
+        blob: blob,
+        url: url,
+      });
+    };
+    session && courseProgressState && grades && preparePDF();
+  }, [session, courseProgressState, grades]);
 
   return (
     <div className="course-report grid grid-cols-1 md:grid-cols-5 gap-4 bg-white shadow-md rounded-lg overflow-hidden">
@@ -217,8 +224,39 @@ const ReportHeader = ({ courseProgressState }: any) => {
           <p className="text-gray-800">{instituteName}</p>
           <p className="text-gray-800">{instituteAddress}</p>
         </div>
-        <div className="date text-gray-500 text-right text-xs">Date: {today}</div>
+        <div className="flex justify-between items-center">
+          <Button>
+            {' '}
+            <a
+              target="_blank"
+              href={pdfData?.url}
+              download="course_report.pdf"
+              style={{ textDecoration: 'underline', display: 'flex', alignItems: 'center', gap: '5px' }}
+              rel="noreferrer"
+            >
+              Download Report
+            </a>
+          </Button>
+
+          <div className="date text-gray-500 text-right text-xs">Date: {today}</div>
+        </div>
       </div>
+      {/* {session && courseProgressState && courseName && grades && (
+        <PDFViewer style={{ width: '600px', height: '800px' }}>
+          <Document style={{ width: '600px' }}>
+            <PDFReport
+              session={session}
+              courseName={courseName}
+              courseProgressState={courseProgressState}
+              instituteName={instituteName}
+              instituteAddress={instituteAddress}
+              today={today}
+              columns={columns}
+              grades={grades}
+            />
+          </Document>
+        </PDFViewer>
+      )} */}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const StatusComponent = ({ status }) => {
+const StatusComponent = ({ status }: any) => {
   // Convert camelCase status to normal text
   const formattedStatus = status
     // Replace underscores with spaces
@@ -8,7 +8,7 @@ const StatusComponent = ({ status }) => {
     // Insert spaces before capital letters
     .replace(/([A-Z])/g, ' $1')
     // Capitalize the first letter
-    .replace(/^./, (str) => str.toUpperCase());
+    .replace(/^./, (str: any) => str.toUpperCase());
 
   let statusClass = '';
 

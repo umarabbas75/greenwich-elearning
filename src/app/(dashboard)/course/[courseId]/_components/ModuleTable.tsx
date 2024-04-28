@@ -138,7 +138,6 @@ const ModuleTable: FC<Props> = ({ data, pagination, setPagination, isLoading, co
   });
 
   const onRowClick = (data: Module) => {
-    console.log({ data });
     router.push(`/course/${courseId}/${data.id}`);
   };
 

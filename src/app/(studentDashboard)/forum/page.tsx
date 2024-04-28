@@ -25,7 +25,6 @@ const Page = () => {
     endpoint: `/forum-thread`,
     queryKey: ['get-forum-threads'],
   });
-  console.log({ forumThreads });
 
   return (
     <div>

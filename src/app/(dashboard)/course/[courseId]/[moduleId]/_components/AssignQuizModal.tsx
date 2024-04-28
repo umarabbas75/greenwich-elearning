@@ -1,6 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useAtom } from 'jotai';
-import { useSession } from 'next-auth/react';
 import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
@@ -25,8 +24,6 @@ type UserFormTypes = {
 const AssignQuizModal = () => {
   const [assignQuizesState, setAssignQuizesState] = useAtom(assignQuizzesModalAtom);
 
-  const { data: session } = useSession();
-  console.log({ session, assignQuizesState });
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const {
@@ -39,9 +36,7 @@ const AssignQuizModal = () => {
     method: 'put',
     sendDataInParams: true,
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-users'] });
         closeModal();
         toast({
@@ -52,8 +47,6 @@ const AssignQuizModal = () => {
       },
     },
   });
-
-  console.log({ assignQuiz });
 
   const closeModal = () => {
     setAssignQuizesState({
@@ -74,21 +67,14 @@ const AssignQuizModal = () => {
     defaultValues,
     resolver: yupResolver(validationSchema) as any,
   });
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = form;
-  console.log({ errors });
+  const { handleSubmit, control } = form;
 
   const { data: quizzesData, isLoading } = useApiGet<any, Error>({
     endpoint: `/quizzes`,
     queryKey: ['get-quizzes'],
   });
-  console.log('quizzes123', quizzesData);
 
   const onSubmit = (values: UserFormTypes) => {
-    console.log({ values });
     const payload = {
       quizId: (values.quizzes as any).value,
       chapterId: assignQuizesState?.data?.id,
@@ -125,11 +111,9 @@ const AssignQuizModal = () => {
                           }
                           value={value} // Find the matching option by value
                           onChange={(val: any) => {
-                            console.log({ val });
                             onChange(val);
                           }}
                           // getOptionLabel={(val: any) => {
-                          //   console.log('valllll', val);
                           //   return val;
                           // }}
                           // getOptionValue={(val: any) => val.id}

@@ -1,6 +1,7 @@
 'use client';
 import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
+import { Eye } from 'lucide-react';
 import { FC } from 'react';
 import { useQueryClient } from 'react-query';
 
@@ -12,6 +13,7 @@ import { useApiMutation } from '@/lib/dashboard/client/user';
 import {
   assignCoursesModalAtom,
   confirmationModalAtom,
+  updatePasswordModalAtom,
   userModalAtom,
   viewUserCoursesModal,
 } from '@/store/modals';
@@ -20,6 +22,7 @@ import { Icons } from '@/utils/icon';
 import { UserData, UsersDataResponse } from '../page';
 
 import AssignCoursesModal from './AssignCoursesModal';
+import UpdatePasswordModal from './UpdatePasswordModal';
 import UserModal from './UserModal';
 import ViewUserCoursesModal from './ViewUserCoursesModal';
 
@@ -33,6 +36,7 @@ interface Props {
 }
 const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) => {
   const [userState, setUserState] = useAtom(userModalAtom);
+  const [updatePasswordState, setUpdatePasswordState] = useAtom(updatePasswordModalAtom);
   const [userCoursesState, setUserCoursesState] = useAtom(viewUserCoursesModal);
   const [assignCoursesState, setAssignCoursesState] = useAtom(assignCoursesModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
@@ -68,6 +72,19 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
 
         <span
           onClick={() => {
+            setUpdatePasswordState({
+              status: true,
+              data: row,
+            });
+          }}
+          className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
+        >
+          <Eye />
+          Update Password
+        </span>
+
+        <span
+          onClick={() => {
             setConfirmState({
               status: true,
               data: row,
@@ -81,26 +98,25 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
       </div>
     );
   };
-  console.log({ userState, confirmState });
 
   const columns = [
     // Accessor Columns
     columnHelper.accessor('photo', {
       header: 'Photo',
-      cell: () => {
+      cell: (props) => {
         return (
           <h1 className="flex  flex-col justify-center w-fit text-center items-center">
-            {/* {props.row.original.photo ? (
-              <Image
+            {props.row.original.photo ? (
+              <img
                 src={props.row.original.photo}
-                alt="genset type"
+                alt="user image"
                 width={50}
                 height={50}
                 className="rounded-full"
               />
-            ) : ( */}
-            <Icons iconName="avatar" className="h-12 w-12" />
-            {/* )} */}
+            ) : (
+              <Icons iconName="avatar" className="h-12 w-12" />
+            )}
           </h1>
         );
       },
@@ -152,7 +168,7 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
             });
           }}
         >
-          View
+          {props.row.original.courses?.length} Course(s)
         </h1>
       ),
       footer: (props) => props.column.id,
@@ -209,6 +225,7 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
 
   return (
     <>
+      <img src="" alt="" />
       <div className="p-2 border rounded">
         <p className="pl-2 font-medium mb-4">Users</p>
         {isLoading ? 'loading...' : <TableComponent table={table} />}
@@ -218,6 +235,7 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
 
       {userState.status && <UserModal />}
       {userCoursesState.status && <ViewUserCoursesModal />}
+      {updatePasswordState.status && <UpdatePasswordModal />}
       {assignCoursesState.status && <AssignCoursesModal />}
       {confirmState.status && (
         <ConfirmationModal

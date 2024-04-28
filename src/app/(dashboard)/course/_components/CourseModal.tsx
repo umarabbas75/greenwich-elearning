@@ -41,9 +41,7 @@ const CourseModal = () => {
     endpoint: `/courses`,
     method: 'post',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-courses'] });
         closeModal();
         toast({
@@ -64,9 +62,7 @@ const CourseModal = () => {
     endpoint: `/courses/${courseModalState?.data?.id}`,
     method: 'put',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-courses'] });
         closeModal();
         toast({
@@ -77,8 +73,6 @@ const CourseModal = () => {
       },
     },
   });
-
-  console.log({ addCourse, editCourse });
 
   const closeModal = () => {
     setCourseModalState({
@@ -110,7 +104,6 @@ const CourseModal = () => {
     config: {
       enabled: !!courseModalState?.data?.id,
       onSuccess: (data: any) => {
-        console.log({ data });
         reset({
           ...data?.data,
         });
@@ -120,8 +113,8 @@ const CourseModal = () => {
 
   const onSubmit = (values: any) => {
     if (data) {
+      // eslint-disable-next-line unused-imports/no-unused-vars
       const { id, ...rest } = values;
-      console.log({ id });
       editCourse(rest);
     } else {
       addCourse(values);

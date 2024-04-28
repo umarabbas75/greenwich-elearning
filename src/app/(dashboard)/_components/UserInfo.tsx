@@ -1,4 +1,6 @@
 'use client';
+import { useAtom } from 'jotai';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 import { useState } from 'react';
@@ -9,8 +11,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { userPhotoAtom } from '@/store/course';
 import { Icons } from '@/utils/icon';
 const UserInfo = () => {
+  const [userPhotoState] = useAtom(userPhotoAtom);
+
   const [openMenu, setOpenMenu] = useState(false);
   const [loading, setIsLoading] = useState(false);
 
@@ -42,25 +47,31 @@ const UserInfo = () => {
     <DropdownMenu onOpenChange={onMenuChange} open={openMenu}>
       <DropdownMenuTrigger asChild>
         <div
-          className={`dark-icon border hover:bg-dark-icon-hover rounded  p-2 text-accent transition duration-300 ${
+          className={`dark-icon border cursor-pointer hover:bg-dark-icon-hover rounded  p-2 text-accent transition duration-300 ${
             openMenu ? 'bg-dark-icon-hover text-primary active-icon' : ''
           } `}
         >
-          {/* {session?.user.photo ? (
-            <Image src={session?.user.photo} width={20} height={20} alt="Profile image" />
-          ) : ( */}
-          <Icons iconName="customer" className="h-6 w-6 cursor-pointer " />
-          {/* )} */}
+          {userPhotoState ? (
+            <Image
+              src={userPhotoState}
+              className="rounded-full cursor-pointer"
+              width={22}
+              height={22}
+              alt="Profile image"
+            />
+          ) : (
+            <Icons iconName="customer" className="h-6 w-6 cursor-pointer " />
+          )}
         </div>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="w-64 bg-white" align="end" side="top">
         <div className="flex gap-2 items-center p-2">
-          {/* {session?.user.photo ? (
-            <Image src={session?.user.photo} width={50} height={50} alt="Profile image" />
-          ) : ( */}
-          <Icons iconName="customer" className="w-16 h-16 cursor-pointer text-accent" />
-          {/* )} */}
+          {userPhotoState ? (
+            <Image src={userPhotoState} className="rounded-full" width={50} height={50} alt="Profile image" />
+          ) : (
+            <Icons iconName="customer" className="w-16 h-16 cursor-pointer text-accent" />
+          )}
 
           <div className="flex flex-col gap-0">
             <span className="font-bold text-lg text-black">

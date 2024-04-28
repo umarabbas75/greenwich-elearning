@@ -19,12 +19,10 @@ const ProgressCourse = () => {
       onSuccess: (res) => {
         const data = res.data.find((item: any) => item.id === courseId);
         setCourseData(data);
-        console.log('all courses response', data);
       },
     },
   });
 
-  console.log('my course id', courseId);
   return (
     <div className="border rounded-sm bg-white" style={{ boxShadow: '0 0 10px rgba(0,0,0,.1)' }}>
       <div className="bg-primary w-full p-4 flex justify-center items-center rounded-tr-sm rounded-tl-sm">

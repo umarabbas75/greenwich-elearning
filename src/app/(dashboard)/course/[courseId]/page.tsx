@@ -40,8 +40,6 @@ const Page = ({ params }: { params: { courseId: string } }) => {
     queryKey: ['get-modules', courseId],
   });
 
-  console.log({ modulesData, isLoading });
-
   return (
     <div>
       <div className="grid grid-cols-2 my-2 mr-2 items-center">

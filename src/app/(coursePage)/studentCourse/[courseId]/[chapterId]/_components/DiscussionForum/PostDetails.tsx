@@ -24,14 +24,13 @@ const PostDetails = ({ showPostDetails, setShowPostDetails, setShowDiscussion }:
   const session = useSession();
   const [editComment, setEditComment] = useState<any>(null);
   const [editCommentValue, setEditCommentValue] = useState('');
-  const { data: postComments, isLoading: fetchingPostComments } = useApiGet<any>({
+  const { data: postComments } = useApiGet<any>({
     endpoint: `/courses/postComment/${showPostDetails?.id}`,
     queryKey: ['postComment', showPostDetails?.id],
     config: {
       enabled: !!showPostDetails?.id,
     },
   });
-  console.log({ fetchingPostComments });
 
   const { mutate: replyOnPost, isLoading: replyingOnPost } = useApiMutation({
     method: 'post',

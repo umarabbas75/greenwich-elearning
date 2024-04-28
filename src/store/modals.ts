@@ -10,6 +10,7 @@ const createModalAtom = () => {
 };
 
 export const userModalAtom = createModalAtom();
+export const updatePasswordModalAtom = createModalAtom();
 export const forumModalAtom = createModalAtom();
 export const viewUserCoursesModal = createModalAtom();
 export const viewAssignedQuizzesModal = createModalAtom();

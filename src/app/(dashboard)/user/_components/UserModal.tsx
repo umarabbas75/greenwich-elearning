@@ -1,5 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useAtom } from 'jotai';
+import { Trash } from 'lucide-react';
 import { FileUploader } from 'react-drag-drop-files';
 import { Controller, useForm } from 'react-hook-form';
 import { CountryData } from 'react-phone-input-2';
@@ -24,6 +25,7 @@ import { userModalAtom } from '@/store/modals';
 type UserFormTypes = {
   email?: string | undefined;
   password?: string | undefined;
+  confirmPassword?: string | undefined;
   role: string;
   photo: null | undefined | string;
   firstName: string;
@@ -44,9 +46,7 @@ const UserModal = () => {
     endpoint: `/users`,
     method: 'post',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-users'] });
         closeModal();
         toast({
@@ -67,9 +67,7 @@ const UserModal = () => {
     endpoint: `/users/${userState?.data?.id}`,
     method: 'put',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-users'] });
         closeModal();
         toast({
@@ -107,6 +105,8 @@ const UserModal = () => {
     role: '',
     photo: null,
   };
+  const passwordRequirements =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*,;.:?/\\])[a-zA-Z0-9!@#$%^&*,;.:?/\\]{8,}$/;
   const validationSchema = Yup.object().shape({
     firstName: Yup.string().required('first name is required'),
     lastName: Yup.string().required('last name is required'),
@@ -117,30 +117,45 @@ const UserModal = () => {
     password: Yup.string().when('uid', {
       is: () => !!userState?.data?.id,
       then: () => Yup.string().notRequired(),
-      otherwise: () => Yup.string().required('password is required'),
+      otherwise: () =>
+        Yup.string()
+          .required('Password is required.')
+          .matches(
+            passwordRequirements,
+            'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.',
+          ),
     }),
+    confirmPassword: Yup.string().when('uid', {
+      is: () => !!userState?.data?.id,
+      then: () => Yup.string().notRequired(),
+      otherwise: () =>
+        Yup.string()
+          .oneOf([Yup.ref('password'), undefined], 'Passwords must match')
+          .required('Confirm password is required.'),
+    }),
+
+    // confirmPassword: Yup.string().when('uid', {
+    //   is: () => !!userState?.data?.id,
+    //   then: Yup.string()
+    //     .oneOf([Yup.ref('password'), undefined], 'Passwords must match')
+    //     .required('Confirm password is required'),
+    //   otherwise: Yup.string().notRequired(),
+    // }),
     role: Yup.string().required('role is required'),
-    photo: Yup.mixed().required('Required').nullable(),
+    photo: Yup.string().notRequired(),
   });
 
   const form = useForm<UserFormTypes>({
     defaultValues,
     resolver: yupResolver(validationSchema) as any,
   });
-  const {
-    reset,
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = form;
-  console.log({ errors });
+  const { reset, handleSubmit, control } = form;
 
   // const { data, isLoading: fetchingUser } = useFetchUser({
   //   variables: {
   //     id: userState?.data?.id,
   //   },
   //   onSuccessCallback: (data: any) => {
-  //     console.log('dataaa', data);
   //     form.reset({
   //       ...data,
   //       customer: data?.customer,
@@ -154,7 +169,6 @@ const UserModal = () => {
     config: {
       enabled: !!userState?.data?.id,
       onSuccess: (data: any) => {
-        console.log({ data });
         reset({
           ...data?.data,
         });
@@ -163,34 +177,23 @@ const UserModal = () => {
   });
 
   const onSubmit = (values: UserFormTypes) => {
-    console.log('values', values);
-    const addFormData = new FormData();
-    addFormData.append('email', values.email as string);
-    addFormData.append('password', values.password as string);
-    addFormData.append('role', values.role);
-    values.photo &&
-      !(typeof values.photo === 'string' && values.photo?.includes('http')) &&
-      addFormData.append('photo', values.photo as any);
-
-    addFormData.append('firstName', values.firstName);
-    addFormData.append('lastName', values.lastName);
-    addFormData.append('phone', values.phone);
-
-    const editFormData = new FormData();
-    editFormData.append('role', values.role);
-    editFormData.append('firstName', values.firstName);
-    editFormData.append('lastName', values.lastName);
-    editFormData.append('phone', values.phone);
-    values.photo &&
-      !(typeof values.photo === 'string' && values.photo?.includes('http')) &&
-      editFormData.append('photo', values.photo as any);
-    const payload = {
+    const editPayload = {
       firstName: values.firstName,
       lastName: values.lastName,
       phone: values.phone,
       role: values.role,
+      photo: values?.photo,
     };
-    data ? editUser(payload) : addUser(addFormData);
+    const addPayload = {
+      firstName: values.firstName,
+      lastName: values.lastName,
+      phone: values.phone,
+      role: values.role,
+      photo: values?.photo,
+      email: values?.email,
+      password: values?.password,
+    };
+    data ? editUser(editPayload) : addUser(addPayload);
   };
 
   return (
@@ -286,22 +289,40 @@ const UserModal = () => {
                 />
 
                 {!data && (
-                  <FormField
-                    control={control}
-                    name="password"
-                    render={({ field: { onChange, value }, formState: { errors } }) => {
-                      return (
-                        <FormItem>
-                          <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <Input type="password" onChange={onChange} value={value} />
-                          </FormControl>
+                  <>
+                    <FormField
+                      control={control}
+                      name="password"
+                      render={({ field: { onChange, value }, formState: { errors } }) => {
+                        return (
+                          <FormItem>
+                            <FormLabel>Password</FormLabel>
+                            <FormControl>
+                              <Input type="password" onChange={onChange} value={value} />
+                            </FormControl>
 
-                          <FormMessage>{errors.password?.message}</FormMessage>
-                        </FormItem>
-                      );
-                    }}
-                  />
+                            <FormMessage>{errors.password?.message}</FormMessage>
+                          </FormItem>
+                        );
+                      }}
+                    />
+                    <FormField
+                      control={control}
+                      name="confirmPassword"
+                      render={({ field: { onChange, value }, formState: { errors } }) => {
+                        return (
+                          <FormItem>
+                            <FormLabel>Confirm password</FormLabel>
+                            <FormControl>
+                              <Input type="password" onChange={onChange} value={value} />
+                            </FormControl>
+
+                            <FormMessage>{errors.confirmPassword?.message}</FormMessage>
+                          </FormItem>
+                        );
+                      }}
+                    />
+                  </>
                 )}
                 <div className="space-y-2">
                   <FormLabel>Role</FormLabel>
@@ -328,13 +349,34 @@ const UserModal = () => {
                       <div className="flex flex-col space-y-2 justify-between">
                         <FormLabel className="mt-3">Photo</FormLabel>
                         <FileUploader
+                          maxSize={1}
                           multiple={false}
-                          handleChange={onChange}
+                          handleChange={(value: any) => {
+                            const file = value;
+                            const reader = new FileReader();
+                            reader.onload = (e: any) => {
+                              const base64 = e.target.result;
+                              onChange(base64);
+                            };
+
+                            reader.readAsDataURL(file);
+                          }}
                           name="file"
                           value={value}
-                          disabled={true}
+                          // disabled={true}
                           types={['jpeg', 'png', 'jpg', 'svg+xml', 'webp']}
                         />
+                        {value && (
+                          <div className="flex justify-between items-center border border-gray-200 p-2 border-dashed">
+                            <img src={value} className="w-12 h-12 rounded-full" alt="" />
+                            <Trash
+                              className="cursor-pointer hover:text-red-500"
+                              onClick={() => {
+                                onChange('');
+                              }}
+                            />
+                          </div>
+                        )}
                       </div>
                     );
                   }}

@@ -11,7 +11,6 @@ import { viewAssignedQuizzesModal } from '@/store/modals';
 
 const ViewAssignQuizzesModal = () => {
   const [viewAssignQuizModalState, setViewAssignQuizModalState] = useAtom(viewAssignedQuizzesModal);
-  console.log({ viewAssignQuizModalState });
   const closeModal = () => {
     setViewAssignQuizModalState({
       ...viewAssignQuizModalState,
@@ -66,7 +65,6 @@ const ViewAssignQuizzesModal = () => {
       footer: (props) => props.column.id,
     }),
   ];
-  console.log('assignedQuizzes', assignedQuizzes?.data);
   const table = useReactTable({
     data: assignedQuizzes?.data,
     columns,

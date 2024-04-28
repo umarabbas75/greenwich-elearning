@@ -1,7 +1,11 @@
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
+import { ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
+import Grades from '@/app/(studentDashboard)/studentCourses/[courseId]/_components/Grades';
 import Modal from '@/components/common/Modal';
 import Spinner from '@/components/common/Spinner';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
@@ -12,8 +16,10 @@ import { Icons } from '@/utils/icon';
 /* const MAX_FILE_SIZE = 102400; */
 
 const ViewUserCoursesModal = () => {
+  const router = useRouter();
+
+  const [selectedCourseId, setSelectedCourseId] = useState('');
   const [userCoursesState, setUserCoursesState] = useAtom(viewUserCoursesModal);
-  console.log({ userCoursesState });
   const closeModal = () => {
     setUserCoursesState({
       ...userCoursesState,
@@ -31,7 +37,6 @@ const ViewUserCoursesModal = () => {
   });
   const columnHelper = createColumnHelper<any>();
 
-  console.log('assignedCourses', assignedCourses?.data);
   const columns = [
     // Accessor Columns
     columnHelper.accessor('image', {
@@ -77,7 +82,16 @@ const ViewUserCoursesModal = () => {
     columnHelper.accessor('report', {
       id: 'report',
       header: 'Report',
-      cell: () => <h1 className="text-themeBlue cursor-pointer">Download PDF</h1>,
+      cell: (props) => (
+        <h1
+          className="text-themeBlue cursor-pointer"
+          onClick={() => {
+            setSelectedCourseId(props.row.original?.id);
+          }}
+        >
+          Download PDF
+        </h1>
+      ),
       footer: (props) => props.column.id,
     }),
   ];
@@ -100,11 +114,18 @@ const ViewUserCoursesModal = () => {
         <Spinner />
       ) : (
         <div className="">
-          {/* {assignedCourses?.data?.map((item: any) => {
-            return <SingleCourse key={item.id} item={item} />;
-          })} */}
-
-          <TableComponent table={table} />
+          {selectedCourseId ? (
+            <div>
+              <ArrowLeft
+                onClick={() => {
+                  router.back();
+                }}
+              />
+              <Grades courseIdProp={selectedCourseId} />
+            </div>
+          ) : (
+            <TableComponent table={table} />
+          )}
         </div>
       )}
     </Modal>

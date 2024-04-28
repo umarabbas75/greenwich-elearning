@@ -1,36 +1,52 @@
-import { AxiosResponse } from 'axios';
+import { useAtom } from 'jotai';
 import { DeleteIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FileUploader } from 'react-drag-drop-files';
 
 import LoadingButton from '@/components/common/LoadingButton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/components/ui/use-toast';
-import { useUpdateImage } from '@/lib/dashboard/client/user';
+import { useApiMutation } from '@/lib/dashboard/client/user';
+import { userPhotoAtom } from '@/store/course';
 
-const UpdateImageForm = ({ isEdit }: { isEdit: boolean }) => {
-  const { data: session, update } = useSession();
+const UpdateImageForm = ({ isEdit, setIsEdit }: { isEdit: boolean; setIsEdit: any }) => {
+  const { data: session } = useSession();
   const { toast } = useToast();
-  const [file, setFile] = useState<File | undefined>();
+  const [userPhotoState, setUserPhotoAtom] = useAtom(userPhotoAtom);
 
-  const { mutate, isLoading } = useUpdateImage({
-    onSuccess: async (res: AxiosResponse) => {
-      await update({ photo: res?.data?.photo });
-      toast({
-        variant: 'success',
-        title: 'Profile Picture Updated',
-      });
-      setFile(undefined);
+  const [file, setFile] = useState<string>(userPhotoState);
+  console.log({ file });
+
+  useEffect(() => {
+    if (userPhotoState) {
+      setFile(userPhotoState);
+    }
+  }, [userPhotoState]);
+
+  const { mutate: editUser, isLoading } = useApiMutation<any>({
+    endpoint: `/users/${session?.user?.id}`,
+    method: 'put',
+    config: {
+      onSuccess: async (res: any) => {
+        console.log({ res }, 'api');
+        setUserPhotoAtom(file);
+        setIsEdit(false);
+        toast({
+          variant: 'success',
+          title: 'Profile Picture Updated',
+        });
+        setFile('');
+      },
     },
   });
-
   const updatePhoto = () => {
-    const addFormData = new FormData();
-    if (file instanceof File) {
-      addFormData.append('photo', file as File);
+    if (file) {
+      const payload = {
+        photo: file,
+      };
       if (session?.user?.id) {
-        mutate({ formData: addFormData, id: session.user.id });
+        editUser(payload);
       }
     }
   };
@@ -45,31 +61,32 @@ const UpdateImageForm = ({ isEdit }: { isEdit: boolean }) => {
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-4">
             <Avatar className="h-28 w-28">
-              <AvatarImage
-                src={file ? URL.createObjectURL(file) : session?.user?.photo ?? ''}
-                alt="user profile pic"
-              />
-              <AvatarFallback className="text-2xl">{session?.user?.first_name || 'A'}</AvatarFallback>
+              <AvatarImage src={file ? file : session?.user?.photo ?? ''} alt="user profile pic" />
+              <AvatarFallback className="text-2xl">{session?.user?.firstName}</AvatarFallback>
             </Avatar>
 
             <FileUploader
               disabled={!isEdit}
               classes="custom-file-uploader"
               multiple={false}
-              handleChange={(e: any) => {
-                if (e) {
-                  setFile(e);
-                }
+              maxSize={1}
+              handleChange={(value: any) => {
+                const file = value;
+                const reader = new FileReader();
+                reader.onload = (e: any) => {
+                  const base64 = e.target.result;
+                  setFile(base64);
+                };
+
+                reader.readAsDataURL(file);
               }}
               name="file"
               value={file}
               types={['jpeg', 'png', 'jpg', 'svg+xml', 'webp']}
             />
-            {file && (
+            {isEdit && file && (
               <div className="flex justify-between mt-1 p-2 hover:bg-gray-200 cursor-pointer">
-                {file.name && <span> {file.name}</span>}
-
-                <DeleteIcon className="cursor-pointer" onClick={() => setFile(undefined)} />
+                <DeleteIcon className="cursor-pointer" onClick={() => setFile('')} />
               </div>
             )}
           </div>

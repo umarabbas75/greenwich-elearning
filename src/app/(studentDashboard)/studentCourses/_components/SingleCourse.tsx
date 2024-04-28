@@ -4,7 +4,6 @@ import React from 'react';
 import { Progress } from '@/components/ui/progress';
 
 const SingleCourse = ({ item }: any) => {
-  console.log({ item });
   return (
     <div className="bg-gray-200 rounded-sm p-4 col-span-1 cursor-pointer updateUserCourse/Progress">
       <Link

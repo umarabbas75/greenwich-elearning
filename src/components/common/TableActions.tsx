@@ -13,7 +13,7 @@ const TableActions = ({ children }: { children: React.ReactNode }) => {
   return (
     <DropdownMenu onOpenChange={onMenuChange} open={openMenu}>
       <DropdownMenuTrigger asChild>
-        <div className="dark-icon   rounded w-fit  p-1 text-accent transition duration-300  hover:bg-dark-icon-hover hover:text-primary">
+        <div className="dark-icon rounded w-fit  p-1 text-accent transition duration-300   hover:text-primary">
           <Icons iconName="action" className=" h-6 w-6 text-gray rotate-90 cursor-pointer " />
           <span className="sr-only">Open menu</span>
         </div>

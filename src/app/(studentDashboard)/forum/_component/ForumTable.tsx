@@ -33,9 +33,7 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
     endpoint: `/forum-thread/update/${selectedForumThread}`,
     method: 'put',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-forum-threads'] });
         setUpdateStatusState({ status: false, data: null });
         toast({
@@ -77,7 +75,6 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
   });
 
   const renderActions = (data: any) => {
-    console.log({ data });
     return (
       <div className="flex flex-col p-2 gap-1 ">
         <span

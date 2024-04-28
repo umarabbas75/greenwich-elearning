@@ -30,7 +30,6 @@ const ChapterModal = () => {
   const queryClient = useQueryClient();
   const params = useParams();
   const { moduleId } = params || {};
-  console.log({ moduleId });
   const {
     mutate: addChapter,
     isLoading: addingChapter,
@@ -40,9 +39,7 @@ const ChapterModal = () => {
     endpoint: `/courses/chapter`,
     method: 'post',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-chapters'] });
         closeModal();
         toast({
@@ -63,9 +60,7 @@ const ChapterModal = () => {
     endpoint: `/courses/chapter/${chapterModalState?.data?.id}`,
     method: 'put',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-chapters'] });
         closeModal();
         toast({
@@ -106,7 +101,6 @@ const ChapterModal = () => {
     config: {
       enabled: !!chapterModalState?.data?.id,
       onSuccess: (data: any) => {
-        console.log({ data });
         reset({
           ...data?.data,
         });
@@ -115,7 +109,6 @@ const ChapterModal = () => {
   });
 
   const onSubmit = (values: ChapterFormTypes) => {
-    console.log('values', values);
     data ? editChapter(values) : addChapter({ ...values, id: moduleId });
   };
 

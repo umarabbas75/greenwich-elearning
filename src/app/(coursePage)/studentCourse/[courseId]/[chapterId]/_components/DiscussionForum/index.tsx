@@ -14,7 +14,6 @@ const DiscussionForum = ({ allPosts, setShowDiscussion }: any) => {
   const { courseId } = useParams();
   const [showPostDetails, setShowPostDetails] = useState<any>(null);
   const [newPostModalState, setCreateNewPostModalAtom] = useAtom(createNewPostModalAtom);
-  console.log({ courseId });
   return (
     <div className="max-w-sm w-96 right-0 bottom-0 top-0 overflow-y-scroll max-h-[95vh]">
       {!showPostDetails?.id && (

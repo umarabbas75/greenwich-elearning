@@ -12,8 +12,6 @@ const UpdateNameForm = ({ isEdit }: { isEdit: boolean }) => {
   const { data: session, update } = useSession();
   const { toast } = useToast();
 
-  console.log('sessong', session);
-
   const [loading, setLoading] = useState(false);
 
   const defaultValues = {
@@ -39,7 +37,6 @@ const UpdateNameForm = ({ isEdit }: { isEdit: boolean }) => {
 
   const { handleSubmit, control } = form;
   const onSubmit = async (values: UserName) => {
-    console.log('formvalues', values);
     setLoading(true);
     await update({
       firstName: values.firstName,

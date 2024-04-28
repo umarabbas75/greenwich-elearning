@@ -21,7 +21,6 @@ const SideBarAllSection = ({ allSections }: any) => {
   const chapterName = search.get('chapterName');
   const completedSections = allSections?.filter((item: any) => item?.isCompleted);
   const totalSections = allSections?.filter((item: any) => item?.title);
-  console.log({ allSections });
   let percentage: any = (completedSections?.length * 100) / totalSections?.length;
   percentage = parseInt(percentage ?? 0);
   return (
@@ -58,7 +57,6 @@ const SideBarAllSection = ({ allSections }: any) => {
               <AccordionContent>
                 <div className="mt-4">
                   {allSections?.map((item: any) => {
-                    console.log('section item', item);
                     if (!item.question) {
                       return (
                         <>

@@ -33,7 +33,6 @@ const Index: FC<Props> = ({
   width = 'min-w-[90%] md:min-w-[35rem]  md:m-0',
   className,
 }) => {
-  console.log({ className });
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className={`${width} ${className}`}>

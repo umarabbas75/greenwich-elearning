@@ -79,7 +79,6 @@ export const useEditUser = (onSuccessCallback: any, onErrorCallback?: any) => {
   const axiosAuth = useAxiosAuth();
   const mutation = useMutation({
     mutationFn: ({ formData, id }: any) => {
-      console.log('formData', formData, id);
       return editUser(axiosAuth, formData, id);
     },
     onSuccess: () => {
@@ -190,7 +189,6 @@ export function useApiMutation<TData = any, TError = any>({
     ...config,
   };
 
-  console.log({ method });
   const mutation = useMutation<TData, TError, any, any>(
     (params: any) => {
       let url = endpoint;
@@ -199,11 +197,9 @@ export function useApiMutation<TData = any, TError = any>({
         const queryString = Object.values(params)
           .map((key) => `/${key}`)
           .join('');
-        console.log({ queryString });
         url += `${queryString}`;
         return axiosAuth[method](url, {}, axiosConfig); // No data in the body, sending empty object
       }
-      console.log({ method, endpoint });
       return axiosAuth[method](url, params, axiosConfig); // No data in the body, sending empty object
     },
     {

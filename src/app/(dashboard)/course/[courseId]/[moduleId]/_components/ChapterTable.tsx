@@ -174,7 +174,6 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
   );
 
   const onRowClick = (data: Chapter) => {
-    console.log({ data });
     router.push(`/course/${courseId}/${moduleId}/${data.id}`);
   };
 

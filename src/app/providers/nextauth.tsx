@@ -6,7 +6,6 @@ import OnLoadAnimation from '@/components/common/OnLoadAnimation';
 
 const SessionProviderWrapper = ({ children }: { children: React.ReactNode }) => {
   const { status } = useSession();
-  console.log('session status', status);
   return <div>{status === 'loading' ? <OnLoadAnimation /> : children}</div>;
 };
 

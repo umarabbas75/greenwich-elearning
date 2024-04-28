@@ -6,3 +6,4 @@ export const selectedSectionAtom = atom<any>({
 
 export const selectedAnswerAtom = atom<any>('');
 export const courseProgressAtom = atom<any>('');
+export const userPhotoAtom = atom<any>('');

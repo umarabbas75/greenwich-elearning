@@ -11,6 +11,8 @@ import UpdateNameForm from './_components/UpdateNameForm';
 import UpdatePassword from './_components/UpdatePassword';
 const Page = () => {
   const { data: session } = useSession();
+  // const [userPhotoState] = useAtom(userPhotoAtom);
+
   const [isEdit, setIsEdit] = useState(false);
 
   return (
@@ -33,7 +35,7 @@ const Page = () => {
         </div>
       </div>
 
-      <UpdateImageForm isEdit={isEdit} />
+      <UpdateImageForm isEdit={isEdit} setIsEdit={setIsEdit} />
 
       <UpdateNameForm isEdit={isEdit} />
 

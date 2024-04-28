@@ -17,7 +17,6 @@ const Comment = ({ comment }: any) => {
   const { data: userData } = useSession();
   const [editComment, setEditComment] = useState<any>();
   const [commentValue, setCommentValue] = useState('');
-  console.log({ comment });
   const queryClient = useQueryClient();
   const { mutate: editCommentApi, isLoading: editingComment } = useApiMutation<any>({
     endpoint: `/forum-thread-comment/${editComment?.id}`,

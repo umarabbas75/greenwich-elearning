@@ -15,7 +15,7 @@ const Page = () => {
   const [comment, setComment] = useState('');
   const params = useParams();
   const { forumThreadId } = params || {};
-  const { data: forumData, isLoading: fetchingForum } = useApiGet<any>({
+  const { data: forumData } = useApiGet<any>({
     endpoint: `/forum-thread/${forumThreadId}`,
     queryKey: ['get-forum-thread', forumThreadId],
     config: {
@@ -32,13 +32,11 @@ const Page = () => {
   });
   const queryClient = useQueryClient();
   const { title, content, user, createdAt } = forumData?.data || {};
-  console.log({ threadComments });
   const { mutate: postComment, isLoading: postingComment } = useApiMutation<any>({
     endpoint: `/forum-thread-comment`,
     method: 'post',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
+      onSuccess: () => {
         setComment('');
         queryClient.invalidateQueries({ queryKey: ['get-forum-thread-comments'] });
 
@@ -51,7 +49,6 @@ const Page = () => {
     },
   });
 
-  console.log({ forumData, fetchingForum });
   return (
     <div className=" pb-20">
       <div className="flex justify-between items-center">

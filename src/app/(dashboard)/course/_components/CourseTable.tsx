@@ -157,7 +157,6 @@ const CourseTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) 
     },
   });
   const onRowClick = (data: Course) => {
-    console.log({ data });
     router.push(`/course/${data.id}`);
   };
 

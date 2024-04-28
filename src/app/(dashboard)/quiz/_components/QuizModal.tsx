@@ -36,9 +36,7 @@ const UserModal = () => {
     endpoint: `/quizzes`,
     method: 'post',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-quizzes'] });
         closeModal();
         toast({
@@ -59,9 +57,7 @@ const UserModal = () => {
     endpoint: `/users/${userState?.data?.id}`,
     method: 'put',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-users'] });
         closeModal();
         toast({
@@ -97,22 +93,13 @@ const UserModal = () => {
     defaultValues,
     //resolver: yupResolver(validationSchema) as any,
   });
-  const {
-    reset,
-    handleSubmit,
-    control,
-    formState: { errors },
-    watch,
-  } = form;
-  console.log({ errors });
+  const { reset, handleSubmit, control, watch } = form;
   const options = watch('options');
-  console.log({ options });
   // const { data, isLoading: fetchingUser } = useFetchUser({
   //   variables: {
   //     id: userState?.data?.id,
   //   },
   //   onSuccessCallback: (data: any) => {
-  //     console.log('dataaa', data);
   //     form.reset({
   //       ...data,
   //       customer: data?.customer,
@@ -126,7 +113,6 @@ const UserModal = () => {
     config: {
       enabled: !!userState?.data?.id,
       onSuccess: (data: any) => {
-        console.log({ data });
         reset({
           ...data?.data,
         });
@@ -135,7 +121,6 @@ const UserModal = () => {
   });
 
   const onSubmit = (values: any) => {
-    console.log('values', values);
     const payload = {
       answer: values.answer?.value,
       options: values?.options?.map((item: any) => item?.value),
@@ -210,7 +195,6 @@ const UserModal = () => {
                           options={[]}
                           value={value} // Find the matching option by value
                           onChange={(val: any) => {
-                            console.log({ val });
                             onChange(val);
                           }}
                           // getOptionLabel={(val: Course) => val.title}
@@ -232,7 +216,6 @@ const UserModal = () => {
                           options={options as any}
                           value={value} // Find the matching option by value
                           onChange={(val: any) => {
-                            console.log({ val });
                             onChange(val);
                           }}
                           // getOptionLabel={(val: Course) => val.title}

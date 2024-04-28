@@ -22,7 +22,6 @@ import 'react-quill/dist/quill.snow.css';
 
 const NewPostModal = () => {
   const [newPostModalState, setCreateNewPostModalAtom] = useAtom(createNewPostModalAtom);
-  console.log({ newPostModalState });
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const {
@@ -34,9 +33,7 @@ const NewPostModal = () => {
     endpoint: `/courses/post/${newPostModalState.data?.courseId}`,
     method: 'post',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['posts'] });
         closeModal();
         toast({
@@ -57,9 +54,7 @@ const NewPostModal = () => {
     endpoint: `/courses/post/${newPostModalState?.data?.id}`,
     method: 'put',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['posts'] });
         closeModal();
         toast({
@@ -91,13 +86,7 @@ const NewPostModal = () => {
     defaultValues,
     resolver: yupResolver(validationSchema) as any,
   });
-  const {
-    reset,
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = form;
-  console.log({ errors });
+  const { reset, handleSubmit, control } = form;
 
   const { data, isLoading: fetchingPost } = useApiGet<any>({
     endpoint: `/courses/post/${newPostModalState?.data?.id}`,
@@ -105,7 +94,6 @@ const NewPostModal = () => {
     config: {
       enabled: !!newPostModalState?.data?.id,
       onSuccess: (data: any) => {
-        console.log({ data });
         reset({
           ...data?.data,
         });
@@ -114,7 +102,6 @@ const NewPostModal = () => {
   });
 
   const onSubmit = (values: any) => {
-    console.log('values', values);
     const payload = {
       title: values?.title,
       content: values?.content,

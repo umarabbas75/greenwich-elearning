@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import React from 'react';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -32,16 +32,8 @@ const CourseContent = () => {
 
   const [moduleId, setModuleId] = React.useState<string>();
 
-  const search = useSearchParams();
-  const percentage: any = (search as any).get(['percentage']);
-  const title: any = (search as any).get(['title']);
-
-  console.log({ percentage, title });
-
   const renderChaptersList = (chapters: any) => {
-    console.log({ chapters });
-    return chapters?.map((item: any, index: number, arr: any) => {
-      console.log('chapter item', arr[index + 1]);
+    return chapters?.map((item: any, index: number) => {
       return (
         <Link
           className="text-black"
@@ -67,8 +59,6 @@ const CourseContent = () => {
       enabled: !!moduleId,
     },
   });
-
-  console.log({ moduleId, chaptersData });
 
   const setAccordionValue = (e: string) => {
     setModuleId(e);

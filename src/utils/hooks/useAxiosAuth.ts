@@ -4,11 +4,10 @@ import { useEffect } from 'react';
 import axiosAuth from '../axiosAuth';
 
 const useAxiosAuth = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   // const [sessionExpire, setSessionExpireModal] = useAtom(
   //   sessionExpireModalAtom,
   // );
-  console.log({ status });
   // const refresh = useRefreshToken();
 
   useEffect(() => {
@@ -32,7 +31,6 @@ const useAxiosAuth = () => {
 
         // if (error.response.status === 401 && !prevReq.retry) {
         //   if (prevReq.url === '/api/login/refresh/') {
-        //     console.log('session expired');
         //     setSessionExpireModal({
         //       ...sessionExpire,
         //       status: true,

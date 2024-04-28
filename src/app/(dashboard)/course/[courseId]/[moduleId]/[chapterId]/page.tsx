@@ -41,8 +41,6 @@ const Page = () => {
     queryKey: ['get-sections', chapterId],
   });
 
-  console.log({ sectionsData, isLoading });
-
   return (
     <div>
       <div className="grid grid-cols-2 my-2 mr-2 items-center">

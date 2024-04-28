@@ -48,9 +48,7 @@ const UpdatePassword = ({ isEdit }: { isEdit: boolean }) => {
     endpoint: `/users/changePassword/${session?.user?.id}`,
     method: 'put',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         toast({
           variant: 'success',
           // title: 'Success ',
@@ -58,7 +56,6 @@ const UpdatePassword = ({ isEdit }: { isEdit: boolean }) => {
         });
       },
       onError: (error) => {
-        console.log({ error });
         toast({
           variant: 'destructive',
           // title: 'Success ',

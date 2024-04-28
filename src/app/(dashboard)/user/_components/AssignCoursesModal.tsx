@@ -1,6 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useAtom } from 'jotai';
-import { useSession } from 'next-auth/react';
 import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
@@ -26,8 +25,6 @@ type UserFormTypes = {
 
 const AssignCoursesModal = () => {
   const [assignCoursesState, setAssignCoursesState] = useAtom(assignCoursesModalAtom);
-  const { data: session } = useSession();
-  console.log({ session });
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const {
@@ -40,9 +37,7 @@ const AssignCoursesModal = () => {
     method: 'put',
     sendDataInParams: true,
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-users'] });
         closeModal();
         toast({
@@ -53,8 +48,6 @@ const AssignCoursesModal = () => {
       },
     },
   });
-
-  console.log({ assignCourse });
 
   const closeModal = () => {
     setAssignCoursesState({
@@ -75,12 +68,7 @@ const AssignCoursesModal = () => {
     defaultValues,
     resolver: yupResolver(validationSchema) as any,
   });
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = form;
-  console.log({ errors });
+  const { handleSubmit, control } = form;
 
   const { data: coursesData, isLoading } = useApiGet<CoursesDataResponse, Error>({
     endpoint: `/courses`,
@@ -88,14 +76,12 @@ const AssignCoursesModal = () => {
   });
 
   const onSubmit = (values: UserFormTypes) => {
-    console.log({ values });
     const payload = {
       userId: assignCoursesState?.data.id,
       courseId: values.courses.id,
     };
     assignCourse(payload);
   };
-  console.log({errors})
 
   return (
     <Modal open={assignCoursesState.status} onClose={() => {}} title={'Assign Course'}>
@@ -119,7 +105,6 @@ const AssignCoursesModal = () => {
                           options={coursesData.data ?? []}
                           value={value} // Find the matching option by value
                           onChange={(val: Course) => {
-                            console.log({ val });
                             onChange(val);
                           }}
                           getOptionLabel={(val: Course) => val.title}

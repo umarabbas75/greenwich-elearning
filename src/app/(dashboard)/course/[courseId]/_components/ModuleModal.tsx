@@ -27,7 +27,6 @@ const ModuleModal = ({ courseId }: { courseId: string }) => {
   const [moduleModalState, setModuleModalState] = useAtom(addModuleModalAtom);
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  console.log({ courseId });
 
   const {
     mutate: addModule,
@@ -38,9 +37,7 @@ const ModuleModal = ({ courseId }: { courseId: string }) => {
     endpoint: `/courses/module`,
     method: 'post',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-modules'] });
         closeModal();
         toast({
@@ -61,9 +58,7 @@ const ModuleModal = ({ courseId }: { courseId: string }) => {
     endpoint: `/courses/module/${moduleModalState?.data?.id}`,
     method: 'put',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-modules'] });
         closeModal();
         toast({
@@ -104,7 +99,6 @@ const ModuleModal = ({ courseId }: { courseId: string }) => {
     config: {
       enabled: !!moduleModalState?.data?.id,
       onSuccess: (data: any) => {
-        console.log({ data });
         reset({
           ...data?.data,
         });
@@ -113,7 +107,6 @@ const ModuleModal = ({ courseId }: { courseId: string }) => {
   });
 
   const onSubmit = (values: ModuleFormTypes) => {
-    console.log('values', values);
     data ? editModule(values) : addModule({ ...values, id: courseId });
   };
 

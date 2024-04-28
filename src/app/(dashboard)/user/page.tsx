@@ -5,6 +5,7 @@ import Error from 'next/error';
 import { useState } from 'react';
 
 import SearchComponent from '@/components/common/SearchInput';
+import TableSkeletonLoader from '@/components/common/TableSkeletonLoader';
 import { Button } from '@/components/ui/button';
 import { useApiGet } from '@/lib/dashboard/client/user';
 import { userModalAtom } from '@/store/modals';
@@ -44,7 +45,6 @@ const Page = () => {
     endpoint: `/users`,
     queryKey: ['get-users'],
   });
-  console.log({ usersData });
 
   return (
     <div>
@@ -75,6 +75,8 @@ const Page = () => {
           setPagination={setPagination}
           isLoading={isLoading}
         />
+      ) : isLoading ? (
+        <TableSkeletonLoader />
       ) : (
         <div className="flex item-center justify-center mt-4">
           <div className="flex flex-col items-center opacity-70">

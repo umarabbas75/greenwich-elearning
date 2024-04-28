@@ -15,7 +15,6 @@ const CourseReport = () => {
   const [nextElement, setNextElement] = useState<any>();
 
   const moduleId = search.get('moduleId');
-  console.log({ moduleId, chapterId });
 
   useApiGet<ChaptersDataResponse, Error>({
     endpoint: `/courses/module/allChapters/${moduleId}`,
@@ -29,11 +28,9 @@ const CourseReport = () => {
             setNextElement(elements?.[index + 1]);
           }
         });
-        console.log({ elements, res, nextElement });
       },
     },
   });
-  console.log({ nextElement });
   return (
     <div className="h-full bg-gradient-to-b from-themeGreen to-primary flex flex-col justify-center items-center">
       <div className="max-w-md p-8 bg-white rounded-lg shadow-lg text-center">

@@ -44,7 +44,6 @@ const Page = () => {
     endpoint: `/quizzes`,
     queryKey: ['get-quizzes'],
   });
-  console.log({ quizzesData });
 
   return (
     <div>

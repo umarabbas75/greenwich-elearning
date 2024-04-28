@@ -32,9 +32,7 @@ const ForumModal = () => {
     endpoint: `/forum-thread`,
     method: 'post',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-forum-threads'] });
         closeModal();
         toast({
@@ -55,9 +53,7 @@ const ForumModal = () => {
     endpoint: `/forum-thread/update/${forumState?.data?.id}`,
     method: 'put',
     config: {
-      onSuccess: (res: any) => {
-        console.log({ res });
-
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-forum-threads'] });
         closeModal();
         toast({
@@ -75,7 +71,6 @@ const ForumModal = () => {
       data: null,
     });
   };
-  console.log({ addForum, editForum });
 
   const defaultValues = {
     title: '',
@@ -90,13 +85,7 @@ const ForumModal = () => {
     defaultValues,
     resolver: yupResolver(validationSchema) as any,
   });
-  const {
-    reset,
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = form;
-  console.log({ errors });
+  const { reset, handleSubmit, control } = form;
 
   const { data, isLoading: fetchingForum } = useApiGet<any>({
     endpoint: `/forum-thread/${forumState?.data?.id}`,
@@ -104,17 +93,14 @@ const ForumModal = () => {
     config: {
       enabled: !!forumState?.data?.id,
       onSuccess: (data: any) => {
-        console.log({ data });
         reset({
           ...data?.data,
         });
       },
     },
   });
-  console.log({ errors });
 
   const onSubmit = (values: any) => {
-    console.log('values', values);
     const payload = {
       title: values?.title,
       content: values?.content,
