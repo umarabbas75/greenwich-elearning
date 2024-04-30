@@ -26,7 +26,7 @@ export type ModulesDataResponse = {
   data: Module[];
 };
 const Page = () => {
-  const [type, setType] = useState('content');
+  const [type, setType] = useState('grades');
 
   return (
     <div className="flex flex-col gap-8 w-full">
