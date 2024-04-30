@@ -1,14 +1,13 @@
 'use client';
 
-import { useAtom } from 'jotai';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import SearchComponent from '@/components/common/SearchInput';
+import TableSkeletonLoader from '@/components/common/TableSkeletonLoader';
 import { Button } from '@/components/ui/button';
 import { useApiGet } from '@/lib/dashboard/client/user';
-import { addCourseModalAtom } from '@/store/modals';
 
-import CourseModal from './_components/CourseModal';
 import CourseTable from './_components/CourseTable';
 export type Course = {
   title: string;
@@ -19,6 +18,7 @@ export type Course = {
   updatedAt: string;
   image: string;
   duration: string;
+  modules: any;
 };
 export type CoursesDataResponse = {
   message: string;
@@ -26,6 +26,7 @@ export type CoursesDataResponse = {
   data: Course[];
 };
 const Page = () => {
+  const router = useRouter();
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
@@ -33,7 +34,6 @@ const Page = () => {
 
   const [search, setSearch] = useState('');
   //const debouncedSearch = useDebounce(search, 500);
-  const [courseModalState, setCourseModalState] = useAtom(addCourseModalAtom);
 
   const { data: coursesData, isLoading } = useApiGet<CoursesDataResponse, Error>({
     endpoint: `/courses`,
@@ -49,10 +49,11 @@ const Page = () => {
             <SearchComponent setSearch={setSearch} search={search} />
             <Button
               onClick={() =>
-                setCourseModalState({
-                  status: true,
-                  data: null,
-                })
+                // setCourseModalState({
+                //   status: true,
+                //   data: null,
+                // })
+                router.push('/course/addCourse')
               }
             >
               Add Course
@@ -79,6 +80,8 @@ const Page = () => {
           setPagination={setPagination}
           isLoading={isLoading}
         />
+      ) : isLoading ? (
+        <TableSkeletonLoader />
       ) : (
         <div className="flex item-center justify-center mt-4">
           <div className="flex flex-col items-center opacity-70">
@@ -87,8 +90,6 @@ const Page = () => {
           </div>
         </div>
       )}
-
-      {courseModalState.status && <CourseModal />}
     </div>
   );
 };

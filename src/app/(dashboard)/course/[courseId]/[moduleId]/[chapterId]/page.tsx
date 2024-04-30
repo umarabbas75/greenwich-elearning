@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
 import SearchComponent from '@/components/common/SearchInput';
+import TableSkeletonLoader from '@/components/common/TableSkeletonLoader';
 import { Button } from '@/components/ui/button';
 import { useApiGet } from '@/lib/dashboard/client/user';
 import { addSectionModalAtom } from '@/store/modals';
@@ -70,6 +71,8 @@ const Page = () => {
           setPagination={setPagination}
           isLoading={isLoading}
         />
+      ) : isLoading ? (
+        <TableSkeletonLoader />
       ) : (
         <div className="flex item-center justify-center mt-4">
           <div className="flex flex-col items-center opacity-70">

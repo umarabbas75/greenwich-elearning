@@ -38,25 +38,18 @@ export const sidebarMenu: SidebarMenu = {
       icon: 'bulb',
       link: '/quiz',
     },
-    {
-      id: 'settings',
-      title: 'Settings',
-      icon: 'setting',
-      link: '/setting/account',
-    },
-    {
-      showInSidebar: false,
-      id: 'settings',
-      title: 'Settings',
-      icon: 'setting',
-      link: '/setting/users',
-      role: ['admin'],
-    },
+
     {
       id: 'forums',
       title: 'Forum',
       icon: 'forum',
       link: '/forum',
+    },
+    {
+      id: 'settings',
+      title: 'Settings',
+      icon: 'setting',
+      link: '/setting/account',
     },
   ],
   user: [

@@ -75,10 +75,10 @@ const AssignCoursesModal = () => {
     queryKey: ['get-courses'],
   });
 
-  const onSubmit = (values: UserFormTypes) => {
+  const onSubmit = (values: any) => {
     const payload = {
       userId: assignCoursesState?.data.id,
-      courseId: values.courses.id,
+      courseId: values?.courses?.id,
     };
     assignCourse(payload);
   };

@@ -4,6 +4,7 @@ import { useAtom } from 'jotai';
 import { useState } from 'react';
 
 import SearchComponent from '@/components/common/SearchInput';
+import TableSkeletonLoader from '@/components/common/TableSkeletonLoader';
 import { Button } from '@/components/ui/button';
 import { useApiGet } from '@/lib/dashboard/client/user';
 import { addChapterModalAtom } from '@/store/modals';
@@ -18,6 +19,7 @@ export type Chapter = {
   createdAt: string;
   updatedAt: string;
   quizzes: string;
+  sections: any;
 };
 
 export type ChaptersDataResponse = {
@@ -70,6 +72,8 @@ const Page = ({ params }: { params: { moduleId: string } }) => {
           isLoading={isLoading}
           moduleId={moduleId}
         />
+      ) : isLoading ? (
+        <TableSkeletonLoader />
       ) : (
         <div className="flex item-center justify-center mt-4">
           <div className="flex flex-col items-center opacity-70">

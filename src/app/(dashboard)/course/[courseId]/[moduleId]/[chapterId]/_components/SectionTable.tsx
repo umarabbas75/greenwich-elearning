@@ -1,13 +1,15 @@
 'use client';
 import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
+import { useParams } from 'next/navigation';
 import { FC } from 'react';
+import { useQueryClient } from 'react-query';
 
 import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
 import TableComponent from '@/components/common/Table';
 import TableActions from '@/components/common/TableActions';
 import { useToast } from '@/components/ui/use-toast';
-import { useDeleteUser } from '@/lib/dashboard/client/user';
+import { useApiMutation } from '@/lib/dashboard/client/user';
 import { addSectionModalAtom, confirmationModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
@@ -24,6 +26,9 @@ interface Props {
   isLoading: boolean;
 }
 const SectionTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) => {
+  const queryClient = useQueryClient();
+  const params = useParams();
+  const { chapterId } = params || {};
   const [sectionModalState, setSectionModalState] = useAtom(addSectionModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const { toast } = useToast();
@@ -108,31 +113,34 @@ const SectionTable: FC<Props> = ({ data, pagination, setPagination, isLoading })
     debugTable: true,
   });
 
-  const handleDeleteSuccess = () => {
-    setConfirmState({
-      ...confirmState,
-      status: false,
-      data: null,
-    });
-    setConfirmState({ status: false, data: null });
-    toast({
-      variant: 'success',
-      title: 'Success ',
-      description: 'Data deleted successfully',
-    });
-  };
-  const handleDeleteError = (data: any) => {
-    toast({
-      variant: 'destructive',
-      title: 'Error ',
-      description: data?.response?.data?.type?.[0] ?? 'Some error occured',
-    });
-  };
-
-  const { mutate: deleteUser, isLoading: deletingUser } = useDeleteUser(
-    handleDeleteSuccess,
-    handleDeleteError,
-  );
+  const { mutate: deleteLesson, isLoading: deletingLesson } = useApiMutation({
+    method: 'delete',
+    endpoint: `/courses/section/${confirmState?.data?.id}`,
+    config: {
+      onSuccess: () => {
+        setConfirmState({
+          ...confirmState,
+          status: false,
+          data: null,
+        });
+        toast({
+          variant: 'success',
+          title: 'Success ',
+          description: 'Data deleted successfully',
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['get-sections', chapterId],
+        });
+      },
+      onError: (data) => {
+        toast({
+          variant: 'destructive',
+          title: 'Error ',
+          description: data?.response?.data?.type?.[0] ?? 'Some error occured',
+        });
+      },
+    },
+  });
 
   return (
     <>
@@ -148,15 +156,15 @@ const SectionTable: FC<Props> = ({ data, pagination, setPagination, isLoading })
         <ConfirmationModal
           open={confirmState.status}
           onClose={() => setConfirmState({ status: false, data: null })}
-          title={'Delete User'}
-          content={`Are you sure you want to delete this user?`}
+          title={'Delete Lesson'}
+          content={`Are you sure you want to delete this lesson?`}
           primaryAction={{
             label: 'Delete',
             onClick: () => {
-              deleteUser(confirmState.data.id);
+              deleteLesson(confirmState.data.id);
               //setConfirmState({ status: false, data: null });
             },
-            loading: deletingUser,
+            loading: deletingLesson,
           }}
           secondaryAction={{
             label: 'Cancel',

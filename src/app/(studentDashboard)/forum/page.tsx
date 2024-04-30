@@ -5,6 +5,7 @@ import Error from 'next/error';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
+import TableSkeletonLoader from '@/components/common/TableSkeletonLoader';
 import { Button } from '@/components/ui/button';
 import { useApiGet } from '@/lib/dashboard/client/user';
 import { forumModalAtom } from '@/store/modals';
@@ -44,8 +45,10 @@ const Page = () => {
         )}
       </div>
       <p className="text-gray-600 mb-4">
-        This forum will contain news items and important announcements (often concerning examinations). Please
-        check this forum regularly for up-to-date information.
+        This forum serves as a central hub for news updates and crucial announcements, particularly those
+        pertaining to examinations. Stay informed by regularly checking this space for the latest information
+        and important notices. Keep yourself up-to-date with relevant news items and announcements that may
+        impact your academic journey.
       </p>
       {/* {isError && <AlertDestructive error={error} />} */}
 
@@ -56,6 +59,8 @@ const Page = () => {
           setPagination={setPagination}
           isLoading={isLoading}
         />
+      ) : isLoading ? (
+        <TableSkeletonLoader />
       ) : (
         <div className="flex item-center justify-center mt-4">
           <div className="flex flex-col items-center opacity-70">

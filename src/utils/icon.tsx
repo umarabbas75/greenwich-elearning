@@ -62,12 +62,12 @@ export const Icons = ({
         <title>Stockholm-icons / Communication / Reply</title>
         <desc>Created with Sketch.</desc>
         <defs></defs>
-        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
           <rect x="0" y="0" width="24" height="24"></rect>
           <path
             d="M21.4451171,17.7910156 C21.4451171,16.9707031 21.6208984,13.7333984 19.0671874,11.1650391 C17.3484374,9.43652344 14.7761718,9.13671875 11.6999999,9 L11.6999999,4.69307548 C11.6999999,4.27886191 11.3642135,3.94307548 10.9499999,3.94307548 C10.7636897,3.94307548 10.584049,4.01242035 10.4460626,4.13760526 L3.30599678,10.6152626 C2.99921905,10.8935795 2.976147,11.3678924 3.2544639,11.6746702 C3.26907199,11.6907721 3.28437331,11.7062312 3.30032452,11.7210037 L10.4403903,18.333467 C10.7442966,18.6149166 11.2188212,18.596712 11.5002708,18.2928057 C11.628669,18.1541628 11.6999999,17.9721616 11.6999999,17.7831961 L11.6999999,13.5 C13.6531249,13.5537109 15.0443703,13.6779456 16.3083984,14.0800781 C18.1284272,14.6590944 19.5349747,16.3018455 20.5280411,19.0083314 L20.5280247,19.0083374 C20.6363903,19.3036749 20.9175496,19.5 21.2321404,19.5 L21.4499999,19.5 C21.4499999,19.0068359 21.4451171,18.2255859 21.4451171,17.7910156 Z"
             fill="darkgray"
-            fill-rule="nonzero"
+            fillRule="nonzero"
           ></path>
         </g>
       </svg>
@@ -85,7 +85,7 @@ export const Icons = ({
         <title>Stockholm-icons / Navigation / Close</title>
         <desc>Created with Sketch.</desc>
         <defs></defs>
-        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
           <g
             transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) translate(4.000000, 4.000000)"
             fill="#000000"
@@ -115,17 +115,17 @@ export const Icons = ({
         <title>Stockholm-icons / Communication / Chat6</title>
         <desc>Created with Sketch.</desc>
         <defs></defs>
-        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
           <rect x="0" y="0" width="24" height="24"></rect>
           <path
             opacity="0.3"
-            fill-rule="evenodd"
+            fillRule="evenodd"
             clip-rule="evenodd"
             d="M14.4862 18L12.7975 21.0566C12.5304 21.54 11.922 21.7153 11.4386 21.4483C11.2977 21.3704 11.1777 21.2597 11.0887 21.1255L9.01653 18H5C3.34315 18 2 16.6569 2 15V6C2 4.34315 3.34315 3 5 3H19C20.6569 3 22 4.34315 22 6V15C22 16.6569 20.6569 18 19 18H14.4862Z"
             fill="darkgray"
           ></path>
           <path
-            fill-rule="evenodd"
+            fillRule="evenodd"
             clip-rule="evenodd"
             d="M6 7H15C15.5523 7 16 7.44772 16 8C16 8.55228 15.5523 9 15 9H6C5.44772 9 5 8.55228 5 8C5 7.44772 5.44772 7 6 7ZM6 11H11C11.5523 11 12 11.4477 12 12C12 12.5523 11.5523 13 11 13H6C5.44772 13 5 12.5523 5 12C5 11.4477 5.44772 11 6 11Z"
             fill="darkgray"
@@ -145,9 +145,9 @@ export const Icons = ({
         <title>Stockholm-icons / Text / Text-width</title>
         <desc>Created with Sketch.</desc>
         <defs></defs>
-        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
           <path
-            fill-rule="evenodd"
+            fillRule="evenodd"
             clip-rule="evenodd"
             d="M22 11.5C22 12.3284 21.3284 13 20.5 13H3.5C2.6716 13 2 12.3284 2 11.5C2 10.6716 2.6716 10 3.5 10H20.5C21.3284 10 22 10.6716 22 11.5Z"
             fill="black"
@@ -169,7 +169,7 @@ export const Icons = ({
         <title>Stockholm-icons / General / Half-star</title>
         <desc>Created with Sketch.</desc>
         <defs></defs>
-        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
           <polygon points="0 0 24 0 24 24 0 24"></polygon>
           <path
             d="M12,4.25932872 C12.1488635,4.25921584 12.3000368,4.29247316 12.4425657,4.36281539 C12.6397783,4.46014562 12.7994058,4.61977315 12.8967361,4.81698575 L14.9389263,8.95491503 L19.5054023,9.61846284 C20.0519472,9.69788046 20.4306287,10.2053233 20.351211,10.7518682 C20.3195865,10.9695052 20.2170993,11.1706476 20.0596157,11.3241562 L16.7552826,14.545085 L17.5353298,19.0931094 C17.6286908,19.6374458 17.263103,20.1544017 16.7187666,20.2477627 C16.5020089,20.2849396 16.2790408,20.2496249 16.0843804,20.1472858 L12,18 L12,4.25932872 Z"
@@ -198,7 +198,7 @@ export const Icons = ({
         <title>Stockholm-icons / General / Notification2</title>
         <desc>Created with Sketch.</desc>
         <defs></defs>
-        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
           <rect x="0" y="0" width="24" height="24"></rect>
           <path
             d="M13.2070325,4 C13.0721672,4.47683179 13,4.97998812 13,5.5 C13,8.53756612 15.4624339,11 18.5,11 C19.0200119,11 19.5231682,10.9278328 20,10.7929675 L20,17 C20,18.6568542 18.6568542,20 17,20 L7,20 C5.34314575,20 4,18.6568542 4,17 L4,7 C4,5.34314575 5.34314575,4 7,4 L13.2070325,4 Z"
@@ -220,13 +220,13 @@ export const Icons = ({
         <title>Stockholm-icons / Home / Bulb1</title>
         <desc>Created with Sketch.</desc>
         <defs></defs>
-        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
           <rect x="0" y="0" width="24" height="24"></rect>
           <circle fill="darkgray" opacity="0.3" cx="12" cy="9" r="8"></circle>
           <path
             d="M14.5297296,11 L9.46184488,11 L11.9758349,17.4645458 L14.5297296,11 Z M10.5679953,19.3624463 L6.53815512,9 L17.4702704,9 L13.3744964,19.3674279 L11.9759405,18.814912 L10.5679953,19.3624463 Z"
             fill="darkgray"
-            fill-rule="nonzero"
+            fillRule="nonzero"
             opacity="0.3"
           ></path>
           <path
@@ -253,18 +253,18 @@ export const Icons = ({
         <title>Stockholm-icons / General / User</title>
         <desc>Created with Sketch.</desc>
         <defs></defs>
-        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
           <polygon points="0 0 24 0 24 24 0 24"></polygon>
           <path
             d="M12,11 C9.790861,11 8,9.209139 8,7 C8,4.790861 9.790861,3 12,3 C14.209139,3 16,4.790861 16,7 C16,9.209139 14.209139,11 12,11 Z"
             fill="darkgray"
-            fill-rule="nonzero"
+            fillRule="nonzero"
             opacity="0.3"
           ></path>
           <path
             d="M3.00065168,20.1992055 C3.38825852,15.4265159 7.26191235,13 11.9833413,13 C16.7712164,13 20.7048837,15.2931929 20.9979143,20.2 C21.0095879,20.3954741 20.9979143,21 20.2466999,21 C16.541124,21 11.0347247,21 3.72750223,21 C3.47671215,21 2.97953825,20.45918 3.00065168,20.1992055 Z"
             fill="darkgray"
-            fill-rule="nonzero"
+            fillRule="nonzero"
           ></path>
         </g>
       </svg>
@@ -281,7 +281,7 @@ export const Icons = ({
         <title>Stockholm-icons / Home / Book-open</title>
         <desc>Created with Sketch.</desc>
         <defs></defs>
-        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
           <rect x="0" y="0" width="24" height="24"></rect>
           <path
             d="M13.6855025,18.7082217 C15.9113859,17.8189707 18.682885,17.2495635 22,17 C22,16.9325178 22,13.1012863 22,5.50630526 L21.9999762,5.50630526 C21.9999762,5.23017604 21.7761292,5.00632908 21.5,5.00632908 C21.4957817,5.00632908 21.4915635,5.00638247 21.4873465,5.00648922 C18.658231,5.07811173 15.8291155,5.74261533 13,7 C13,7.04449645 13,10.79246 13,18.2438906 L12.9999854,18.2438906 C12.9999854,18.520041 13.2238496,18.7439052 13.5,18.7439052 C13.5635398,18.7439052 13.6264972,18.7317946 13.6855025,18.7082217 Z"
@@ -997,7 +997,7 @@ export const Icons = ({
     //     version="1.1"
     //     {...props}
     //   >
-    //     <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    //     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
     //       <polygon points="0 0 24 0 24 24 0 24"></polygon>
     //       <path
     //         d="M12,18 L7.91561963,20.1472858 C7.42677504,20.4042866 6.82214789,20.2163401 6.56514708,19.7274955 C6.46280801,19.5328351 6.42749334,19.309867 6.46467018,19.0931094 L7.24471742,14.545085 L3.94038429,11.3241562 C3.54490071,10.938655 3.5368084,10.3055417 3.92230962,9.91005817 C4.07581822,9.75257453 4.27696063,9.65008735 4.49459766,9.61846284 L9.06107374,8.95491503 L11.1032639,4.81698575 C11.3476862,4.32173209 11.9473121,4.11839309 12.4425657,4.36281539 C12.6397783,4.46014562 12.7994058,4.61977315 12.8967361,4.81698575 L14.9389263,8.95491503 L19.5054023,9.61846284 C20.0519472,9.69788046 20.4306287,10.2053233 20.351211,10.7518682 C20.3195865,10.9695052 20.2170993,11.1706476 20.0596157,11.3241562 L16.7552826,14.545085 L17.5353298,19.0931094 C17.6286908,19.6374458 17.263103,20.1544017 16.7187666,20.2477627 C16.5020089,20.2849396 16.2790408,20.2496249 16.0843804,20.1472858 L12,18 Z"

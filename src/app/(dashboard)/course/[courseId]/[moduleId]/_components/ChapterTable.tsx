@@ -3,12 +3,13 @@ import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from 
 import { useAtom } from 'jotai';
 import { useParams, useRouter } from 'next/navigation';
 import { FC } from 'react';
+import { useQueryClient } from 'react-query';
 
 import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
 import TableComponent from '@/components/common/Table';
 import TableActions from '@/components/common/TableActions';
 import { useToast } from '@/components/ui/use-toast';
-import { useDeleteUser } from '@/lib/dashboard/client/user';
+import { useApiMutation } from '@/lib/dashboard/client/user';
 import {
   addChapterModalAtom,
   assignQuizzesModalAtom,
@@ -36,6 +37,7 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
   const router = useRouter();
   const params = useParams();
   const { courseId } = params || {};
+  const queryClient = useQueryClient();
   const [chapterModalState, setChapterModalState] = useAtom(addChapterModalAtom);
   const [viewAssignQuizModalState, setViewAssignQuizModalState] = useAtom(viewAssignedQuizzesModal);
   const [assignQuizesState, setAssignQuizesState] = useAtom(assignQuizzesModalAtom);
@@ -106,6 +108,12 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
       cell: (props) => <h1>{props.row.original.description}</h1>,
       footer: (props) => props.column.id,
     }),
+    columnHelper.accessor('sections', {
+      id: 'sections',
+      header: 'Lessons',
+      cell: (props) => <h1>{props.row.original.sections?.length}</h1>,
+      footer: (props) => props.column.id,
+    }),
     columnHelper.accessor('quizzes', {
       id: 'quizzes',
       header: 'Quizzes',
@@ -147,31 +155,34 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
     debugTable: true,
   });
 
-  const handleDeleteSuccess = () => {
-    setConfirmState({
-      ...confirmState,
-      status: false,
-      data: null,
-    });
-    setConfirmState({ status: false, data: null });
-    toast({
-      variant: 'success',
-      title: 'Success ',
-      description: 'Data deleted successfully',
-    });
-  };
-  const handleDeleteError = (data: any) => {
-    toast({
-      variant: 'destructive',
-      title: 'Error ',
-      description: data?.response?.data?.type?.[0] ?? 'Some error occured',
-    });
-  };
-
-  const { mutate: deleteUser, isLoading: deletingUser } = useDeleteUser(
-    handleDeleteSuccess,
-    handleDeleteError,
-  );
+  const { mutate: deleteChapter, isLoading: deletingChapter } = useApiMutation({
+    method: 'delete',
+    endpoint: `/courses/chapter/${confirmState?.data?.id}`,
+    config: {
+      onSuccess: () => {
+        setConfirmState({
+          ...confirmState,
+          status: false,
+          data: null,
+        });
+        toast({
+          variant: 'success',
+          title: 'Success ',
+          description: 'Data deleted successfully',
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['get-chapters', moduleId],
+        });
+      },
+      onError: (data) => {
+        toast({
+          variant: 'destructive',
+          title: 'Error ',
+          description: data?.response?.data?.type?.[0] ?? 'Some error occured',
+        });
+      },
+    },
+  });
 
   const onRowClick = (data: Chapter) => {
     router.push(`/course/${courseId}/${moduleId}/${data.id}`);
@@ -193,15 +204,15 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
         <ConfirmationModal
           open={confirmState.status}
           onClose={() => setConfirmState({ status: false, data: null })}
-          title={'Delete Chapter'}
-          content={`Are you sure you want to delete this chapter?`}
+          title={'Delete Element'}
+          content={`Are you sure you want to delete this element?`}
           primaryAction={{
             label: 'Delete',
             onClick: () => {
-              deleteUser(confirmState.data.id);
+              deleteChapter(confirmState.data.id);
               //setConfirmState({ status: false, data: null });
             },
-            loading: deletingUser,
+            loading: deletingChapter,
           }}
           secondaryAction={{
             label: 'Cancel',

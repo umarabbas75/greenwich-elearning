@@ -16,8 +16,6 @@ import { Icons } from '@/utils/icon';
 
 import { Course, CoursesDataResponse } from '../page';
 
-import CourseModal from './CourseModal';
-
 const columnHelper = createColumnHelper<Course>();
 
 interface Props {
@@ -29,6 +27,7 @@ interface Props {
 const CourseTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) => {
   const router = useRouter();
   const [courseModalState, setCourseModalState] = useAtom(addCourseModalAtom);
+  console.log({ courseModalState });
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const { toast } = useToast();
   const renderActions = (row: Course) => {
@@ -40,6 +39,7 @@ const CourseTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) 
               status: true,
               data: row,
             });
+            router.push('/course/addCourse');
           }}
           className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
         >
@@ -106,6 +106,13 @@ const CourseTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) 
       footer: (props) => props.column.id,
     }),
 
+    columnHelper.accessor('modules', {
+      id: 'units',
+      header: 'Units',
+      cell: (props) => <h1>{props.row.original.modules?.length}</h1>,
+      footer: (props) => props.column.id,
+    }),
+
     {
       id: 'actions',
       cell: (props: CellContext<Course, string>) => (
@@ -169,7 +176,6 @@ const CourseTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) 
         <div className="h-4" />
       </div>
 
-      {courseModalState.status && <CourseModal />}
       {confirmState.status && (
         <ConfirmationModal
           open={confirmState.status}

@@ -111,7 +111,11 @@ const ModuleModal = ({ courseId }: { courseId: string }) => {
   };
 
   return (
-    <Modal open={moduleModalState.status} onClose={() => {}} title={data ? 'Edit Module' : 'New Module'}>
+    <Modal
+      open={moduleModalState.status}
+      onClose={() => {}}
+      title={data ? 'Edit Unit Details' : 'New Unit details'}
+    >
       {fetchingModule ? (
         <Spinner />
       ) : (
@@ -119,40 +123,38 @@ const ModuleModal = ({ courseId }: { courseId: string }) => {
           {(isEditError || isAddError) && <AlertDestructive error={editError || addError} />}
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={control}
-                  name="title"
-                  render={({ field: { onChange, value }, formState: { errors } }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                          <Input onChange={onChange} value={value} />
-                        </FormControl>
+              <FormField
+                control={control}
+                name="title"
+                render={({ field: { onChange, value }, formState: { errors } }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input onChange={onChange} value={value} />
+                      </FormControl>
 
-                        <FormMessage>{errors.title?.message}</FormMessage>
-                      </FormItem>
-                    );
-                  }}
-                />
-                <FormField
-                  control={control}
-                  name="description"
-                  render={({ field: { onChange, value }, formState: { errors } }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel>Description</FormLabel>
-                        <FormControl>
-                          <Input onChange={onChange} value={value} />
-                        </FormControl>
+                      <FormMessage>{errors.title?.message}</FormMessage>
+                    </FormItem>
+                  );
+                }}
+              />
+              <FormField
+                control={control}
+                name="description"
+                render={({ field: { onChange, value }, formState: { errors } }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Input onChange={onChange} value={value} />
+                      </FormControl>
 
-                        <FormMessage>{errors.description?.message}</FormMessage>
-                      </FormItem>
-                    );
-                  }}
-                />
-              </div>
+                      <FormMessage>{errors.description?.message}</FormMessage>
+                    </FormItem>
+                  );
+                }}
+              />
 
               <div className="flex items-center justify-end gap-2">
                 <Button variant={'outline'} onClick={closeModal}>

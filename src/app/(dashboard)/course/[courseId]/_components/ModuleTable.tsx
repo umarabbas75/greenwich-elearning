@@ -85,6 +85,13 @@ const ModuleTable: FC<Props> = ({ data, pagination, setPagination, isLoading, co
       footer: (props) => props.column.id,
     }),
 
+    columnHelper.accessor('chapters', {
+      id: 'elements',
+      header: 'Elements',
+      cell: (props) => <h1>{props.row.original.chapters.length}</h1>,
+      footer: (props) => props.column.id,
+    }),
+
     {
       id: 'actions',
       cell: (props: CellContext<Module, string>) => (
@@ -144,7 +151,7 @@ const ModuleTable: FC<Props> = ({ data, pagination, setPagination, isLoading, co
   return (
     <>
       <div className="p-2 border rounded">
-        <p className="pl-2 font-medium mb-4">Modules</p>
+        <p className="pl-2 font-medium mb-4">Unit</p>
         {isLoading ? 'loading...' : <TableComponent table={table} onRowClick={onRowClick} />}
 
         <div className="h-4" />

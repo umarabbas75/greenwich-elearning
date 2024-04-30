@@ -1,12 +1,11 @@
 'use client';
+import { FolderClosed, FolderOpen } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useApiGet } from '@/lib/dashboard/client/user';
-
-import { ModulesDataResponse } from '../page';
 
 export type Chapter = {
   title: string;
@@ -25,77 +24,80 @@ export type ChaptersDataResponse = {
 const CourseContent = () => {
   const params = useParams();
   const { courseId } = params;
-  const { data: modulesData, isLoading: isModuleLoading } = useApiGet<ModulesDataResponse, Error>({
-    endpoint: `/courses/allModules/${courseId}`,
+  const [openAccordions, setOpenAccordions] = useState<any>([]);
+  const { data: modulesData, isLoading: isModuleLoading } = useApiGet<any, Error>({
+    endpoint: `/courses/user/allModules/${courseId}`,
     queryKey: ['get-modules', courseId],
-  });
-
-  const [moduleId, setModuleId] = React.useState<string>();
-
-  const renderChaptersList = (chapters: any) => {
-    return chapters?.map((item: any, index: number) => {
-      return (
-        <Link
-          className="text-black"
-          key={index}
-          href={{
-            pathname: `/studentCourse/${courseId}/${item.id}`,
-            query: {
-              chapterName: item.title,
-              courseId,
-              moduleId,
-            },
-          }}
-        >
-          <li className="text-black">{item.title}</li>
-        </Link>
-      );
-    });
-  };
-  const { data: chaptersData, isLoading } = useApiGet<ChaptersDataResponse, Error>({
-    endpoint: `/courses/module/allChapters/${moduleId}`,
-    queryKey: ['get-chapters', moduleId],
     config: {
-      enabled: !!moduleId,
+      select: (res) => res?.data?.data,
+      onSuccess: (res: any) => {
+        setOpenAccordions(res.map((_: any, index: any) => index)); // Initially open all accordions
+      },
     },
   });
 
-  const setAccordionValue = (e: string) => {
-    setModuleId(e);
+  const toggleAccordion = (index: any) => {
+    if (openAccordions.includes(index)) {
+      setOpenAccordions(openAccordions.filter((item: any) => item !== index));
+    } else {
+      setOpenAccordions([...openAccordions, index]);
+    }
   };
+  console.log({ openAccordions });
+  if (isModuleLoading) {
+    return 'loading....';
+  }
 
   return (
     <div className="p-4 font-sans rounded-xl border bg-white">
-      {isModuleLoading ? (
-        'loading'
-      ) : (
-        <>
-          <div className="flex items-center justify-between">
-            <h1 className="text-primary text-xl font-bold mb-3">Content</h1>
-            <p className="text-base font-bold">{modulesData?.data?.length} Units</p>
-          </div>
+      <>
+        <div className="flex items-center justify-between">
+          <h1 className="text-primary text-xl font-bold mb-3">Content</h1>
+          <p className="text-base font-bold">{modulesData?.length} Units</p>
+        </div>
 
-          <Accordion
-            type="single"
-            collapsible
-            className="w-full"
-            value={moduleId}
-            onValueChange={(e) => setAccordionValue(e)}
-          >
-            {modulesData?.data?.map((item: any) => {
-              return (
-                <AccordionItem key={item.id} value={item.id}>
-                  <AccordionTrigger>{item.title}</AccordionTrigger>
-                  <AccordionContent>
-                    {/* <ul className="list-disc">{renderChaptersList(item.chapters)}</ul> */}
-                    {isLoading ? 'loading' : renderChaptersList(chaptersData?.data)}
-                  </AccordionContent>
-                </AccordionItem>
-              );
-            })}
-          </Accordion>
-        </>
-      )}
+        <div className="w-full">
+          {modulesData?.map((item: any, index: any) => (
+            <Accordion key={item.id} type="multiple">
+              <AccordionItem value={`item-${index}`}>
+                <AccordionTrigger
+                  onClick={() => toggleAccordion(index)}
+                  className="flex items-center justify-between px-4 py-3 bg-themeGreen shadow-md cursor-pointer"
+                >
+                  <span className="font-medium uppercase text-white">{item.title}</span>
+                  {!openAccordions.includes(index) ? (
+                    <FolderClosed className="w-6 h-6 text-white" />
+                  ) : (
+                    <FolderOpen className="w-6 h-6 text-white" />
+                  )}
+                </AccordionTrigger>
+                <AccordionContent>
+                  <ul className="divide-y divide-gray-200">
+                    {item.chapters.map((chapter: any) => (
+                      <Link
+                        className="text-black"
+                        key={index}
+                        href={{
+                          pathname: `/studentCourse/${courseId}/${chapter.id}`,
+                          query: {
+                            chapterName: chapter.title,
+                            courseId,
+                            moduleId: item?.id,
+                          },
+                        }}
+                      >
+                        <li key={chapter.id} className="p-4 cursor-pointer hover:bg-gray-100">
+                          <h3 className="uppercase font-semibold">{chapter.title}</h3>
+                        </li>
+                      </Link>
+                    ))}
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          ))}
+        </div>
+      </>
     </div>
   );
 };

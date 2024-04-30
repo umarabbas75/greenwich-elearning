@@ -36,7 +36,7 @@ export const options = {
             },
           });
           const userData = await res.json();
-          console.log({ userData }, userData?.data?.user);
+          console.log({ userData, res }, userData?.data?.user);
           // //adding this temporarily-start
           // return {
           //   ...user,
@@ -63,7 +63,7 @@ export const options = {
             lastName: userData?.data?.user?.lastName ?? '',
             email: userData?.data?.user?.email ?? '',
             id: userData?.data?.user?.id ?? '',
-            photo: userData?.data?.user?.photo ?? '',
+            photo: '',
             role: userData?.data?.user?.role ?? '',
           } as any;
         } catch (error) {

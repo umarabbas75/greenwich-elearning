@@ -12,21 +12,13 @@ import { courseProgressAtom } from '@/store/course';
 
 import PDFReport from './PDFReport';
 
-const Grades = ({ courseIdProp }: { courseIdProp?: any } = {}) => {
+const Grades = ({ courseIdProp, courseNameProp }: { courseIdProp?: any; courseNameProp?: any } = {}) => {
   const { courseId } = useParams();
   const courseIdParam = courseId ?? courseIdProp;
   const [courseProgressState, setCourseProgressState] = useAtom(courseProgressAtom);
   const [grades, setGrades] = useState<any>([]);
 
-  const columns = [
-    'Grade Name',
-    'Status',
-    'Progress',
-    'Contribution',
-    'Quiz Correct',
-    'Quiz Attempted',
-    'Grade',
-  ];
+  const columns = ['Name', 'Status', 'Progress', 'Contribution', 'Quiz Correct', 'Quiz Attempted', 'Grade'];
 
   useApiGet<any, Error>({
     endpoint: `/courses/report/${courseIdParam}`,
@@ -95,7 +87,12 @@ const Grades = ({ courseIdProp }: { courseIdProp?: any } = {}) => {
             NEBOSH International Diploma in Environmental Management- course report
           </h2>
         </div> */}
-        <ReportHeader courseProgressState={courseProgressState} columns={columns} grades={grades} />
+        <ReportHeader
+          courseProgressState={courseProgressState}
+          columns={columns}
+          grades={grades}
+          courseNameProp={courseNameProp}
+        />
         <div className="py-4 overflow-x-auto">
           <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
             <table className="min-w-full leading-normal">
@@ -151,10 +148,10 @@ const Grades = ({ courseIdProp }: { courseIdProp?: any } = {}) => {
 
 export default Grades;
 
-const ReportHeader = ({ courseProgressState, columns, grades }: any) => {
+const ReportHeader = ({ courseProgressState, columns, grades, courseNameProp }: any) => {
   const session = useSession();
   const search = useSearchParams();
-  const courseName = search.get('title');
+  const courseName = search.get('title') ?? courseNameProp;
 
   const userPhoto = 'https://via.placeholder.com/150'; // Placeholder image
   const instituteName = 'Greenwich Training and consulting';
@@ -184,17 +181,23 @@ const ReportHeader = ({ courseProgressState, columns, grades }: any) => {
     url: '',
   });
   useEffect(() => {
-    const preparePDF = async () => {
-      const document: any = await getNewDocument();
-      const blob = await ReactPDF.pdf(document).toBlob();
+    try {
+      const preparePDF = async () => {
+        const document: any = await getNewDocument();
+        const blob = await ReactPDF.pdf(document).toBlob();
 
-      const url = URL.createObjectURL(blob);
-      setPdfData({
-        blob: blob,
-        url: url,
-      });
-    };
-    session && courseProgressState && grades && preparePDF();
+        const url = URL.createObjectURL(blob);
+        console.log({ url });
+        setPdfData({
+          blob: blob,
+          url: url,
+        });
+      };
+      console.log({ session, courseProgressState, grades });
+      session && grades && preparePDF();
+    } catch (error) {
+      console.log({ error });
+    }
   }, [session, courseProgressState, grades]);
 
   return (

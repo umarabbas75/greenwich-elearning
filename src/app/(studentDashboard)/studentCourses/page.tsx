@@ -3,6 +3,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import React from 'react';
 
+import CourseCardSkeleton from '@/components/common/CourseCardSkeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useApiGet } from '@/lib/dashboard/client/user';
 
@@ -14,9 +15,12 @@ const Page = () => {
   const params = useSearchParams();
   const type = params.get('type');
   const { data: session } = useSession();
-  const { data: assignedCourses } = useApiGet<any, Error>({
+  const { data: assignedCourses, isLoading } = useApiGet<any, Error>({
     endpoint: `/courses/getAllAssignedCourses/${session?.user.id}`,
     queryKey: ['get-sections', session?.user.id],
+    config: {
+      keepPreviousData: true,
+    },
   });
 
   return (
@@ -33,6 +37,8 @@ const Page = () => {
 
           <TabsTrigger value="completed">Completed Courses</TabsTrigger>
         </TabsList>
+
+        {isLoading && <CourseCardSkeleton />}
 
         {(type == 'active' || !type) && (
           <ActiveCourses

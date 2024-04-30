@@ -4,6 +4,7 @@ import { useAtom } from 'jotai';
 import { useState } from 'react';
 
 import SearchComponent from '@/components/common/SearchInput';
+import TableSkeletonLoader from '@/components/common/TableSkeletonLoader';
 import { Button } from '@/components/ui/button';
 import { useApiGet } from '@/lib/dashboard/client/user';
 import { addModuleModalAtom } from '@/store/modals';
@@ -17,6 +18,7 @@ export type Module = {
   id: string;
   createdAt: string;
   updatedAt: string;
+  chapters: any;
 };
 
 export type ModulesDataResponse = {
@@ -55,24 +57,11 @@ const Page = ({ params }: { params: { courseId: string } }) => {
                 })
               }
             >
-              Add Modules
+              Add Units
             </Button>
           </div>
         </div>
       </div>
-      {/* {isError && <AlertDestructive error={error} />} */}
-      {/* <CourseTable
-        data={{
-          results: tempData,
-          count: 10,
-          previous: null,
-          next: null,
-        }}
-        pagination={pagination}
-        setPagination={setPagination}
-        isLoading={false}
-        courseId={courseId}
-      /> */}
 
       {modulesData?.data && modulesData?.data?.length > 0 ? (
         <ModuleTable
@@ -82,6 +71,8 @@ const Page = ({ params }: { params: { courseId: string } }) => {
           isLoading={isLoading}
           courseId={courseId}
         />
+      ) : isLoading ? (
+        <TableSkeletonLoader />
       ) : (
         <div className="flex item-center justify-center mt-4">
           <div className="flex flex-col items-center opacity-70">

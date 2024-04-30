@@ -2,7 +2,6 @@ import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/re
 import { useAtom } from 'jotai';
 import { ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import Grades from '@/app/(studentDashboard)/studentCourses/[courseId]/_components/Grades';
@@ -16,9 +15,7 @@ import { Icons } from '@/utils/icon';
 /* const MAX_FILE_SIZE = 102400; */
 
 const ViewUserCoursesModal = () => {
-  const router = useRouter();
-
-  const [selectedCourseId, setSelectedCourseId] = useState('');
+  const [selectedCourseId, setSelectedCourseId] = useState<any>(null);
   const [userCoursesState, setUserCoursesState] = useAtom(viewUserCoursesModal);
   const closeModal = () => {
     setUserCoursesState({
@@ -86,10 +83,10 @@ const ViewUserCoursesModal = () => {
         <h1
           className="text-themeBlue cursor-pointer"
           onClick={() => {
-            setSelectedCourseId(props.row.original?.id);
+            setSelectedCourseId(props.row.original);
           }}
         >
-          Download PDF
+          View Report
         </h1>
       ),
       footer: (props) => props.column.id,
@@ -116,12 +113,19 @@ const ViewUserCoursesModal = () => {
         <div className="">
           {selectedCourseId ? (
             <div>
-              <ArrowLeft
-                onClick={() => {
-                  router.back();
-                }}
-              />
-              <Grades courseIdProp={selectedCourseId} />
+              <div className="mb-2">
+                <button
+                  className="flex gap-1 items-center"
+                  onClick={() => {
+                    setSelectedCourseId(null);
+                  }}
+                >
+                  <ArrowLeft />
+                  back
+                </button>
+              </div>
+
+              <Grades courseIdProp={selectedCourseId?.id} courseNameProp={selectedCourseId?.title} />
             </div>
           ) : (
             <TableComponent table={table} />
