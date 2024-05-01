@@ -8,11 +8,15 @@ import React, { useEffect, useState } from 'react';
 import StatusComponent from '@/components/common/StatusComponent';
 import { Button } from '@/components/ui/button';
 import { useApiGet } from '@/lib/dashboard/client/user';
-import { courseProgressAtom } from '@/store/course';
+import { courseProgressAtom, userPhotoAtom } from '@/store/course';
 
 import PDFReport from './PDFReport';
 
-const Grades = ({ courseIdProp, courseNameProp }: { courseIdProp?: any; courseNameProp?: any } = {}) => {
+const Grades = ({
+  type,
+  courseIdProp,
+  courseNameProp,
+}: { courseIdProp?: any; courseNameProp?: any; type?: string } = {}) => {
   const { courseId } = useParams();
   const courseIdParam = courseId ?? courseIdProp;
   const [courseProgressState, setCourseProgressState] = useAtom(courseProgressAtom);
@@ -20,7 +24,7 @@ const Grades = ({ courseIdProp, courseNameProp }: { courseIdProp?: any; courseNa
 
   const columns = ['Name', 'Status', 'Progress', 'Contribution', 'Quiz Correct', 'Quiz Attempted', 'Grade'];
 
-  useApiGet<any, Error>({
+  const { refetch, isLoading } = useApiGet<any, Error>({
     endpoint: `/courses/report/${courseIdParam}`,
     queryKey: ['get-chapters', courseIdParam],
     config: {
@@ -79,6 +83,12 @@ const Grades = ({ courseIdProp, courseNameProp }: { courseIdProp?: any; courseNa
       },
     },
   });
+  useEffect(() => {
+    if (type === 'grades' && !isLoading) {
+      refetch();
+    }
+  }, [type]);
+
   return (
     <div>
       <div className="pb-8">
@@ -123,10 +133,10 @@ const Grades = ({ courseIdProp, courseNameProp }: { courseIdProp?: any; courseNa
                           {<StatusComponent status={row?.status} />}
                         </td>
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                          {row.progress}%
+                          {isNaN(row?.progress) ? 0 : row.progress?.toFixed(2)}%
                         </td>
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                          {row.progressContributionToCourse}%
+                          {isNaN(row.progressContributionToCourse) ? 0 : row.progressContributionToCourse}%
                         </td>
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                           {row.quizCorrect}/{row?.totalQuizzes}
@@ -152,6 +162,7 @@ const ReportHeader = ({ courseProgressState, columns, grades, courseNameProp }: 
   const session = useSession();
   const search = useSearchParams();
   const courseName = search.get('title') ?? courseNameProp;
+  const [userPhotoState] = useAtom(userPhotoAtom);
 
   const userPhoto = 'https://via.placeholder.com/150'; // Placeholder image
   const instituteName = 'Greenwich Training and consulting';
@@ -164,6 +175,7 @@ const ReportHeader = ({ courseProgressState, columns, grades, courseNameProp }: 
         <Document>
           <PDFReport
             session={session}
+            userPhotoState={userPhotoState}
             courseName={courseName}
             courseProgressState={courseProgressState}
             instituteName={instituteName}
@@ -203,7 +215,11 @@ const ReportHeader = ({ courseProgressState, columns, grades, courseNameProp }: 
   return (
     <div className="course-report grid grid-cols-1 md:grid-cols-5 gap-4 bg-white shadow-md rounded-lg overflow-hidden">
       <div className="col-span-2 student-info px-6 py-4 flex flex-col items-center justify-center bg-gray-100">
-        <img className="w-24 h-24 rounded-full object-cover mb-4" src={userPhoto} alt="User Photo" />
+        <img
+          className="w-24 h-24 rounded-full object-cover mb-4"
+          src={userPhotoState ?? userPhoto}
+          alt="User Photo"
+        />
         <h2 className="text-xl font-bold text-gray-800">{`${session.data?.user?.firstName} ${session.data?.user?.lastName}`}</h2>
         <p className="text-gray-600 text-sm">{session.data?.user?.email}</p>
         <p className="text-gray-600 text-sm">{session.data?.user?.phone}</p>

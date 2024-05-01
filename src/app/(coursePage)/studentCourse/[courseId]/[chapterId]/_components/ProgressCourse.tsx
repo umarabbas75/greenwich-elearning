@@ -1,11 +1,11 @@
 'use client';
+import { ArrowLeft } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import React, { useState } from 'react';
 
 import ProgressBar from '@/components/common/Progress';
 import { useApiGet } from '@/lib/dashboard/client/user';
-import { ArrowLeft } from 'lucide-react';
 
 const ProgressCourse = () => {
   const { courseId } = useParams();
@@ -36,9 +36,8 @@ const ProgressCourse = () => {
             router.back();
           }}
         >
-         <ArrowLeft/>
-         Back
-          
+          <ArrowLeft />
+          Back
         </p>
         <h1 className="text-2xl font-bold mt-4">{courseData?.title}</h1>
         <div className="mt-4">

@@ -1,12 +1,10 @@
 'use client';
 import { FolderClosed, FolderOpen } from 'lucide-react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import React, { useState } from 'react';
+import React from 'react';
 import { buildStyles, CircularProgressbar } from 'react-circular-progressbar';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { useApiGet } from '@/lib/dashboard/client/user';
 
 export type Chapter = {
   title: string;
@@ -22,69 +20,7 @@ export type ChaptersDataResponse = {
   statusCode: number;
   data: Chapter[];
 };
-const CourseContent = () => {
-  const params = useParams();
-  const { courseId } = params;
-  const [openAccordions, setOpenAccordions] = useState<any>([]);
-  const [modulesRecord, setModulesRecord] = useState([]);
-  const { isLoading: isModuleLoading } = useApiGet<any, Error>({
-    endpoint: `/courses/user/allModules/${courseId}`,
-    queryKey: ['get-modules', courseId],
-    config: {
-      select: (res) => res?.data?.data,
-      onSuccess: (res: any) => {
-        setOpenAccordions(res.map((_: any, index: any) => index)); // Initially open all accordions
-
-        const modulesWithProgress = res?.map((module: any) => {
-          const totalModuleSections = module.chapters.reduce(
-            (total: any, chapter: any) => total + chapter.sections.length,
-            0,
-          );
-          const completedModuleSections = module.course.UserCourseProgress.filter((progress: any) =>
-            module.chapters.some((chapter: any) =>
-              chapter.sections.some((section: any) => section.id === progress.sectionId),
-            ),
-          ).length;
-
-          const moduleCompletedPercentage = (completedModuleSections / totalModuleSections) * 100;
-
-          const chaptersWithProgress = module.chapters.map((chapter: any) => {
-            const totalChapterSections = chapter.sections.length;
-            const completedChapterSections = chapter.sections.filter((section: any) =>
-              module.course.UserCourseProgress.some((progress: any) => progress.sectionId === section.id),
-            ).length;
-
-            const chapterCompletedPercentage = (completedChapterSections / totalChapterSections) * 100;
-
-            return {
-              ...chapter,
-              completedPercentage: chapterCompletedPercentage.toFixed(2),
-            };
-          });
-
-          return {
-            ...module,
-            completedPercentage: moduleCompletedPercentage.toFixed(2),
-            chapters: chaptersWithProgress,
-          };
-        });
-        setModulesRecord(modulesWithProgress);
-        console.log({ modulesWithProgress });
-      },
-    },
-  });
-
-  const toggleAccordion = (index: any) => {
-    if (openAccordions.includes(index)) {
-      setOpenAccordions(openAccordions.filter((item: any) => item !== index));
-    } else {
-      setOpenAccordions([...openAccordions, index]);
-    }
-  };
-  if (isModuleLoading) {
-    return 'loading....';
-  }
-
+const CourseContent = ({ modulesRecord, toggleAccordion, openAccordions, courseId }: any) => {
   return (
     <div className="p-4 font-sans rounded-xl border bg-white">
       <>

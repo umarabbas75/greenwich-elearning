@@ -1,13 +1,16 @@
 'use client';
 import { Tabs } from '@radix-ui/react-tabs';
+import { useParams } from 'next/navigation';
 import React, { useState } from 'react';
 
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useApiGet } from '@/lib/dashboard/client/user';
 
 import Assessment from './_components/Assessment';
 import CourseContent from './_components/CourseContent';
 import CourseOverview from './_components/CourseOverview';
 import Grades from './_components/Grades';
+import ModuleLoader from './_components/ModuleLoader';
 import Resources from './_components/Resources';
 import Syllabus from './_components/Syllabus';
 
@@ -26,7 +29,73 @@ export type ModulesDataResponse = {
   data: Module[];
 };
 const Page = () => {
-  const [type, setType] = useState('grades');
+  const [type, setType] = useState('content');
+  const params = useParams();
+  const { courseId } = params;
+  const [openAccordions, setOpenAccordions] = useState<any>([]);
+  const [modulesRecord, setModulesRecord] = useState([]);
+  const { isLoading: isModuleLoading, refetch } = useApiGet<any, Error>({
+    endpoint: `/courses/user/allModules/${courseId}`,
+    queryKey: ['get-modules', courseId],
+    config: {
+      select: (res) => res?.data?.data,
+      onSuccess: (res: any) => {
+        setOpenAccordions(res.map((_: any, index: any) => index)); // Initially open all accordions
+
+        const modulesWithProgress = res?.map((module: any) => {
+          const totalModuleSections = module?.chapters?.reduce(
+            (total: any, chapter: any) => total + chapter?.sections?.length,
+            0,
+          );
+          const completedModuleSections = module?.course?.UserCourseProgress?.filter(
+            (progress: any) =>
+              module?.chapters?.some(
+                (chapter: any) =>
+                  chapter?.sections?.some((section: any) => section?.id === progress?.sectionId),
+              ),
+          ).length;
+
+          const moduleCompletedPercentage = (completedModuleSections / totalModuleSections) * 100;
+
+          const chaptersWithProgress = module?.chapters?.map((chapter: any) => {
+            const totalChapterSections = chapter?.sections?.length;
+            const completedChapterSections = chapter?.sections?.filter(
+              (section: any) =>
+                module?.course?.UserCourseProgress?.some(
+                  (progress: any) => progress?.sectionId === section?.id,
+                ),
+            ).length;
+
+            const chapterCompletedPercentage = (completedChapterSections / totalChapterSections) * 100;
+
+            return {
+              ...chapter,
+              completedPercentage: chapterCompletedPercentage.toFixed(2),
+            };
+          });
+
+          return {
+            ...module,
+            completedPercentage: moduleCompletedPercentage.toFixed(2),
+            chapters: chaptersWithProgress,
+          };
+        });
+        setModulesRecord(modulesWithProgress);
+        console.log({ modulesWithProgress });
+      },
+    },
+  });
+
+  const toggleAccordion = (index: any) => {
+    if (openAccordions.includes(index)) {
+      setOpenAccordions(openAccordions.filter((item: any) => item !== index));
+    } else {
+      setOpenAccordions([...openAccordions, index]);
+    }
+  };
+  if (isModuleLoading) {
+    return <ModuleLoader />;
+  }
 
   return (
     <div className="flex flex-col gap-8 w-full">
@@ -34,7 +103,9 @@ const Page = () => {
         defaultValue={type}
         className="w-full"
         onValueChange={(route) => {
-          //router.push(`/studentCourses?type=${route}`);
+          if (route === 'content') {
+            refetch();
+          }
           setType(route);
         }}
       >
@@ -46,13 +117,29 @@ const Page = () => {
           <TabsTrigger value="syllabus">Syllabus</TabsTrigger>
           <TabsTrigger value="grades">Grades</TabsTrigger>
         </TabsList>
-
-        {type == 'content' && <CourseContent />}
-        {type === 'overview' && <CourseOverview />}
-        {type === 'grades' && <Grades />}
-        {type == 'assessment' && <Assessment />}
-        {type == 'resources' && <Resources />}
-        {type == 'syllabus' && <Syllabus />}
+        <div className={`${type === 'content' ? 'block' : 'hidden'}`}>
+          <CourseContent
+            modulesRecord={modulesRecord}
+            toggleAccordion={toggleAccordion}
+            openAccordions={openAccordions}
+            courseId={courseId}
+          />
+        </div>
+        <div className={`${type === 'overview' ? 'block' : 'hidden'}`}>
+          <CourseOverview />
+        </div>{' '}
+        <div className={`${type === 'grades' ? 'block' : 'hidden'}`}>
+          <Grades type={type} />
+        </div>{' '}
+        <div className={`${type === 'assessment' ? 'block' : 'hidden'}`}>
+          <Assessment />
+        </div>{' '}
+        <div className={`${type === 'resources' ? 'block' : 'hidden'}`}>
+          <Resources />
+        </div>{' '}
+        <div className={`${type === 'syllabus' ? 'block' : 'hidden'}`}>
+          <Syllabus />
+        </div>
       </Tabs>
     </div>
   );
