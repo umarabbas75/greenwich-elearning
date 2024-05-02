@@ -40,20 +40,54 @@ const Assessment = ({ control, assessments, appendAssessment, removeAssessment }
           {assessments?.map((el: any, assessmentIndex: any) => {
             return (
               <div className="flex gap-2 items-end mb-4" key={el.id}>
-                <FormField
-                  control={control}
-                  name={`assessments[${assessmentIndex}].file`}
-                  render={({ field: { onChange, value } }) => {
-                    return (
-                      <FormItem className="flex-1">
-                        <FormLabel>File</FormLabel>
-                        <FormControl>
-                          <Input onChange={onChange} value={value} />
-                        </FormControl>
-                      </FormItem>
-                    );
-                  }}
-                />
+                <div>
+                  <FormField
+                    control={control}
+                    name={`assessments[${assessmentIndex}].file`}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <FormItem className="flex-1">
+                          <FormLabel>File url</FormLabel>
+                          <FormControl>
+                            <Input onChange={onChange} value={value} />
+                          </FormControl>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                </div>
+                <div>
+                  <FormField
+                    control={control}
+                    name={`assessments[${assessmentIndex}].name`}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <FormItem className="flex-1">
+                          <FormLabel>File name</FormLabel>
+                          <FormControl>
+                            <Input onChange={onChange} value={value} />
+                          </FormControl>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                </div>
+                <div>
+                  <FormField
+                    control={control}
+                    name={`assessments[${assessmentIndex}].type`}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <FormItem className="flex-1">
+                          <FormLabel>File type</FormLabel>
+                          <FormControl>
+                            <Input onChange={onChange} value={value} />
+                          </FormControl>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                </div>
                 <Trash
                   className="cursor-pointer"
                   onClick={() => {
@@ -69,7 +103,8 @@ const Assessment = ({ control, assessments, appendAssessment, removeAssessment }
             onClick={() => {
               appendAssessment({
                 file: '',
-                isSeen: false,
+                name: '',
+                type: '',
               });
             }}
           >

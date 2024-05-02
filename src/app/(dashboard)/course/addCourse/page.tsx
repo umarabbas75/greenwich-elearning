@@ -79,20 +79,23 @@ const Page = () => {
     syllabusOverview: '',
     syllabus: [
       {
-        isSeen: false,
         file: '',
+        name: '',
+        type: '',
       },
     ],
     assessments: [
       {
-        isSeen: false,
         file: '',
+        name: '',
+        type: '',
       },
     ],
     resources: [
       {
-        isSeen: false,
         file: '',
+        name: '',
+        type: '',
       },
     ],
   };
@@ -106,16 +109,7 @@ const Page = () => {
     defaultValues,
     resolver: yupResolver(validationSchema) as any,
   });
-  const {
-    handleSubmit,
-    control,
-    reset,
-    setError,
-    clearErrors,
-    watch,
-    formState: { errors },
-  } = form;
-  console.log({ errors });
+  const { handleSubmit, control, reset, setError, clearErrors, watch } = form;
 
   const {
     mutate: addCourse,
@@ -152,17 +146,6 @@ const Page = () => {
     },
   });
 
-  const onSubmit = (values: any) => {
-    console.log({ values });
-
-    if (data) {
-      // eslint-disable-next-line unused-imports/no-unused-vars
-      const { id, ...rest } = values;
-      editCourse(rest);
-    } else {
-      addCourse(values);
-    }
-  };
   const {
     fields: syllabusFields,
     append: appendSyllabus,
@@ -213,8 +196,18 @@ const Page = () => {
     };
   });
 
-  console.log({ syllabus, assessments });
-
+  const onSubmit = (values: any) => {
+    values.resources = resources;
+    values.assessments = assessments;
+    values.syllabus = syllabus;
+    if (data) {
+      // eslint-disable-next-line unused-imports/no-unused-vars
+      const { id, ...rest } = values;
+      editCourse(rest);
+    } else {
+      addCourse(values);
+    }
+  };
   if (fetchingCourse) {
     return <Spinner />;
   }
@@ -223,7 +216,6 @@ const Page = () => {
       <button
         className="flex gap-1"
         onClick={() => {
-          console.log('button clicked');
           router.push('/course');
         }}
       >
@@ -349,11 +341,9 @@ const Page = () => {
                               maxSize={0.5}
                               multiple={false}
                               onSizeError={(err: any) => {
-                                console.log({ err });
                                 setError('image', { message: `${err}, max size allowed is 0.5mb` });
                               }}
                               handleChange={(value: any) => {
-                                console.log({ value });
                                 clearErrors(['image']);
                                 const file = value;
                                 const reader = new FileReader();

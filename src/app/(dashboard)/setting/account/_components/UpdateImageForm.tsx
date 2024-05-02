@@ -16,7 +16,6 @@ const UpdateImageForm = ({ isEdit, setIsEdit }: { isEdit: boolean; setIsEdit: an
   const [userPhotoState, setUserPhotoAtom] = useAtom(userPhotoAtom);
 
   const [file, setFile] = useState<string>(userPhotoState);
-  console.log({ file });
 
   useEffect(() => {
     if (userPhotoState) {
@@ -28,8 +27,7 @@ const UpdateImageForm = ({ isEdit, setIsEdit }: { isEdit: boolean; setIsEdit: an
     endpoint: `/users/${session?.user?.id}`,
     method: 'put',
     config: {
-      onSuccess: async (res: any) => {
-        console.log({ res }, 'api');
+      onSuccess: async () => {
         setUserPhotoAtom(file);
         setIsEdit(false);
         toast({

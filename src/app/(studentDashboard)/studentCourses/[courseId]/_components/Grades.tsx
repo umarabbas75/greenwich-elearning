@@ -199,13 +199,11 @@ const ReportHeader = ({ courseProgressState, columns, grades, courseNameProp }: 
         const blob = await ReactPDF.pdf(document).toBlob();
 
         const url = URL.createObjectURL(blob);
-        console.log({ url });
         setPdfData({
           blob: blob,
           url: url,
         });
       };
-      console.log({ session, courseProgressState, grades });
       session && grades && preparePDF();
     } catch (error) {
       console.log({ error });

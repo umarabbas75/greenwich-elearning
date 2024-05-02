@@ -40,20 +40,55 @@ const Syllabus = ({ control, syllabus, appendSyllabus, removeSyllabus }: any) =>
           {syllabus?.map((el: any, syllabusIndex: any) => {
             return (
               <div className="flex gap-2 items-end mb-4" key={el.id}>
-                <FormField
-                  control={control}
-                  name={`syllabus[${syllabusIndex}].file`}
-                  render={({ field: { onChange, value } }) => {
-                    return (
-                      <FormItem className="flex-1">
-                        <FormLabel>File</FormLabel>
-                        <FormControl>
-                          <Input onChange={onChange} value={value} />
-                        </FormControl>
-                      </FormItem>
-                    );
-                  }}
-                />
+                <div>
+                  <FormField
+                    control={control}
+                    name={`syllabus[${syllabusIndex}].file`}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <FormItem className="flex-1">
+                          <FormLabel>File url</FormLabel>
+                          <FormControl>
+                            <Input onChange={onChange} value={value} />
+                          </FormControl>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                </div>
+                <div>
+                  <FormField
+                    control={control}
+                    name={`syllabus[${syllabusIndex}].name`}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <FormItem className="flex-1">
+                          <FormLabel>File name</FormLabel>
+                          <FormControl>
+                            <Input onChange={onChange} value={value} />
+                          </FormControl>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                </div>
+                <div>
+                  <FormField
+                    control={control}
+                    name={`syllabus[${syllabusIndex}].type`}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <FormItem className="flex-1">
+                          <FormLabel>File type</FormLabel>
+                          <FormControl>
+                            <Input onChange={onChange} value={value} />
+                          </FormControl>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                </div>
+
                 <Trash
                   className="cursor-pointer"
                   onClick={() => {
@@ -69,7 +104,8 @@ const Syllabus = ({ control, syllabus, appendSyllabus, removeSyllabus }: any) =>
             onClick={() => {
               appendSyllabus({
                 file: '',
-                isSeen: false,
+                name: '',
+                type: '',
               });
             }}
           >

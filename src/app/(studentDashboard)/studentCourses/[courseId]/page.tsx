@@ -29,7 +29,7 @@ export type ModulesDataResponse = {
   data: Module[];
 };
 const Page = () => {
-  const [type, setType] = useState('content');
+  const [type, setType] = useState('overview');
   const params = useParams();
   const { courseId } = params;
   const [openAccordions, setOpenAccordions] = useState<any>([]);
@@ -86,6 +86,15 @@ const Page = () => {
     },
   });
 
+  const { data: courseData } = useApiGet<any, Error>({
+    endpoint: `/courses/${courseId}`,
+    queryKey: ['get-course-data', courseId],
+    config: {
+      select: (res) => res?.data?.data,
+    },
+  });
+  console.log({ courseData });
+
   const toggleAccordion = (index: any) => {
     if (openAccordions.includes(index)) {
       setOpenAccordions(openAccordions.filter((item: any) => item !== index));
@@ -109,9 +118,9 @@ const Page = () => {
           setType(route);
         }}
       >
-        <TabsList className="grid  grid-cols-6 mb-4">
-          <TabsTrigger value="content">Content</TabsTrigger>
+        <TabsList className="flex flex-wrap h-20 md:h-auto md:grid  md:grid-cols-6 mb-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="content">Content</TabsTrigger>
           <TabsTrigger value="assessment">Assessment</TabsTrigger>
           <TabsTrigger value="resources">Resources</TabsTrigger>
           <TabsTrigger value="syllabus">Syllabus</TabsTrigger>
@@ -126,19 +135,19 @@ const Page = () => {
           />
         </div>
         <div className={`${type === 'overview' ? 'block' : 'hidden'}`}>
-          <CourseOverview />
+          <CourseOverview courseOverview={courseData?.overview} />
         </div>{' '}
         <div className={`${type === 'grades' ? 'block' : 'hidden'}`}>
           <Grades type={type} />
         </div>{' '}
         <div className={`${type === 'assessment' ? 'block' : 'hidden'}`}>
-          <Assessment />
+          <Assessment assessmentOverview={courseData?.assessment} assessments={courseData?.assessments} />
         </div>{' '}
         <div className={`${type === 'resources' ? 'block' : 'hidden'}`}>
-          <Resources />
+          <Resources resourcesOverview={courseData?.resourcesOverview} resources={courseData?.resources} />
         </div>{' '}
         <div className={`${type === 'syllabus' ? 'block' : 'hidden'}`}>
-          <Syllabus />
+          <Syllabus syllabusOverview={courseData?.syllabusOverview} syllabus={courseData?.syllabus} />
         </div>
       </Tabs>
     </div>

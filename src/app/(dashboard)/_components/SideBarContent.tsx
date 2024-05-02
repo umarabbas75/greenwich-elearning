@@ -17,7 +17,7 @@ const SideBarContent = () => {
     <>
       <div className="h-20 flex justify-center items-center border-b border-dashed border-gray-500">
         <Link href="/">
-          <Image src="/assets/images/greenwich_logo.png" width={80} height={50} alt="Genmark logo" />
+          <Image src="/assets/images/greenwich_logo.png" width={80} height={50} alt="greenwich logo" />
         </Link>
       </div>
       <nav className="grid items-start gap-2 p-6">

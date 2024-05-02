@@ -32,7 +32,7 @@ const Page = () => {
           router.push(`/studentCourses?type=${route}`);
         }}
       >
-        <TabsList className="grid w-[400px] grid-cols-2">
+        <TabsList className="md:grid md:w-[400px] grid-cols-2">
           <TabsTrigger value="active">Active Courses</TabsTrigger>
 
           <TabsTrigger value="completed">Completed Courses</TabsTrigger>

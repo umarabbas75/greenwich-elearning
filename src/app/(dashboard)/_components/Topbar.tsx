@@ -28,7 +28,6 @@ const Topbar = () => {
       select: (res) => res?.data,
       enabled: !!session?.user?.id,
       onSuccess: (data: any) => {
-        console.log('on succcess', data);
         setUserPhotoAtom(data?.data?.photo ?? '');
       },
     },

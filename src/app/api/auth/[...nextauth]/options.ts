@@ -36,7 +36,6 @@ export const options = {
             },
           });
           const userData = await res.json();
-          console.log({ userData, res }, userData?.data?.user);
           // //adding this temporarily-start
           // return {
           //   ...user,
@@ -67,7 +66,6 @@ export const options = {
             role: userData?.data?.user?.role ?? '',
           } as any;
         } catch (error) {
-          console.log('login error', error);
           if (error instanceof Error) {
             //  fetch(
             //   `${process.env.NEXT_PUBLIC_API_URI}/api/login/`,

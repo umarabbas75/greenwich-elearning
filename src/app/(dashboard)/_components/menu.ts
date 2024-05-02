@@ -71,5 +71,11 @@ export const sidebarMenu: SidebarMenu = {
       icon: 'forum',
       link: '/forum',
     },
+    {
+      id: 'settings',
+      title: 'Settings',
+      icon: 'setting',
+      link: '/setting/account',
+    },
   ],
 };
