@@ -196,7 +196,7 @@ const PDFReport = ({
     <Page size="A4" style={styles.page}>
       <View style={styles.courseReport}>
         <View style={styles.studentInfo}>
-          <Image src={userPhotoState} style={{borderRadius : '50%',width : '50px', height : '50px'}} />
+          <Image src={userPhotoState} style={{ borderRadius: '50%', width: '50px', height: '50px' }} />
           <Text
             style={styles.userInfo}
           >{`${session.data?.user?.firstName} ${session.data?.user?.lastName}`}</Text>

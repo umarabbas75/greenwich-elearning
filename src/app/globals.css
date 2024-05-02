@@ -17,7 +17,7 @@ html {
     --popover: #ffffff;
     --popover-foreground: #232323;
 
-    --primary: #637C8F;
+    --primary: #637c8f;
     --primary-foreground: #f8fafc;
 
     --secondary: #f1f5f9;
@@ -135,7 +135,7 @@ html {
   .my-react-select-container .my-react-select__input-container,
   .my-react-select-container .my-react-select__placeholder,
   .my-react-select-container .my-react-select__single-value {
-    @apply text-neutral-600 dark:text-neutral-200 ;
+    @apply text-neutral-600 dark:text-neutral-200;
   }
 }
 
@@ -242,9 +242,6 @@ html {
   border: none !important;
 }
 
-
-
-
 /* -------------------------------------------------------------------------
   VERTICAL STEPPERS
 -------------------------------------------------------------------------- */
@@ -278,7 +275,7 @@ html {
 
 /* Circle */
 .circle {
-  background: #0069B4;
+  background: #0069b4;
   position: relative;
   width: 1.5em;
   height: 1.5em;
@@ -286,7 +283,7 @@ html {
   border-radius: 100%;
   color: #fff;
   text-align: center;
-}/* Circle */
+} /* Circle */
 .step.step-incomplete .circle {
   background: transparent;
   border-color: gray;
@@ -313,10 +310,11 @@ html {
   width: 2px;
   transform: scale(1, 2);
   transform-origin: 50% -100%;
-  background-color: #0069B4;
+  background-color: #0069b4;
   z-index: 1;
 }
-.step.step-active .circle:after, .step.step-incomplete  .circle:after{
+.step.step-active .circle:after,
+.step.step-incomplete .circle:after {
   content: ' ';
   position: absolute;
   display: block;
@@ -332,7 +330,7 @@ html {
   z-index: 1;
 }
 .step:last-child .circle:after {
-  display: none
+  display: none;
 }
 
 .step:first-child .circle:after {
@@ -348,7 +346,7 @@ html {
 .caption {
   font-size: 0.8em;
 }
-.ql-container{
+.ql-container {
   height: auto !important;
   min-height: 100px !important;
 }

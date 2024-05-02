@@ -1,6 +1,7 @@
 import { formatDistanceToNow } from 'date-fns';
 import { useAtom } from 'jotai';
 import { Edit, Trash } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 
@@ -11,7 +12,6 @@ import { confirmationModalAtom, createNewPostModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 
 import NewPostModal from './NewPostModal';
-import { useSession } from 'next-auth/react';
 
 const PostPreview = ({ onClick, item }: any) => {
   const queryClient = useQueryClient();
