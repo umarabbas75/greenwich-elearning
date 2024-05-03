@@ -109,7 +109,7 @@ const UpdatePasswordModal = () => {
                           <Input type="password" onChange={onChange} value={value} />
                         </FormControl>
 
-                        <FormMessage>{errors.password?.message}</FormMessage>
+                        <FormMessage>{errors.password?.message?.toString() ?? ''}</FormMessage>
                       </FormItem>
                     );
                   }}
@@ -125,7 +125,7 @@ const UpdatePasswordModal = () => {
                           <Input type="password" onChange={onChange} value={value} />
                         </FormControl>
 
-                        <FormMessage>{errors.confirmPassword?.message}</FormMessage>
+                        <FormMessage>{errors.confirmPassword?.message?.toString() ?? ''}</FormMessage>
                       </FormItem>
                     );
                   }}

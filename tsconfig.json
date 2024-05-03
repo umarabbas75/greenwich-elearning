@@ -32,7 +32,6 @@
     "src/app/providers/theme.jsx",
     "src/app/api/auth/[...nextauth]/route.ts",
     "src/app/api/auth/[...nextauth]/options.ts",
-    "src/components/common/Modal/UploadCSVModal",
     "src/components/common/Modal/ConfirmationModal"
   ],
   "exclude": ["node_modules"]
