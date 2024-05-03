@@ -35,9 +35,8 @@ export const options = {
               'Content-Type': 'application/json',
             },
           });
-          console.log({ res });
           const userData = await res.json();
-          console.log({ userData });
+          console.log('user/res', { userData, res });
           // //adding this temporarily-start
           // return {
           //   ...user,

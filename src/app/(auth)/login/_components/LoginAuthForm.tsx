@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import React, { useState } from 'react';
 
 // import { cn } from '@/lib/utils';
@@ -23,45 +24,24 @@ export const LoginAuthForm = () => {
     event.preventDefault();
     setIsLoading(true);
 
-    const payload = {
+    const res = await signIn('credentials', {
+      redirect: false,
       email: state.email,
       password: state.password,
-    };
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URI}/auth/login`, {
-      method: 'POST',
-      body: JSON.stringify(payload),
-      headers: {
-        'Content-Type': 'application/json',
-      },
     });
-    const userData = await res.json();
-    console.log({ res, userData });
 
-    if (!res.ok) {
-      setIsLoading(false);
+    if (res?.error) {
       toast({
         variant: 'destructive',
         // className: cn(
         //   'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4',
         // ),
         //title: 'Error',
-        description: 'Something went wrong',
+        description: 'Incorrect email/password',
       });
-    } else {
-      setIsLoading(false);
-      router.push('/');
     }
-
-    // if (res?.error) {
-    //   toast({
-    //     variant: 'destructive',
-    //     // className: cn(
-    //     //   'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4',
-    //     // ),
-    //     //title: 'Error',
-    //     description: 'Incorrect email/password',
-    //   });
-    // }
+    setIsLoading(false);
+    router.push('/');
   }
 
   return (
