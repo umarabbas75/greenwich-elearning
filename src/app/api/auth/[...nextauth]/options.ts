@@ -35,7 +35,9 @@ export const options = {
               'Content-Type': 'application/json',
             },
           });
+          console.log({ res });
           const userData = await res.json();
+          console.log({ userData });
           // //adding this temporarily-start
           // return {
           //   ...user,
@@ -66,6 +68,7 @@ export const options = {
             role: userData?.data?.user?.role ?? '',
           } as any;
         } catch (error) {
+          console.log({ error });
           if (error instanceof Error) {
             //  fetch(
             //   `${process.env.NEXT_PUBLIC_API_URI}/api/login/`,
