@@ -89,7 +89,7 @@ const Page = () => {
   }, [allSectionsListSuccess, lastSeenSectionSuccess]);
 
   const [selectedItem, setSelectedItem] = useAtom(selectedSectionAtom);
-  const [selectedAnswer] = useAtom(selectedAnswerAtom);
+  const [selectedAnswer, setSelectedAnswer] = useAtom(selectedAnswerAtom);
 
   const lastSection = sectionsData?.[sectionsData?.length - 1];
 
@@ -127,26 +127,32 @@ const Page = () => {
     method: 'put',
     config: {
       onSuccess: () => {
-        const selectedIndex = sectionsData?.findIndex((item: any) => item.id === selectedItem?.id);
-        const isLastSection = lastSection?.id === selectedItem?.id;
-        if (!isLastSection) {
-          const nextItem = sectionsData?.[(selectedIndex ?? 0) + 1];
-          setSelectedItem(nextItem);
+        try {
+          console.log('sucess sucess');
+          const selectedIndex = sectionsData?.findIndex((item: any) => item.id === selectedItem?.id);
+          const isLastSection = lastSection?.id === selectedItem?.id;
+          if (!isLastSection) {
+            const nextItem = sectionsData?.[(selectedIndex ?? 0) + 1];
+            setSelectedItem(nextItem);
 
-          queryClient.invalidateQueries({
-            queryKey: ['get-course-progress'],
-          });
+            console.log('invalid');
+            queryClient.invalidateQueries({
+              queryKey: ['get-all-assigned-courses'],
+            });
 
-          queryClient.invalidateQueries({
-            queryKey: ['get-users-sections-list'],
-          });
+            queryClient.invalidateQueries({
+              queryKey: ['get-users-sections-list'],
+            });
 
-          toast({
-            variant: 'success',
-            description: 'Progress saved!',
-          });
-        } else {
-          setShowCourseReport(true);
+            toast({
+              variant: 'success',
+              description: 'Progress saved!',
+            });
+          } else {
+            setShowCourseReport(true);
+          }
+        } catch (error) {
+          console.log({ error });
         }
       },
     },
@@ -156,24 +162,31 @@ const Page = () => {
     endpoint: `/quizzes/checkQuiz`,
     method: 'post',
     config: {
-      onSuccess: () => {
+      onSuccess: (res) => {
         const selectedIndex = sectionsData?.findIndex((item: any) => item.id === selectedItem?.id);
         const nextItem = sectionsData?.[(selectedIndex ?? 0) + 1];
         setSelectedItem(nextItem);
         queryClient.invalidateQueries({
           queryKey: ['get-users-sections-list'],
         });
-
+        console.log('isAnswerCorrect', res?.data?.data?.isAnswerCorrect);
         toast({
-          variant: 'success',
-          // title: 'Success ',
-          description: 'Progress saved!',
+          variant: res?.data?.data?.isAnswerCorrect ? 'success' : 'destructive',
+          description: res?.data?.data?.isAnswerCorrect
+            ? `Congratulations! You've given the correct answer.`
+            : `Sorry, that's not the correct answer.`,
         });
+      },
+      onError: () => {
+        // queryClient.invalidateQueries({
+        //   queryKey: ['get-users-sections-list'],
+        // });
       },
     },
   });
 
   const updateCourseProgress = () => {
+    console.log('update course progress');
     if (selectedItem.question) {
       if (!selectedAnswer) {
         return toast({
@@ -182,6 +195,7 @@ const Page = () => {
           description: 'kindly select at least one option',
         });
       }
+      setSelectedAnswer('');
       return checkQuizAnswer({
         quizId: selectedItem?.id,
         chapterId: chapterId,
@@ -190,17 +204,17 @@ const Page = () => {
     }
 
     const payload = {
-      // userId: userData?.user.id,
       courseId: courseId,
       chapterId: chapterId,
       sectionId: selectedItem?.id,
     };
+    console.log({ payload });
     updateProgress(payload);
   };
   const renderButtonText = () => {
     if (updatingProgress || checkingQuizAnswer) return 'updating...';
     if (lastSection?.id === selectedItem?.id) return 'End of lesson';
-    else return 'Save and continue';
+    else return 'Next';
   };
 
   return (

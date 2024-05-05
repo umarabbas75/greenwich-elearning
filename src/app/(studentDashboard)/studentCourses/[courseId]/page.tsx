@@ -121,9 +121,15 @@ const Page = () => {
         <TabsList className="flex flex-wrap h-20 md:h-auto md:grid  md:grid-cols-6 mb-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="content">Content</TabsTrigger>
-          <TabsTrigger value="assessment">Assessment</TabsTrigger>
-          <TabsTrigger value="resources">Resources</TabsTrigger>
-          <TabsTrigger value="syllabus">Syllabus</TabsTrigger>
+          {(courseData?.assessment || courseData?.assessments?.length > 0) && (
+            <TabsTrigger value="assessment">Assessment</TabsTrigger>
+          )}
+          {(courseData?.resourcesOverview || courseData?.resources?.length > 0) && (
+            <TabsTrigger value="resources">Resources</TabsTrigger>
+          )}
+          {(courseData?.syllabusOverview || courseData?.syllabus?.length > 0) && (
+            <TabsTrigger value="syllabus">Syllabus</TabsTrigger>
+          )}
           <TabsTrigger value="grades">Grades</TabsTrigger>
         </TabsList>
         <div className={`${type === 'content' ? 'block' : 'hidden'}`}>
@@ -140,15 +146,21 @@ const Page = () => {
         <div className={`${type === 'grades' ? 'block' : 'hidden'}`}>
           <Grades type={type} />
         </div>{' '}
-        <div className={`${type === 'assessment' ? 'block' : 'hidden'}`}>
-          <Assessment assessmentOverview={courseData?.assessment} assessments={courseData?.assessments} />
-        </div>{' '}
-        <div className={`${type === 'resources' ? 'block' : 'hidden'}`}>
-          <Resources resourcesOverview={courseData?.resourcesOverview} resources={courseData?.resources} />
-        </div>{' '}
-        <div className={`${type === 'syllabus' ? 'block' : 'hidden'}`}>
-          <Syllabus syllabusOverview={courseData?.syllabusOverview} syllabus={courseData?.syllabus} />
-        </div>
+        {(courseData?.assessment || courseData?.assessments?.length > 0) && (
+          <div className={`${type === 'assessment' ? 'block' : 'hidden'}`}>
+            <Assessment assessmentOverview={courseData?.assessment} assessments={courseData?.assessments} />
+          </div>
+        )}
+        {(courseData?.resourcesOverview || courseData?.resources?.length > 0) && (
+          <div className={`${type === 'resources' ? 'block' : 'hidden'}`}>
+            <Resources resourcesOverview={courseData?.resourcesOverview} resources={courseData?.resources} />
+          </div>
+        )}
+        {(courseData?.syllabusOverview || courseData?.syllabus?.length > 0) && (
+          <div className={`${type === 'syllabus' ? 'block' : 'hidden'}`}>
+            <Syllabus syllabusOverview={courseData?.syllabusOverview} syllabus={courseData?.syllabus} />
+          </div>
+        )}
       </Tabs>
     </div>
   );

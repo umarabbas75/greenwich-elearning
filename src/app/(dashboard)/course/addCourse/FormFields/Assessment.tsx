@@ -2,7 +2,6 @@ import { Trash } from 'lucide-react';
 import React from 'react';
 import { Controller } from 'react-hook-form';
 
-import { Button } from '@/components/ui/button';
 import { FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 const ReactQuill = typeof window === 'object' ? require('react-quill') : () => false;
@@ -98,7 +97,8 @@ const Assessment = ({ control, assessments, appendAssessment, removeAssessment }
             );
           })}
 
-          <Button
+          <button
+            className="border border-dashed border-gray-400 rounded-md px-4 py-2 w-full"
             type="button"
             onClick={() => {
               appendAssessment({
@@ -108,8 +108,8 @@ const Assessment = ({ control, assessments, appendAssessment, removeAssessment }
               });
             }}
           >
-            Add more files
-          </Button>
+            Add Syllabus files
+          </button>
         </div>
       </div>
     </>

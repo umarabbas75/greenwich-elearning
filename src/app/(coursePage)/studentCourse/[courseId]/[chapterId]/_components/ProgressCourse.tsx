@@ -15,9 +15,10 @@ const ProgressCourse = () => {
 
   useApiGet<any, Error>({
     endpoint: `/courses/getAllAssignedCourses/${userData?.user.id}`,
-    queryKey: ['get-sections', userData?.user.id],
+    queryKey: ['get-all-assigned-courses', userData?.user.id],
     config: {
       onSuccess: (res) => {
+        console.log('invalid2');
         const data = res.data.find((item: any) => item.id === courseId);
         setCourseData(data);
       },

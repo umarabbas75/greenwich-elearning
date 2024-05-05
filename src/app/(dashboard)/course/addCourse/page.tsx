@@ -77,27 +77,27 @@ const Page = () => {
     resourcesOverview: '',
     assessment: '',
     syllabusOverview: '',
-    syllabus: [
-      {
-        file: '',
-        name: '',
-        type: '',
-      },
-    ],
-    assessments: [
-      {
-        file: '',
-        name: '',
-        type: '',
-      },
-    ],
-    resources: [
-      {
-        file: '',
-        name: '',
-        type: '',
-      },
-    ],
+    // syllabus: [
+    //   {
+    //     file: '',
+    //     name: '',
+    //     type: '',
+    //   },
+    // ],
+    // assessments: [
+    //   {
+    //     file: '',
+    //     name: '',
+    //     type: '',
+    //   },
+    // ],
+    // resources: [
+    //   {
+    //     file: '',
+    //     name: '',
+    //     type: '',
+    //   },
+    // ],
   };
   const validationSchema = Yup.object().shape({
     title: Yup.string().required('title is required'),
