@@ -136,18 +136,6 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
   };
 
   const columns = [
-    // Accessor Columns
-    // columnHelper.accessor('favorite', {
-    //   header: '',
-    //   cell: () => {
-    //     return (
-    //       <div className="cursor-pointer group">
-    //         <Icons iconName="star" className=" group-hover:opacity-100" />
-    //       </div>
-    //     );
-    //   },
-    //   footer: (props) => props.column.id,
-    // }),
     columnHelper.accessor('title', {
       header: 'Title',
       cell: (props) => {
@@ -204,18 +192,23 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
       cell: (props) => <h1>{props.row.original?.ForumComment?.length}</h1>,
       footer: (props) => props.column.id,
     }),
-    columnHelper.accessor('status', {
-      id: 'status',
-      header: 'Status',
-      cell: (props) => renderStatus(props.row.original.status),
-      footer: (props) => props.column.id,
-    }),
-    {
+  ];
+
+  if (userData?.user?.role === 'admin') {
+    columns.push(
+      columnHelper.accessor('status', {
+        id: 'status',
+        header: 'Status',
+        cell: (props) => renderStatus(props.row.original.status),
+        footer: (props) => props.column.id,
+      }),
+    );
+    columns.push({
       id: 'actions',
       cell: (props: any) =>
         userData?.user?.role === 'admin' && <TableActions>{renderActions(props.row.original)}</TableActions>,
-    },
-  ];
+    });
+  }
 
   const table = useReactTable({
     data: data?.data,

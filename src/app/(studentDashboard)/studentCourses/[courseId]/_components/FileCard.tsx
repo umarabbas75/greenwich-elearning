@@ -1,11 +1,13 @@
-import { File } from 'lucide-react';
+import { CheckCircle, File } from 'lucide-react';
 
-const FileCard = ({ fileName, fileType, seen, onClick, file }: any) => {
+const FileCard = ({ fileName, fileType, seen, onClick, file, item }: any) => {
   return (
     <div
-      className="bg-white block shadow-md rounded-lg p-4 w-64 cursor-pointer hover:bg-black/10"
+      className={`bg-white block shadow-md rounded-lg p-4 w-64 cursor-pointer hover:bg-black/10 ${
+        seen ? 'border border-green-500' : ''
+      }`}
       onClick={() => {
-        onClick?.();
+        onClick?.(item ?? '');
         window.open(file, '_blank');
       }}
     >
@@ -17,7 +19,10 @@ const FileCard = ({ fileName, fileType, seen, onClick, file }: any) => {
         <span>{fileType}</span>
       </div>
       {seen && (
-        <div className="bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-full mb-3">Seen</div>
+        <div className="flex items-center text-green-500 text-xs font-semibold mb-3">
+          <CheckCircle className="w-4 h-4 mr-1" />
+          <span>Seen</span>
+        </div>
       )}
     </div>
   );

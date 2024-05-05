@@ -74,6 +74,7 @@ const CourseContent = ({ modulesRecord, toggleAccordion, openAccordions, courseI
                             chapterName: chapter.title,
                             courseId,
                             moduleId: item?.id,
+                            pdfFile: chapter?.pdfFile,
                           },
                         }}
                       >

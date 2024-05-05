@@ -20,6 +20,7 @@ export type Chapter = {
   updatedAt: string;
   quizzes: string;
   sections: any;
+  pdfFile: string;
 };
 
 export type ChaptersDataResponse = {

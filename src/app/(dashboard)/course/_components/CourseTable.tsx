@@ -75,7 +75,8 @@ const CourseTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) 
             alt="course"
             width={50}
             height={50}
-            className="rounded-full"
+            objectFit="contain"
+            className="rounded-full h-12 w-12 object-contain"
           />
         );
       },

@@ -22,6 +22,7 @@ import { addChapterModalAtom } from '@/store/modals';
 type ChapterFormTypes = {
   title: string;
   description: string;
+  pdfFile: string;
 };
 
 const ChapterModal = () => {
@@ -83,10 +84,12 @@ const ChapterModal = () => {
   const defaultValues = {
     title: '',
     description: '',
+    pdfFile: '',
   };
   const validationSchema = Yup.object().shape({
     title: Yup.string().required('title is required'),
     description: Yup.string().required('description is required'),
+    pdfFile: Yup.string().notRequired().nullable(),
   });
 
   const form = useForm<ChapterFormTypes>({
@@ -133,6 +136,23 @@ const ChapterModal = () => {
                       </FormControl>
 
                       <FormMessage>{errors.title?.message}</FormMessage>
+                    </FormItem>
+                  );
+                }}
+              />
+
+              <FormField
+                control={control}
+                name="pdfFile"
+                render={({ field: { onChange, value }, formState: { errors } }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel>PDF file</FormLabel>
+                      <FormControl>
+                        <Input onChange={onChange} value={value} />
+                      </FormControl>
+
+                      <FormMessage>{errors.pdfFile?.message}</FormMessage>
                     </FormItem>
                   );
                 }}
