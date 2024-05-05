@@ -18,6 +18,7 @@ module.exports = {
       colors: {
         border: 'var(--border)',
         input: 'var(--input)',
+        themeOrange: 'var(--orange)',
         themeGreen: '#344e41',
         themeBlue: '#0057B0',
         ring: 'var(--ring)',

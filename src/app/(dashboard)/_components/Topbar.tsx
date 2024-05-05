@@ -7,7 +7,7 @@ import React from 'react';
 
 import SessionExpireModal from '@/components/common/Modal/SessionExpireModal';
 import { useApiGet } from '@/lib/dashboard/client/user';
-import { userPhotoAtom } from '@/store/course';
+import { userPhotoAtom, userTimezoneAtom } from '@/store/course';
 import { sideBarDrawerAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 import 'react-quill/dist/quill.snow.css';
@@ -20,7 +20,8 @@ const Topbar = () => {
 
   const [sideBarDrawer, setSideBarDrawer] = useAtom(sideBarDrawerAtom);
   const [userPhotoState, setUserPhotoAtom] = useAtom(userPhotoAtom);
-  console.log({ userPhotoState });
+  const [userTimezoneState, setUserTimezone] = useAtom(userTimezoneAtom);
+  console.log({ userPhotoState, userTimezoneState });
   useApiGet<any>({
     endpoint: `/users/${session?.user?.id}`,
     queryKey: ['get-user', session?.user?.id],
@@ -29,6 +30,7 @@ const Topbar = () => {
       enabled: !!session?.user?.id,
       onSuccess: (data: any) => {
         setUserPhotoAtom(data?.data?.photo ?? '');
+        setUserTimezone(data?.data?.timezone);
       },
     },
   });

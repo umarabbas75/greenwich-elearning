@@ -8,6 +8,7 @@ declare module 'next-auth' {
   interface Session {
     user: {
       expiry: string;
+      timezone?: string;
       phone: string;
       access: string;
       refresh: string;

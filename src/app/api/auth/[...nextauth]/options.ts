@@ -62,6 +62,7 @@ export const options = {
             firstName: userData?.data?.user?.firstName ?? '',
             lastName: userData?.data?.user?.lastName ?? '',
             email: userData?.data?.user?.email ?? '',
+            timezone: userData?.data?.user?.timezone ?? '',
             id: userData?.data?.user?.id ?? '',
             photo: '',
             role: userData?.data?.user?.role ?? '',
