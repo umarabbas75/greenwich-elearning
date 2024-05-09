@@ -51,13 +51,13 @@ const UpdateImageForm = ({ isEdit, setIsEdit }: { isEdit: boolean; setIsEdit: an
 
   return (
     <div className="grid grid-cols-3  items-center py-4 border-b ">
-      <div className="col-span-1">
+      <div className="col-span-3 md:col-span-1">
         <h3 className="text-xl font-bold">Photo</h3>
         <p className="text-accent">Update your profile picture</p>
       </div>
-      <div className="col-span-2 ">
+      <div className="col-span-3 md:col-span-2 ">
         <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col md:flex-row items-center gap-4">
             <Avatar className="h-28 w-28">
               <AvatarImage src={file ? file : session?.user?.photo ?? ''} alt="user profile pic" />
               <AvatarFallback className="text-2xl">{session?.user?.firstName}</AvatarFallback>

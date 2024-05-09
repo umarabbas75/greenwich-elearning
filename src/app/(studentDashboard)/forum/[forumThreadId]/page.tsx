@@ -1,5 +1,6 @@
 'use client';
-import { useParams } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
@@ -14,6 +15,7 @@ import Comment from './_components/Comment';
 const Page = () => {
   const [comment, setComment] = useState('');
   const params = useParams();
+  const router = useRouter();
   const { forumThreadId } = params || {};
   const { data: forumData } = useApiGet<any>({
     endpoint: `/forum-thread/${forumThreadId}`,
@@ -51,8 +53,17 @@ const Page = () => {
 
   return (
     <div className=" pb-20">
-      <div className="flex justify-between items-center">
-        <p className="pl-2  mt-8 mb-4 font-medium  text-3xl">News & Announcements Forum</p>
+      <div className="flex gap-2 items-center my-4">
+        <p
+          className="text-gray-500 flex gap-1 text-sm cursor-pointer"
+          onClick={() => {
+            router.back();
+          }}
+        >
+          <ArrowLeft />
+          Back
+        </p>
+        <p className="pl-2   font-medium  text-3xl">News & Announcements Forum</p>
       </div>
       <p className="text-gray-600 mb-4 pl-2 font-medium">{title}</p>
 
@@ -61,7 +72,7 @@ const Page = () => {
           <div className="w-[80px]">
             <Icons iconName="customer" className="w-16 h-16 cursor-pointer text-accent" />
           </div>
-          <div>
+          <div className="flex-1">
             <p className="font-medium text-gray-900 text-lg">{title}</p>
             <p className="flex gap-2 items-center">
               <span>by</span>

@@ -54,11 +54,11 @@ const Page = () => {
       </div>
 
       <div className="grid grid-cols-3  items-center py-4 border-b ">
-        <div className="col-span-1">
+        <div className="col-span-3 md:col-span-1">
           <h3 className="text-xl font-bold">Password</h3>
           <p className="text-accent">Change your password</p>
         </div>
-        <div className="col-span-2  flex items-center gap-4">
+        <div className="col-span-3 md:col-span-2  flex items-center gap-4">
           <UpdatePassword isEdit={isEdit} />
         </div>
       </div>

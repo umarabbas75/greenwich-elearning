@@ -74,6 +74,13 @@ const AssignCoursesModal = () => {
     endpoint: `/courses`,
     queryKey: ['get-courses'],
   });
+  const { data: assignedCourses, isLoading: fetchingAssignedCourses } = useApiGet<any>({
+    endpoint: `/courses/getAllAssignedCourses/${assignCoursesState?.data?.id}`,
+    queryKey: ['get-user', assignCoursesState?.data?.id],
+    config: {
+      enabled: !!assignCoursesState?.data?.id,
+    },
+  });
 
   const onSubmit = (values: any) => {
     const payload = {
@@ -85,7 +92,7 @@ const AssignCoursesModal = () => {
 
   return (
     <Modal open={assignCoursesState.status} onClose={() => {}} title={'Assign Course'}>
-      {isLoading ? (
+      {isLoading || fetchingAssignedCourses ? (
         <Spinner />
       ) : (
         <>
@@ -101,6 +108,7 @@ const AssignCoursesModal = () => {
                     render={({ field: { onChange, value } }) => {
                       return (
                         <ReactSelect
+                          className=""
                           isMulti={false}
                           options={coursesData.data ?? []}
                           value={value} // Find the matching option by value
@@ -109,6 +117,14 @@ const AssignCoursesModal = () => {
                           }}
                           getOptionLabel={(val: Course) => val.title}
                           getOptionValue={(val: Course) => val.id}
+                          isOptionDisabled={(option) => {
+                            console.log(
+                              { option },
+                              assignedCourses,
+                              assignedCourses?.data?.some((el: any) => el?.id === option.id),
+                            );
+                            return assignedCourses?.data?.some((el: any) => el?.id === option.id);
+                          }}
                         />
                       );
                     }}

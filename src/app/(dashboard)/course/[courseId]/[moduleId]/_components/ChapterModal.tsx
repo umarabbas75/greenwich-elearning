@@ -89,7 +89,7 @@ const ChapterModal = () => {
   const validationSchema = Yup.object().shape({
     title: Yup.string().required('title is required'),
     description: Yup.string().required('description is required'),
-    pdfFile: Yup.string().notRequired().nullable(),
+    pdfFile: Yup.string().url('invalid url').notRequired().nullable(),
   });
 
   const form = useForm<ChapterFormTypes>({

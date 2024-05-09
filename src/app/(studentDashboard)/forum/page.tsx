@@ -29,8 +29,8 @@ const Page = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center">
-        <p className="pl-2  my-8 font-medium  text-3xl">News & Announcements Forum</p>
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 md:gap-0 mb-4 md:mb-0">
+        <p className="md:pl-2  md:my-8 font-medium  text-xl lg:text-3xl">News & Announcements Forum</p>
         {userData?.user?.role === 'admin' && (
           <Button
             onClick={() => {

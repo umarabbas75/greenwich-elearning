@@ -55,6 +55,7 @@ const Page = () => {
                 // })
                 router.push('/course/addCourse')
               }
+              className="whitespace-nowrap"
             >
               Add Course
             </Button>

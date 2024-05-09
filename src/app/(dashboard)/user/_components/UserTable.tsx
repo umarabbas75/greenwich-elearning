@@ -1,7 +1,7 @@
 'use client';
 import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
-import { Eye } from 'lucide-react';
+import { Eye, Redo } from 'lucide-react';
 import { FC } from 'react';
 import { useQueryClient } from 'react-query';
 
@@ -54,7 +54,8 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
           }}
           className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
         >
-          <Icons iconName="book" className="w-6 h-6 cursor-pointer" />
+          {/* <Icons iconName="book" className="w-6 h-6 cursor-pointer" /> */}
+          <Redo />
           Assign Courses
         </span>
         <span
@@ -160,7 +161,7 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
       header: 'Courses',
       cell: (props) => (
         <h1
-          className="cursor-pointer text-themeBlue"
+          className="cursor-pointer text-themeBlue whitespace-nowrap"
           onClick={() => {
             setUserCoursesState({
               status: true,
@@ -217,7 +218,7 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
         toast({
           variant: 'destructive',
           title: 'Error ',
-          description: data?.response?.data?.type?.[0] ?? 'Some error occured',
+          description: data?.response?.data?.error ?? 'Some error occured',
         });
       },
     },

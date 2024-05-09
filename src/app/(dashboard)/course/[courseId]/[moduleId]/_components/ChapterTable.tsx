@@ -1,6 +1,7 @@
 'use client';
 import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
+import { Redo } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { FC } from 'react';
 import { useQueryClient } from 'react-query';
@@ -55,7 +56,7 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
           }}
           className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
         >
-          <Icons iconName="edit" className="w-6 h-6 cursor-pointer" />
+          <Redo />
           Assign quiz questions
         </span>
         <span
@@ -118,18 +119,26 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
     columnHelper.accessor('pdfFile', {
       id: 'pdfFile',
       header: 'PDF',
-      cell: (props) => (
-        <>
-          <a
-            href={props.row.original.pdfFile}
-            target="_blank"
-            className="bg-red-800 w-fit text-white pl-1 flex items-center gap-1 justify-center rounded-sm text-xs px-2 py-1"
-          >
-            <PDFSVG className="w-4 h-4" />
-            DOWNLOAD
-          </a>
-        </>
-      ),
+      cell: (props) =>
+        props.row.original.pdfFile ? (
+          <>
+            <span
+              role="presentation"
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(props.row.original.pdfFile, '_blank');
+              }}
+              // href={props.row.original.pdfFile}
+              // target="_blank"
+              className="bg-red-800 w-fit text-white pl-1 flex items-center gap-1 justify-center rounded-sm text-xs px-2 py-1"
+            >
+              <PDFSVG className="w-4 h-4" />
+              DOWNLOAD
+            </span>
+          </>
+        ) : (
+          '----'
+        ),
       footer: (props) => props.column.id,
     }),
     columnHelper.accessor('quizzes', {
@@ -196,7 +205,7 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
         toast({
           variant: 'destructive',
           title: 'Error ',
-          description: data?.response?.data?.type?.[0] ?? 'Some error occured',
+          description: data?.response?.data?.error ?? 'Some error occured',
         });
       },
     },

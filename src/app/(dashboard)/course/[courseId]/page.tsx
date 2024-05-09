@@ -1,6 +1,8 @@
 'use client';
 
 import { useAtom } from 'jotai';
+import { ArrowLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import SearchComponent from '@/components/common/SearchInput';
@@ -28,6 +30,7 @@ export type ModulesDataResponse = {
 };
 const Page = ({ params }: { params: { courseId: string } }) => {
   const courseId = params.courseId;
+  const router = useRouter();
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
@@ -45,7 +48,17 @@ const Page = ({ params }: { params: { courseId: string } }) => {
   return (
     <div>
       <div className="grid grid-cols-2 my-2 mr-2 items-center">
-        <div className="col-span-2 md:col-span-1 flex justify-start"></div>
+        <div className="col-span-2 md:col-span-1 flex justify-start">
+          <p
+            className="text-gray-500 flex gap-1 text-sm cursor-pointer"
+            onClick={() => {
+              router.back();
+            }}
+          >
+            <ArrowLeft />
+            Back
+          </p>
+        </div>
         <div className="col-span-2  md:col-span-1 ">
           <div className="flex justify-end  gap-2">
             <SearchComponent setSearch={setSearch} search={search} />

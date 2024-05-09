@@ -30,16 +30,16 @@ const Index: FC<Props> = ({
   children,
   primaryAction,
   secondaryAction,
-  width = 'min-w-[90%] md:min-w-[35rem]  md:m-0',
-  className,
+  // width = 'min-w-[90%] w-full md:min-w-[35rem]  md:m-0',
+  // className,
 }) => {
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className={`${width} ${className}`}>
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        <div className="bg-gray-200 h-[1px] w-full absolute top-[64px]"></div>
+        {/* <div className="bg-gray-200 h-[1px] w-full absolute top-[64px]"></div> */}
         <div className="mt-7">{children}</div>
         <DialogFooter>
           {secondaryAction?.onClick && (

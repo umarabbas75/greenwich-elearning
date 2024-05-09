@@ -10,7 +10,7 @@ import ReactSelectCreateable from '@/components/common/ReactSelectCreateable';
 import Spinner from '@/components/common/Spinner';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
 import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
@@ -54,11 +54,11 @@ const UserModal = () => {
     isError: isEditError,
     error: editError,
   } = useApiMutation<any>({
-    endpoint: `/users/${userState?.data?.id}`,
+    endpoint: `/quizzes/${userState?.data?.id}`,
     method: 'put',
     config: {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['get-users'] });
+        queryClient.invalidateQueries({ queryKey: ['get-quizzes'] });
         closeModal();
         toast({
           variant: 'success',
@@ -91,30 +91,29 @@ const UserModal = () => {
 
   const form = useForm<QuizFormTypes>({
     defaultValues,
-    //resolver: yupResolver(validationSchema) as any,
   });
   const { reset, handleSubmit, control, watch } = form;
   const options = watch('options');
-  // const { data, isLoading: fetchingUser } = useFetchUser({
-  //   variables: {
-  //     id: userState?.data?.id,
-  //   },
-  //   onSuccessCallback: (data: any) => {
-  //     form.reset({
-  //       ...data,
-  //       customer: data?.customer,
-  //     });
-  //   },
-  // });
 
   const { data, isLoading: fetchingUser } = useApiGet<any>({
     endpoint: `/quizzes/${userState?.data?.id}`,
-    queryKey: ['get-user', userState?.data?.id],
+    queryKey: ['get-all-quizzes', userState?.data?.id],
     config: {
       enabled: !!userState?.data?.id,
       onSuccess: (data: any) => {
         reset({
           ...data?.data,
+          options: data?.data?.options?.map((item: any) => {
+            return {
+              label: item,
+              value: item,
+              __isNew__: true,
+            };
+          }),
+          answer: {
+            value: data?.data?.answer,
+            label: data?.data?.answer,
+          },
         });
       },
     },
@@ -128,34 +127,8 @@ const UserModal = () => {
     };
 
     data ? editQuiz(payload) : addQuiz(payload);
-    // const addFormData = new FormData();
-    // addFormData.append('email', values.email as string);
-    // addFormData.append('password', values.password as string);
-    // addFormData.append('role', values.role);
-    // values.photo &&
-    //   !(typeof values.photo === 'string' && values.photo?.includes('http')) &&
-    //   addFormData.append('photo', values.photo as any);
-
-    // addFormData.append('firstName', values.firstName);
-    // addFormData.append('lastName', values.lastName);
-    // addFormData.append('phone', values.phone);
-
-    // const editFormData = new FormData();
-    // editFormData.append('role', values.role);
-    // editFormData.append('firstName', values.firstName);
-    // editFormData.append('lastName', values.lastName);
-    // editFormData.append('phone', values.phone);
-    // values.photo &&
-    //   !(typeof values.photo === 'string' && values.photo?.includes('http')) &&
-    //   editFormData.append('photo', values.photo as any);
-    // const payload = {
-    //   firstName: values.firstName,
-    //   lastName: values.lastName,
-    //   phone: values.phone,
-    //   role: values.role,
-    // };
-    // data ? editUser(payload) : addUser(addFormData);
   };
+  console.log({ options });
 
   return (
     <Modal open={userState.status} onClose={() => {}} title={data ? 'Edit Quiz' : 'New Quiz'}>
@@ -166,7 +139,7 @@ const UserModal = () => {
           {(isEditError || isAddError) && <AlertDestructive error={editError || addError} />}
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-2 gap-4">
                 <FormField
                   control={control}
                   name="question"
@@ -175,7 +148,7 @@ const UserModal = () => {
                       <FormItem>
                         <FormLabel>Question</FormLabel>
                         <FormControl>
-                          <Input onChange={onChange} value={value} />
+                          <Textarea rows={4} onChange={onChange} value={value} />
                         </FormControl>
 
                         <FormMessage>{errors.question?.message}</FormMessage>
@@ -218,6 +191,7 @@ const UserModal = () => {
                           onChange={(val: any) => {
                             onChange(val);
                           }}
+                          className=""
                           // getOptionLabel={(val: Course) => val.title}
                           // getOptionValue={(val: Course) => val.id}
                         />

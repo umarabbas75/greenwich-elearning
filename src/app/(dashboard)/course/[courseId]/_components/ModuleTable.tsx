@@ -138,7 +138,7 @@ const ModuleTable: FC<Props> = ({ data, pagination, setPagination, isLoading, co
         toast({
           variant: 'destructive',
           title: 'Error ',
-          description: data?.response?.data?.type?.[0] ?? 'Some error occured',
+          description: data?.response?.data?.error ?? 'Some error occured',
         });
       },
     },

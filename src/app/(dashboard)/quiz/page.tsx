@@ -54,6 +54,7 @@ const Page = () => {
           <div className="flex justify-end gap-2">
             <SearchComponent setSearch={setSearch} search={search} />
             <Button
+              className="whitespace-nowrap"
               onClick={() =>
                 setUserState({
                   status: true,

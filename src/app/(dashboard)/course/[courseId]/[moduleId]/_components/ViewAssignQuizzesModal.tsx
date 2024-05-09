@@ -1,15 +1,19 @@
-import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { useAtom } from 'jotai';
+import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { useAtom, useSetAtom } from 'jotai';
+import { Undo } from 'lucide-react';
 
 import Modal from '@/components/common/Modal';
 import Spinner from '@/components/common/Spinner';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
 import TableComponent from '@/components/common/Table';
+import TableActions from '@/components/common/TableActions';
 import { useApiGet } from '@/lib/dashboard/client/user';
-import { viewAssignedQuizzesModal } from '@/store/modals';
+import { unAssignQuizModalAtom, viewAssignedQuizzesModal } from '@/store/modals';
 /* const MAX_FILE_SIZE = 102400; */
 
 const ViewAssignQuizzesModal = () => {
+  const setConfirmState = useSetAtom(unAssignQuizModalAtom);
+
   const [viewAssignQuizModalState, setViewAssignQuizModalState] = useAtom(viewAssignedQuizzesModal);
   const closeModal = () => {
     setViewAssignQuizModalState({
@@ -27,7 +31,24 @@ const ViewAssignQuizzesModal = () => {
     },
   });
   const columnHelper = createColumnHelper<any>();
-
+  const renderActions = (row: any) => {
+    return (
+      <div className="flex flex-col p-2 gap-1 ">
+        <span
+          onClick={() => {
+            setConfirmState({
+              status: true,
+              data: row,
+            });
+          }}
+          className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
+        >
+          <Undo />
+          Unassign Quiz
+        </span>
+      </div>
+    );
+  };
   const columns = [
     // Accessor Columns
 
@@ -64,6 +85,12 @@ const ViewAssignQuizzesModal = () => {
       cell: (props) => <h1>{props.row.original.answer}</h1>,
       footer: (props) => props.column.id,
     }),
+    {
+      id: 'actions',
+      cell: (props: CellContext<any, string>) => (
+        <TableActions>{renderActions(props.row.original)}</TableActions>
+      ),
+    },
   ];
   const table = useReactTable({
     data: assignedQuizzes?.data,
@@ -76,7 +103,7 @@ const ViewAssignQuizzesModal = () => {
       onClose={() => {
         closeModal();
       }}
-      title={'Assign Quizzes'}
+      title={'Assigned Quizzes'}
     >
       {fetchingAssignedQuizzes ? (
         <Spinner />

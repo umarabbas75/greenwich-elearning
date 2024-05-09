@@ -18,8 +18,8 @@ const ReactSelectCreateable = (props: Props) => {
     onChange,
     getOptionLabel,
     getOptionValue,
-    className = 'my-react-select-container',
-    classNamePrefix = 'my-react-select',
+    className = '',
+    classNamePrefix = '',
     isMulti = false,
   } = props || {};
   return (

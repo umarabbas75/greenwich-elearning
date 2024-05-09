@@ -91,7 +91,7 @@ html {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground !pr-0;
   }
   .custom-file-uploader {
     @apply w-24 h-28 flex flex-col items-center justify-center pt-7 !important;

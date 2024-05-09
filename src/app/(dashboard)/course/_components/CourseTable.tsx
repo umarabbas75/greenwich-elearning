@@ -86,8 +86,8 @@ const CourseTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) 
       header: 'Title',
       cell: (props) => {
         return (
-          <h1 className="flex  flex-col justify-center w-fit text-center items-center">
-            <span>{`${props.row.original.title}`}</span>
+          <h1 className="flex  flex-col justify-center  text-center items-center">
+            <span className="line-clamp-3 ">{props.row.original.title}</span>
           </h1>
         );
       },
@@ -97,7 +97,7 @@ const CourseTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) 
     columnHelper.accessor('description', {
       id: 'description',
       header: 'Description',
-      cell: (props) => <h1>{props.row.original.description}</h1>,
+      cell: (props) => <h1 className="line-clamp-3">{props.row.original.description}</h1>,
       footer: (props) => props.column.id,
     }),
     columnHelper.accessor('duration', {
@@ -156,10 +156,11 @@ const CourseTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) 
         });
       },
       onError: (data) => {
+        console.log({ data });
         toast({
           variant: 'destructive',
           title: 'Error ',
-          description: data?.response?.data?.type?.[0] ?? 'Some error occurred',
+          description: data?.response?.data?.error ?? 'Some error occurred',
         });
       },
     },

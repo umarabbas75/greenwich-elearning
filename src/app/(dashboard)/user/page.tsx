@@ -3,12 +3,15 @@
 import { useAtom } from 'jotai';
 import Error from 'next/error';
 import { useState } from 'react';
+import { useQueryClient } from 'react-query';
 
+import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
 import SearchComponent from '@/components/common/SearchInput';
 import TableSkeletonLoader from '@/components/common/TableSkeletonLoader';
 import { Button } from '@/components/ui/button';
-import { useApiGet } from '@/lib/dashboard/client/user';
-import { userModalAtom } from '@/store/modals';
+import { toast } from '@/components/ui/use-toast';
+import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
+import { unAssignCourseModalAtom, userModalAtom, viewUserCoursesModal } from '@/store/modals';
 
 import UserModal from './_components/UserModal';
 import UserTable from './_components/UserTable';
@@ -32,18 +35,53 @@ export type UsersDataResponse = {
   data: UserData[];
 };
 const Page = () => {
+  const [confirmState, setConfirmState] = useAtom(unAssignCourseModalAtom);
+
+  const [userCoursesState] = useAtom(viewUserCoursesModal);
+
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
 
   const [search, setSearch] = useState('');
-  //const debouncedSearch = useDebounce(search, 500);
   const [userState, setUserState] = useAtom(userModalAtom);
+  const queryClient = useQueryClient();
 
   const { data: usersData, isLoading } = useApiGet<UsersDataResponse, Error>({
     endpoint: `/users`,
     queryKey: ['get-users'],
+  });
+  const { mutate: unAssignCourse, isLoading: unAssigning } = useApiMutation({
+    method: 'put',
+    endpoint: `/courses/unAssignCourse/user`,
+    config: {
+      onSuccess: () => {
+        setConfirmState({
+          ...confirmState,
+          status: false,
+          data: null,
+        });
+        toast({
+          variant: 'success',
+          title: 'Success ',
+          description: 'Course unassigned successfully',
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['get-users'],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['get-user', userCoursesState?.data?.id],
+        });
+      },
+      onError: (data) => {
+        toast({
+          variant: 'destructive',
+          title: 'Error ',
+          description: data?.response?.data?.error ?? 'Some error occurred',
+        });
+      },
+    },
   });
 
   return (
@@ -60,6 +98,7 @@ const Page = () => {
                   data: null,
                 })
               }
+              className="w-fit whitespace-nowrap"
             >
               Add User
             </Button>
@@ -86,6 +125,29 @@ const Page = () => {
       )}
 
       {userState.status && <UserModal />}
+      {confirmState.status && (
+        <ConfirmationModal
+          open={confirmState.status}
+          onClose={() => setConfirmState({ status: false, data: null })}
+          title={'Unassign Course'}
+          content={`Are you sure you want to unassign this course?`}
+          primaryAction={{
+            label: 'Unassign',
+            onClick: () => {
+              const payload = {
+                userId: userCoursesState?.data?.id,
+                courseId: confirmState?.data?.id,
+              };
+              unAssignCourse(payload);
+            },
+            loading: unAssigning,
+          }}
+          secondaryAction={{
+            label: 'Cancel',
+            onClick: () => setConfirmState({ status: false, data: null }),
+          }}
+        />
+      )}
     </div>
   );
 };

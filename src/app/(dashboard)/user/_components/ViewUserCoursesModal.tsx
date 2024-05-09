@@ -1,6 +1,6 @@
-import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { useAtom } from 'jotai';
-import { ArrowLeft } from 'lucide-react';
+import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { useAtom, useSetAtom } from 'jotai';
+import { ArrowLeft, Undo } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 
@@ -9,13 +9,15 @@ import Modal from '@/components/common/Modal';
 import Spinner from '@/components/common/Spinner';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
 import TableComponent from '@/components/common/Table';
+import TableActions from '@/components/common/TableActions';
 import { useApiGet } from '@/lib/dashboard/client/user';
-import { viewUserCoursesModal } from '@/store/modals';
+import { unAssignCourseModalAtom, viewUserCoursesModal } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 /* const MAX_FILE_SIZE = 102400; */
 
 const ViewUserCoursesModal = () => {
   const [selectedCourseId, setSelectedCourseId] = useState<any>(null);
+  const setConfirmState = useSetAtom(unAssignCourseModalAtom);
   const [userCoursesState, setUserCoursesState] = useAtom(viewUserCoursesModal);
   const closeModal = () => {
     setUserCoursesState({
@@ -33,7 +35,24 @@ const ViewUserCoursesModal = () => {
     },
   });
   const columnHelper = createColumnHelper<any>();
-
+  const renderActions = (row: any) => {
+    return (
+      <div className="flex flex-col p-2 gap-1 ">
+        <span
+          onClick={() => {
+            setConfirmState({
+              status: true,
+              data: row,
+            });
+          }}
+          className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
+        >
+          <Undo />
+          Unassign Course
+        </span>
+      </div>
+    );
+  };
   const columns = [
     // Accessor Columns
     columnHelper.accessor('image', {
@@ -91,6 +110,12 @@ const ViewUserCoursesModal = () => {
       ),
       footer: (props) => props.column.id,
     }),
+    {
+      id: 'actions',
+      cell: (props: CellContext<any, string>) => (
+        <TableActions>{renderActions(props.row.original)}</TableActions>
+      ),
+    },
   ];
 
   const table = useReactTable({
@@ -99,40 +124,43 @@ const ViewUserCoursesModal = () => {
     // pageCount: Math.ceil(assignedCourses?.data.length / 10),
     getCoreRowModel: getCoreRowModel(),
   });
-  return (
-    <Modal
-      open={userCoursesState.status}
-      onClose={() => {
-        closeModal();
-      }}
-      title={'Assigned Courses'}
-    >
-      {fetchingUser ? (
-        <Spinner />
-      ) : (
-        <div className="">
-          {selectedCourseId ? (
-            <div>
-              <div className="mb-2">
-                <button
-                  className="flex gap-1 items-center"
-                  onClick={() => {
-                    setSelectedCourseId(null);
-                  }}
-                >
-                  <ArrowLeft />
-                  back
-                </button>
-              </div>
 
-              <Grades courseIdProp={selectedCourseId?.id} courseNameProp={selectedCourseId?.title} />
-            </div>
-          ) : (
-            <TableComponent table={table} />
-          )}
-        </div>
-      )}
-    </Modal>
+  return (
+    <>
+      <Modal
+        open={userCoursesState.status}
+        onClose={() => {
+          closeModal();
+        }}
+        title={'Assigned Courses'}
+      >
+        {fetchingUser ? (
+          <Spinner />
+        ) : (
+          <div className="">
+            {selectedCourseId ? (
+              <div>
+                <div className="mb-2">
+                  <button
+                    className="flex gap-1 items-center"
+                    onClick={() => {
+                      setSelectedCourseId(null);
+                    }}
+                  >
+                    <ArrowLeft />
+                    back
+                  </button>
+                </div>
+
+                <Grades courseIdProp={selectedCourseId?.id} courseNameProp={selectedCourseId?.title} />
+              </div>
+            ) : (
+              <TableComponent table={table} />
+            )}
+          </div>
+        )}
+      </Modal>
+    </>
   );
 };
 

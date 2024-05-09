@@ -19,7 +19,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         router.push(`/setting/${route}`);
       }}
     >
-      <TabsList className={`grid w-[400px] ${role === 'user' ? 'grid-cols-2' : 'grid-cols-1'}`}>
+      <TabsList className={`grid md:w-[400px] ${role === 'user' ? 'grid-cols-2' : 'grid-cols-1'}`}>
         <TabsTrigger value="account">Account</TabsTrigger>
 
         {role === 'user' && <TabsTrigger value="policies">Policies and procedures</TabsTrigger>}

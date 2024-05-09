@@ -133,10 +133,13 @@ const SectionTable: FC<Props> = ({ data, pagination, setPagination, isLoading })
         });
       },
       onError: (data) => {
+        queryClient.invalidateQueries({
+          queryKey: ['get-sections', chapterId],
+        });
         toast({
           variant: 'destructive',
           title: 'Error ',
-          description: data?.response?.data?.type?.[0] ?? 'Some error occured',
+          description: data?.response?.data?.error ?? 'Some error occured',
         });
       },
     },

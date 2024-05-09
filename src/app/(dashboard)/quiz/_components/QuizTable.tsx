@@ -78,7 +78,7 @@ const UserTable: FC<any> = ({ data, pagination, setPagination, isLoading }) => {
       id: 'options',
       header: 'Options',
       cell: (props) => (
-        <h1>
+        <h1 className="flex">
           {props.row.original.options?.map((item: any) => {
             return (
               <span key={item} className="inline-block p-2 border rounded-sm mx-1">
@@ -143,7 +143,7 @@ const UserTable: FC<any> = ({ data, pagination, setPagination, isLoading }) => {
         toast({
           variant: 'destructive',
           title: 'Error ',
-          description: data?.response?.data?.type?.[0] ?? 'Some error occurred',
+          description: data?.response?.data?.error ?? 'Some error occurred',
         });
       },
     },

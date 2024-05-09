@@ -39,6 +39,8 @@ const AssignQuizModal = () => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-users'] });
         closeModal();
+        queryClient.invalidateQueries(['get-chapters']);
+
         toast({
           variant: 'success',
           // title: 'Success ',
@@ -74,6 +76,15 @@ const AssignQuizModal = () => {
     queryKey: ['get-quizzes'],
   });
 
+  const { data: assignedQuizzes, isLoading: loadingAssignedQuizzes } = useApiGet<any>({
+    endpoint: `/quizzes/getAllAssignQuizzes/${assignQuizesState?.data?.id}`,
+    queryKey: ['get-all-assigned-quizzes', assignQuizesState?.data?.id],
+    config: {
+      enabled: !!assignQuizesState?.data?.id,
+      select: (res) => res?.data?.data,
+    },
+  });
+  console.log({ assignedQuizzes });
   const onSubmit = (values: UserFormTypes) => {
     const payload = {
       quizId: (values.quizzes as any).value,
@@ -84,7 +95,7 @@ const AssignQuizModal = () => {
 
   return (
     <Modal open={assignQuizesState.status} onClose={() => {}} title={'Assign Quizzes'}>
-      {isLoading ? (
+      {isLoading || loadingAssignedQuizzes ? (
         <Spinner />
       ) : (
         <>
@@ -113,10 +124,13 @@ const AssignQuizModal = () => {
                           onChange={(val: any) => {
                             onChange(val);
                           }}
-                          // getOptionLabel={(val: any) => {
-                          //   return val;
-                          // }}
-                          // getOptionValue={(val: any) => val.id}
+                          isOptionDisabled={(option: any) => {
+                            const isDisable = assignedQuizzes?.some(
+                              (disabledItem: any) => disabledItem.id === option.value,
+                            );
+                            return isDisable;
+                          }}
+                          className=""
                         />
                       );
                     }}
