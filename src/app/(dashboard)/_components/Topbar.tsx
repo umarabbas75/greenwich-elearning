@@ -34,6 +34,12 @@ const Topbar = () => {
       },
     },
   });
+
+  const { data: authData } = useApiGet<any>({
+    endpoint: `/auth/me`,
+    queryKey: ['auth-me', session?.user?.id],
+  });
+  console.log({ authData });
   return (
     <nav className="flex justify-between items-center h-20 px-9  shadow-app-header">
       <div className="flex items-center">

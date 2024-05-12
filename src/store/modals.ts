@@ -10,6 +10,7 @@ const createModalAtom = () => {
 };
 
 export const userModalAtom = createModalAtom();
+export const todoModalAtom = createModalAtom();
 export const updatePasswordModalAtom = createModalAtom();
 export const forumModalAtom = createModalAtom();
 export const viewUserCoursesModal = createModalAtom();
@@ -21,6 +22,7 @@ export const createNewPostModalAtom = createModalAtom();
 export const updateStatusModalAtom = createModalAtom();
 export const sessionExpireModalAtom = createModalAtom();
 export const sideBarDrawerAtom = createModalAtom();
+export const courseDrawerAtom = createModalAtom();
 export const addCourseModalAtom = createModalAtom();
 export const addModuleModalAtom = createModalAtom();
 export const addChapterModalAtom = createModalAtom();

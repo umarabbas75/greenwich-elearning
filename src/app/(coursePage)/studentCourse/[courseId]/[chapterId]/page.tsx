@@ -1,5 +1,6 @@
 'use client';
 import { useAtom } from 'jotai';
+import { Menu } from 'lucide-react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
@@ -10,14 +11,18 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
 import { selectedAnswerAtom, selectedSectionAtom } from '@/store/course';
+import { courseDrawerAtom } from '@/store/modals';
+import useWindowWidth from '@/utils/hooks/useWindowWidth';
 import { Icons } from '@/utils/icon';
 
 import CourseReport from './_components/CourseReport';
+import CourseSideBarDrawer from './_components/CourseSideBarDrawer';
 import DiscussionForum from './_components/DiscussionForum';
 import Question from './_components/Question';
 import SideBarAllSection from './_components/SideBarAllSection';
 
 const Page = () => {
+  const [courseDrawerState, setCourseDrawerState] = useAtom(courseDrawerAtom);
   const params = useParams();
   const search = useSearchParams();
   const [showDiscussion, setShowDiscussion] = useState(false);
@@ -208,7 +213,6 @@ const Page = () => {
       chapterId: chapterId,
       sectionId: selectedItem?.id,
     };
-    console.log({ payload });
     updateProgress(payload);
   };
   const renderButtonText = () => {
@@ -216,14 +220,38 @@ const Page = () => {
     if (lastSection?.id === selectedItem?.id) return 'End of lesson';
     else return 'Next';
   };
-
+  const width = useWindowWidth();
+  console.log({ width });
   return (
     <div className="flex gap-4 min-h-full p-4">
       <>
         {!showDiscussion && <SideBarAllSection allSections={sectionsData} />}
+        {width < 1024 && courseDrawerState.status && (
+          <CourseSideBarDrawer>
+            <SideBarAllSection allSections={sectionsData} isSidebar={true} />
+          </CourseSideBarDrawer>
+        )}
         <div className="flex-1 p-4 rounded-xl border bg-white h-[95vh] overflow-hidden overflow-y-auto flex flex-col">
-          <div className="flex justify-between pb-4  border-b border-gray-300 items-center">
-            <p className="text-xl text-primary max-w-[70%] font-roboto">{chapterName}</p>
+          <div className="bg-primary w-full p-4 flex lg:hidden justify-between items-center rounded-sm rounded-tl-sm mb-2">
+            <div
+              onClick={() => {
+                setCourseDrawerState({
+                  data: null,
+                  status: !courseDrawerState.status,
+                });
+              }}
+              className="dark-icon border rounded visible lg:invisible  p-2 text-accent transition duration-300  hover:bg-dark-icon-hover hover:text-primary"
+            >
+              {/* <Icons iconName="menu" className="h-6 w-6 cursor-pointer text-accent" /> */}
+              <Menu className="text-white" />
+            </div>
+            <p className="text-white font-bold">Greenwich E-learning</p>
+            <p></p>
+          </div>
+          <div className="flex flex-col md:flex-row justify-between pb-4  border-b border-gray-300 items-center">
+            <p className="mb-2 md:mb-0 text-sm sm:text-base lg:text-xl text-primary max-w-[70%] font-roboto">
+              {chapterName}
+            </p>
             <div className="flex gap-1">
               {pdfFile && (
                 <a
@@ -251,7 +279,7 @@ const Page = () => {
             <CourseReport />
           ) : (
             <>
-              <div className="flex-1 overflow-y-auto mt-4 px-8">
+              <div className="flex-1 overflow-y-auto mt-4 px-2 md:px-8">
                 {isLoading ? (
                   'loading....'
                 ) : selectedItem?.question ? (

@@ -31,11 +31,11 @@ const Index: FC<Props> = ({
   primaryAction,
   secondaryAction,
   // width = 'min-w-[90%] w-full md:min-w-[35rem]  md:m-0',
-  // className,
+  className,
 }) => {
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className={className}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>

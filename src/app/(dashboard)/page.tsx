@@ -1,9 +1,14 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
+
 import CourseProgressGraph from './_components/dashboard/CourseProgressGraph';
+import TodoList from './_components/dashboard/TodoList';
 import WorldClock from './_components/dashboard/WorldClock';
 
 export default function Home() {
+  const { data: userData } = useSession();
+
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
@@ -11,9 +16,14 @@ export default function Home() {
         <div className="bg-white rounded-lg shadow-md  lg:col-span-3">
           <WorldClock />
         </div>
-        <div className="bg-white rounded-lg shadow-md  lg:col-span-2">
-          <CourseProgressGraph />
-        </div>
+        {userData?.user?.role === 'user' && (
+          <div className="bg-white rounded-lg shadow-md  lg:col-span-2">
+            <CourseProgressGraph />
+          </div>
+        )}
+      </div>
+      <div>
+        <TodoList />
       </div>
 
       {/* <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">

@@ -14,7 +14,7 @@ import ProgressCourse from './ProgressCourse';
 
 import { useSearchParams } from 'next/navigation';
 
-const SideBarAllSection = ({ allSections }: any) => {
+const SideBarAllSection = ({ allSections, isSidebar = false }: any) => {
   const [selectedItem, setSelectedItem] = useAtom(selectedSectionAtom);
   const search = useSearchParams();
   // const [collapsible, setCollapsible] = useState(false);
@@ -24,7 +24,11 @@ const SideBarAllSection = ({ allSections }: any) => {
   let percentage: any = (completedSections?.length * 100) / totalSections?.length;
   percentage = parseInt(percentage ?? 0);
   return (
-    <div className="max-w-sm w-96 right-0 bottom-0 top-0 overflow-y-scroll max-h-[95vh]">
+    <div
+      className={`max-w-sm w-96  ${
+        isSidebar ? 'block p-5' : ' hidden lg:block'
+      } right-0 bottom-0 top-0 overflow-y-scroll max-h-[95vh]`}
+    >
       <div className="flex flex-col gap-6">
         <ProgressCourse />
         <div>

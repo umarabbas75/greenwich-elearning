@@ -1,13 +1,36 @@
+import { useSession } from 'next-auth/react';
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
+import { useApiGet } from '@/lib/dashboard/client/user';
+
 const CourseProgressGraph = () => {
-  const data = [
-    { number: 1, percentage: 83, course: 'nebosh' },
-    { number: 2, percentage: 34, course: 'iosh' },
-    // { number: 3, percentage: 0, course: 'iosh' },
-  ];
-  const xAxisTicks = ['nebosh', 'iosh'];
+  const { data: userData } = useSession();
+
+  // const data = [
+  //   { number: 1, percentage: 83, course: 'nebosh' },
+  //   { number: 2, percentage: 34, course: 'iosh' },
+  //   // { number: 3, percentage: 0, course: 'iosh' },
+  // ];
+  const { data, isLoading } = useApiGet<any, Error>({
+    endpoint: `/courses/getAllAssignedCourses/${userData?.user.id}`,
+    queryKey: ['get-all-assigned-courses', userData?.user.id],
+    config: {
+      select: (res) => {
+        console.log({ res });
+        // return res?.data;
+        const updatedResult = res?.data?.data?.map((item: any) => {
+          return {
+            number: item?.id,
+            percentage: item?.percentage,
+            course: item?.title,
+          };
+        });
+        console.log({ res }, res?.data);
+        return updatedResult;
+      },
+    },
+  });
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       console.log('payload', payload[0]);
@@ -26,26 +49,36 @@ const CourseProgressGraph = () => {
     }
     return null;
   };
+
   return (
     <div className="w-full h-72 ">
       <h2 className="text-2xl font-semibold  text-primary pt-6 px-6">Course progress</h2>
 
-      <ResponsiveContainer width="100%" height={230}>
-        <BarChart height={100} data={data} barSize={10} margin={{ top: 25, right: 30, left: 20, bottom: 5 }}>
-          <XAxis ticks={xAxisTicks} dataKey="course" type="category" />
-          <YAxis />
-          <CartesianGrid strokeDasharray="3 3" />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend />
-          {[<Bar key={1} dataKey="percentage" name="percentage" stackId="a" />]}
-          {/* <text x={180} y={10} dominantBaseline="middle" textAnchor="middle">
+      {isLoading ? (
+        'loading...'
+      ) : (
+        <ResponsiveContainer width="100%" height={230}>
+          <BarChart
+            height={100}
+            data={data}
+            barSize={10}
+            margin={{ top: 25, right: 30, left: 20, bottom: 5 }}
+          >
+            <XAxis dataKey="course" type="category" />
+            <YAxis />
+            <CartesianGrid strokeDasharray="3 3" />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend />
+            {[<Bar key={1} dataKey="percentage" name="percentage" stackId="a" />]}
+            {/* <text x={180} y={10} dominantBaseline="middle" textAnchor="middle">
             nebosh
           </text>
           <text x={180} y={50} dominantBaseline="middle" textAnchor="middle">
             iosh
           </text> */}
-        </BarChart>
-      </ResponsiveContainer>
+          </BarChart>
+        </ResponsiveContainer>
+      )}
     </div>
   );
 };

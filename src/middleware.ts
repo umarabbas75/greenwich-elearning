@@ -7,8 +7,17 @@ type RoleType = 'user' | 'admin';
 export default withAuth(
   async function middleware(req) {
     const token: any = await getToken({ req });
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URI}/auth/me`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token?.access}`,
+      },
+    });
+    const data = await res?.json();
+    console.log({ data, token });
 
-    const isAuth = !!token;
+    const isAuth = !!token && data?.statusCode !== 403;
     const isAuthPage = req.nextUrl.pathname.startsWith('/login');
 
     // Check if user is already authenticated and trying to visit login page
