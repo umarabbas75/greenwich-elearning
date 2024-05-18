@@ -8,6 +8,7 @@ import { todoModalAtom } from '@/store/modals';
 
 import PaginationComp from './Pagination';
 import SingleTodoItem from './SingleTodoItem';
+import TodoListSkeletonLoader from './TodoListSkeletonLoader';
 import TodoModal from './TodoModal';
 
 function TodoList() {
@@ -81,49 +82,8 @@ function TodoList() {
     setCurrentPage(0);
   };
 
-  // Function to filter todos based on dropdown option
-  // const handleFilterChange = (option: string) => {
-  //   setStatusFilter(option);
-  //   console.log({ filteredTodos, option });
-  //   filterTodos('', option);
-  //   const updatedList = todosList?.todos?.filter((item: any) => {
-  //     if (option === 'completed') {
-  //       return item?.isCompleted === true;
-  //     }
-  //     if (option === 'incomplete') {
-  //       return item?.isCompleted === false;
-  //     }
-  //     if (option === 'due') {
-  //       return new Date(item?.dueDate) > new Date() && item?.isCompleted === false;
-  //     } else {
-  //       return item;
-  //     }
-  //   });
-  //   setFilteredTodos([...updatedList]);
-  //   setCurrentPage(0);
-  // };
-
-  // Function to filter todos based on search value and filter option
-  // const filterTodos = (searchValue: string, option: string) => {
-  //   let filtered = todosList.todos.filter((item: any) => {
-  //     return item.title.toLowerCase().includes(searchValue.toLowerCase());
-  //   });
-
-  //   if (option === 'completed') {
-  //     filtered = filtered.filter((todo: any) => todo.completed);
-  //   } else if (option === 'incomplete') {
-  //     filtered = filtered.filter((todo: any) => !todo.completed);
-  //   } else if (option === 'due') {
-  //     const now = new Date();
-  //     filtered = filtered.filter((todo: any) => new Date(todo.dueDate) < now);
-  //   }
-
-  //   setFilteredTodos(filtered);
-  //   setCurrentPage(0); // Reset currentPage when search filter changes
-  // };
-
   if (loadingTodos) {
-    return 'loading...';
+    return <TodoListSkeletonLoader />;
   }
 
   return (
