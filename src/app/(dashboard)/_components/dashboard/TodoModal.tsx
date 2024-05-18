@@ -36,10 +36,7 @@ const TodoModal = () => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-todos'] });
         reset();
-        setTodoState({
-          data: null,
-          status: false,
-        });
+        closeModal();
         toast({
           variant: 'success',
           // title: 'Success ',
@@ -61,6 +58,7 @@ const TodoModal = () => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['get-todos'] });
         reset();
+        closeModal();
         toast({
           variant: 'success',
           // title: 'Success ',
@@ -99,6 +97,7 @@ const TodoModal = () => {
     handleSubmit,
     control,
     getValues,
+    watch,
     formState: { errors },
   } = form;
 
@@ -115,6 +114,7 @@ const TodoModal = () => {
       },
     },
   });
+  const date = watch('dueDate');
 
   console.log('getValues', getValues(), { errors });
 
@@ -132,6 +132,20 @@ const TodoModal = () => {
       todoId: todoState?.data?.id,
     };
     data ? editTodoItem(editPayload) : addTodoItem(addPayload);
+  };
+  // Function to get the minimum time based on the selected date
+  const getMinTime = (date: any) => {
+    const now = new Date();
+    if (date && date.toDateString() === now.toDateString()) {
+      return now;
+    } else {
+      return new Date().setHours(0, 0, 0, 0); // Return the start of the day as a Date object
+    }
+  };
+
+  // Function to get the maximum time
+  const getMaxTime = () => {
+    return new Date().setHours(23, 59, 59, 999); // Return the end of the day as a Date object
   };
 
   return (
@@ -196,6 +210,9 @@ const TodoModal = () => {
                             placeholderText="select due date"
                             selected={value}
                             showTimeSelect={true}
+                            minDate={new Date()}
+                            minTime={new Date(getMinTime(date))} // Ensure this is a Date object
+                            maxTime={new Date(getMaxTime())} // Ensure this is a Date object
                             timeFormat="h:mm aa"
                             timeCaption="time"
                             timeIntervals={15}

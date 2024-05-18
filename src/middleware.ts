@@ -22,7 +22,7 @@ export default withAuth(
 
     // Check if user is already authenticated and trying to visit login page
     if (isAuthPage && isAuth) {
-      return NextResponse.redirect(new URL('/', req.url));
+      return NextResponse.redirect(new URL('/?expire=true', req.url));
     }
 
     const pathname = req.nextUrl.pathname; // "/dashboard"

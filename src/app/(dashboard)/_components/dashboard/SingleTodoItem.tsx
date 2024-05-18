@@ -6,6 +6,7 @@ import { useQueryClient } from 'react-query';
 import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
 import Spinner from '@/components/common/Spinner';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from '@/components/ui/use-toast';
 import { useApiMutation } from '@/lib/dashboard/client/user';
 import { confirmationModalAtom, todoModalAtom } from '@/store/modals';
@@ -85,7 +86,25 @@ const SingleTodoItem = ({ selectedTodo, todo, setSelectedTodo }: any) => {
           }}
         />
         <div className="flex flex-col">
-          <p className={`text-base ${todo.isCompleted && 'line-through text-gray-500'}`}>{todo.content}</p>
+          <Popover>
+            <PopoverTrigger asChild>
+              <p
+                className={`text-base text-primary underline cursor-pointer ${
+                  todo.isCompleted && 'line-through text-gray-500'
+                }`}
+              >
+                {todo.title}
+              </p>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 bg-white">
+              <div className="grid gap-4">
+                <div className="space-y-2">
+                  <h4 className="font-medium leading-none">{todo.title}</h4>
+                  <p className="text-sm text-muted-foreground">{todo.content}</p>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
           <p className="text-sm text-gray-500">
             <span className="mr-1">Created:</span>
 
@@ -95,7 +114,11 @@ const SingleTodoItem = ({ selectedTodo, todo, setSelectedTodo }: any) => {
             <div className="flex items-center text-sm text-gray-500 mt-1">
               <span
                 className={`${
-                  getDueDateDisplay(todo.dueDate).includes('Overdue') ? 'text-red-500 font-bold' : ''
+                  getDueDateDisplay(todo.dueDate).includes('Overdue')
+                    ? 'text-red-500 font-bold'
+                    : getDueDateDisplay(todo.dueDate).includes('Due Today')
+                    ? 'text-green-800 font-bold'
+                    : ''
                 }`}
               >
                 {getDueDateDisplay(todo.dueDate)}
