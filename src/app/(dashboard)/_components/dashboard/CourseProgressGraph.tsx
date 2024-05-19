@@ -4,20 +4,16 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 
 import { useApiGet } from '@/lib/dashboard/client/user';
 
+import GraphSkeletonLoader from './GraphSkeletonLoader';
+
 const CourseProgressGraph = () => {
   const { data: userData } = useSession();
 
-  // const data = [
-  //   { number: 1, percentage: 83, course: 'nebosh' },
-  //   { number: 2, percentage: 34, course: 'iosh' },
-  //   // { number: 3, percentage: 0, course: 'iosh' },
-  // ];
   const { data, isLoading } = useApiGet<any, Error>({
     endpoint: `/courses/getAllAssignedCourses/${userData?.user.id}`,
     queryKey: ['get-all-assigned-courses', userData?.user.id],
     config: {
       select: (res) => {
-        console.log({ res });
         // return res?.data;
         const updatedResult = res?.data?.data?.map((item: any) => {
           return {
@@ -26,23 +22,19 @@ const CourseProgressGraph = () => {
             course: item?.title,
           };
         });
-        console.log({ res }, res?.data);
         return updatedResult;
       },
     },
   });
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
-      console.log('payload', payload[0]);
-
       return (
         <div className="bg-white text-center py-3 flex flex-col justify-center items-center rounded-xl w-72">
-          {/* <p className="text-green font-bold fs-x-large">{`${formattedCurrency(payload?.[0].payload?.avg_price?.toFixed(2))}`}</p> */}
           <p className="rounded-full bg-secondaryLight text-green px-6 py-3 text-center mt-2 w-fit uppercase">
             {payload?.[0]?.payload?.course}
           </p>
           <p className="text-primary text-center mt-2 w-fit underline">
-            Course is {payload?.[0]?.payload?.percentage}% completed{' '}
+            Course is {payload?.[0]?.payload?.percentage?.toFixed(2)}% completed{' '}
           </p>
         </div>
       );
@@ -55,7 +47,7 @@ const CourseProgressGraph = () => {
       <h2 className="text-2xl font-semibold  text-primary pt-6 px-6">Course progress</h2>
 
       {isLoading ? (
-        'loading...'
+        <GraphSkeletonLoader />
       ) : (
         <ResponsiveContainer width="100%" height={230}>
           <BarChart
@@ -70,12 +62,6 @@ const CourseProgressGraph = () => {
             <Tooltip content={<CustomTooltip />} />
             <Legend />
             {[<Bar key={1} dataKey="percentage" name="percentage" stackId="a" />]}
-            {/* <text x={180} y={10} dominantBaseline="middle" textAnchor="middle">
-            nebosh
-          </text>
-          <text x={180} y={50} dominantBaseline="middle" textAnchor="middle">
-            iosh
-          </text> */}
           </BarChart>
         </ResponsiveContainer>
       )}

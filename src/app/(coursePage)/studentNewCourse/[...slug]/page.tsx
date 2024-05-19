@@ -1,68 +1,68 @@
 'use client';
 import { useAtom } from 'jotai';
 import { Menu } from 'lucide-react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
+import Skeleton from 'react-loading-skeleton';
 import { useQueryClient } from 'react-query';
 
-import { AlertDestructive } from '@/components/common/FormError';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
-import { selectedAnswerAtom, selectedSectionAtom } from '@/store/course';
+import { lastSelectedSectionAtom, selectedAnswerAtom } from '@/store/course';
 import { courseDrawerAtom } from '@/store/modals';
 import useWindowWidth from '@/utils/hooks/useWindowWidth';
 import { Icons } from '@/utils/icon';
 
-import CourseReport from './_components/CourseReport';
-import CourseSideBarDrawer from './_components/CourseSideBarDrawer';
-import DiscussionForum from './_components/DiscussionForum';
-import Question from './_components/Question';
-import SideBarAllSection from './_components/SideBarAllSection';
+import CourseReport from '../_components/CourseReport';
+import CourseSideBarDrawer from '../_components/CourseSideBarDrawer';
+import DiscussionForum from '../_components/DiscussionForum';
+import Question from '../_components/Question';
+import SideBarAllSection from '../_components/SideBarAllSection';
 
 const Page = () => {
-  const [courseDrawerState, setCourseDrawerState] = useAtom(courseDrawerAtom);
   const params = useParams();
-  const search = useSearchParams();
-  const [showDiscussion, setShowDiscussion] = useState(false);
-  const [showCourseReport, setShowCourseReport] = useState(false);
-  const { courseId, chapterId } = params;
-  const queryClient = useQueryClient();
-  const chapterName = search.get('chapterName');
-  const pdfFile = search.get('pdfFile');
-
+  const router = useRouter();
   const { data: userData } = useSession();
+  const [showDiscussion, setShowDiscussion] = useState(false);
+  const [courseDrawerState, setCourseDrawerState] = useAtom(courseDrawerAtom);
+  const [showCourseReport, setShowCourseReport] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useAtom(selectedAnswerAtom);
+  const [lastSelectedSection, setLastSelectedSection] = useAtom(lastSelectedSectionAtom);
 
-  const {
-    data: sectionsData,
-    isLoading,
-    isSuccess: allSectionsListSuccess,
-  } = useApiGet<any, Error>({
+  const courseId = params.slug?.[0] || '';
+  const chapterId = params.slug?.[1] || '';
+  const moduleId = params.slug?.[2] || '';
+  const sectionId = params.slug?.[3] || '';
+  const queryClient = useQueryClient();
+
+  const [selectedSection, setSelectedSection] = useState(sectionId);
+
+  const { data: { data: sectionsData, chapter } = {}, isLoading } = useApiGet<any, Error>({
     endpoint: `/courses/user/module/chapter/allSections/${chapterId}/${courseId}`,
     queryKey: ['get-users-sections-list', chapterId],
     config: {
+      keepPreviousData: true,
       select: (data) => {
-        return data?.data?.data;
+        return data?.data;
       },
     },
   });
+  const selectedItem = sectionsData?.find((item: any) => item?.id === sectionId);
+  const lastSection = sectionsData?.[sectionsData?.length - 1];
+  const remainingQuestions = sectionsData?.filter((item: any) => item?.question);
+  console.log({ sectionsData, remainingQuestions }, remainingQuestions?.length);
 
-  let trueCount = 0;
-  let falseCount = 0;
-
-  sectionsData?.forEach((item: any) => {
-    // eslint-disable-next-line no-prototype-builtins
-    if ((item as any)?.hasOwnProperty('isCorrect')) {
-      if (item?.isCorrect === true) {
-        trueCount++;
-      } else {
-        falseCount++;
-      }
-    }
+  const { data: courseData, isLoading: courseDataLoading } = useApiGet<any, Error>({
+    endpoint: `/courses/getAllAssignedCourses/${userData?.user.id}`,
+    queryKey: ['get-all-assigned-courses', userData?.user.id],
+    config: {
+      keepPreviousData: true,
+    },
   });
 
-  const { data: allPosts } = useApiGet<any, Error>({
+  const { data: allPosts, isLoading: allPostsLoading } = useApiGet<any, Error>({
     endpoint: `/courses/posts/${courseId}`,
     queryKey: ['posts', courseId],
     config: {
@@ -79,68 +79,56 @@ const Page = () => {
   } = useApiGet<any, Error>({
     endpoint: `/courses/section/getLastSeen/${userData?.user.id}/${chapterId}`,
     queryKey: ['last-seen-section', userData?.user.id, chapterId],
+    config: {
+      select: (res) => res?.data?.data,
+    },
   });
-
-  useEffect(() => {
-    if (allSectionsListSuccess && lastSeenSectionSuccess) {
-      if (!lastSeenSection?.data?.id) {
-        const firstSection = sectionsData?.[0];
-        setSelectedItem(firstSection);
-      } else if (lastSeenSection.data.id) {
-        const lastItem = sectionsData?.find((item: any) => item.id === lastSeenSection.data.sectionId);
-        setSelectedItem(lastItem);
-      }
-    }
-  }, [allSectionsListSuccess, lastSeenSectionSuccess]);
-
-  const [selectedItem, setSelectedItem] = useAtom(selectedSectionAtom);
-  const [selectedAnswer, setSelectedAnswer] = useAtom(selectedAnswerAtom);
-
-  const lastSection = sectionsData?.[sectionsData?.length - 1];
-
-  const {
-    mutate: updateLastSeenSection,
-    //isLoading: editingCourse,
-  } = useApiMutation<any>({
+  const { mutate: updateLastSeenSection } = useApiMutation<any>({
     endpoint: `/courses/section/updateLastSeen/`,
     method: 'post',
   });
 
   useEffect(() => {
-    return () => {
-      setSelectedItem(null);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (selectedItem?.id && chapterId) {
-      const payload = {
-        chapterId: chapterId,
-        sectionId: selectedItem?.id,
-      };
-      updateLastSeenSection(payload);
+    if (lastSeenSectionSuccess) {
+      if (selectedSection) {
+        router.replace(`/studentNewCourse/${courseId}/${chapterId}/${moduleId}/${selectedSection}`);
+      } else {
+        if (lastSeenSection?.sectionId) {
+          setSelectedSection(lastSeenSection?.sectionId);
+        } else {
+          const firstSection = sectionsData?.[0];
+          const payload = {
+            chapterId: chapterId,
+            sectionId: firstSection?.id,
+          };
+          updateLastSeenSection(payload);
+          setSelectedSection(firstSection?.id);
+        }
+      }
     }
-  }, [selectedItem, chapterId]);
+  }, [selectedSection, sectionsData, lastSeenSectionSuccess, lastSeenSection]);
 
-  const {
-    mutate: updateProgress,
-    isLoading: updatingProgress,
-    isError: isUpdateError,
-    error: updateError,
-  } = useApiMutation<any>({
+  const width = useWindowWidth();
+
+  const renderButtonText = () => {
+    if (updatingProgress || checkingQuizAnswer) return 'updating...';
+    // if (updatingProgress || checkingQuizAnswer) return 'updating...';
+    if (lastSection?.id === selectedItem?.id) return 'End of lesson';
+    return 'Next';
+  };
+  const { mutate: updateProgress, isLoading: updatingProgress } = useApiMutation<any>({
     endpoint: `/courses/updateUserChapter/Progress`,
     method: 'put',
     config: {
       onSuccess: () => {
         try {
-          console.log('sucess sucess');
-          const selectedIndex = sectionsData?.findIndex((item: any) => item.id === selectedItem?.id);
+          const selectedIndex = sectionsData?.findIndex((item: any) => item.id === sectionId);
           const isLastSection = lastSection?.id === selectedItem?.id;
           if (!isLastSection) {
             const nextItem = sectionsData?.[(selectedIndex ?? 0) + 1];
-            setSelectedItem(nextItem);
+            !selectedItem?.question && setLastSelectedSection(sectionId);
+            setSelectedSection(nextItem?.id);
 
-            console.log('invalid');
             queryClient.invalidateQueries({
               queryKey: ['get-all-assigned-courses'],
             });
@@ -155,6 +143,13 @@ const Page = () => {
             });
           } else {
             setShowCourseReport(true);
+            queryClient.invalidateQueries({
+              queryKey: ['get-all-assigned-courses'],
+            });
+
+            queryClient.invalidateQueries({
+              queryKey: ['get-users-sections-list'],
+            });
           }
         } catch (error) {
           console.log({ error });
@@ -163,14 +158,31 @@ const Page = () => {
     },
   });
 
+  const goToNextSection = () => {
+    const selectedIndex = sectionsData?.findIndex((item: any) => item.id === sectionId);
+    const isLastSection = lastSection?.id === selectedItem?.id;
+    if (!isLastSection) {
+      const nextItem = sectionsData?.[(selectedIndex ?? 0) + 1];
+      console.log('setting last section', sectionId);
+      !selectedItem?.question && setLastSelectedSection(sectionId);
+      setSelectedSection(nextItem?.id);
+    } else {
+      setShowCourseReport(true);
+    }
+  };
+  console.log('lastSelectedSection 0', lastSelectedSection);
+
   const { mutate: checkQuizAnswer, isLoading: checkingQuizAnswer } = useApiMutation<any>({
     endpoint: `/quizzes/checkQuiz`,
     method: 'post',
     config: {
       onSuccess: (res) => {
-        const selectedIndex = sectionsData?.findIndex((item: any) => item.id === selectedItem?.id);
+        console.log('lastSelectedSection 1', lastSelectedSection);
+        const selectedIndex = sectionsData?.findIndex((item: any) => item.id === lastSelectedSection);
+        console.log('lastSelectedSection selectedIndex', selectedIndex);
         const nextItem = sectionsData?.[(selectedIndex ?? 0) + 1];
-        setSelectedItem(nextItem);
+        console.log('lastSelectedSection nextItem', nextItem);
+        setSelectedSection(nextItem?.id);
         queryClient.invalidateQueries({
           queryKey: ['get-users-sections-list'],
         });
@@ -189,6 +201,7 @@ const Page = () => {
       },
     },
   });
+  console.log({ selectedItem });
 
   const updateCourseProgress = () => {
     if (selectedItem.question) {
@@ -210,23 +223,36 @@ const Page = () => {
     const payload = {
       courseId: courseId,
       chapterId: chapterId,
-      sectionId: selectedItem?.id,
+      sectionId: sectionId,
     };
-    updateProgress(payload);
+    !selectedItem?.isCompleted ? updateProgress(payload) : goToNextSection();
   };
-  const renderButtonText = () => {
-    if (updatingProgress || checkingQuizAnswer) return 'updating...';
-    if (lastSection?.id === selectedItem?.id) return 'End of lesson';
-    else return 'Next';
-  };
-  const width = useWindowWidth();
+
   return (
     <div className="flex gap-4 min-h-full p-4">
       <>
-        {!showDiscussion && <SideBarAllSection allSections={sectionsData} />}
+        {!showDiscussion && (
+          <SideBarAllSection
+            courseData={courseData}
+            courseDataLoading={courseDataLoading}
+            chapter={chapter}
+            allSections={sectionsData}
+            setSelectedSection={setSelectedSection}
+            selectedSection={selectedSection}
+            isLoading={isLoading}
+          />
+        )}
         {width < 1024 && courseDrawerState.status && (
           <CourseSideBarDrawer>
-            <SideBarAllSection allSections={sectionsData} isSidebar={true} />
+            <SideBarAllSection
+              courseData={courseData}
+              courseDataLoading={courseDataLoading}
+              chapter={chapter}
+              allSections={sectionsData}
+              setSelectedSection={setSelectedSection}
+              selectedSection={selectedSection}
+              isSidebar={true}
+            />
           </CourseSideBarDrawer>
         )}
         <div className="flex-1 p-4 rounded-xl border bg-white h-[95vh] overflow-hidden overflow-y-auto flex flex-col">
@@ -246,32 +272,36 @@ const Page = () => {
             <p className="text-white font-bold">Greenwich E-learning</p>
             <p></p>
           </div>
-          <div className="flex flex-col md:flex-row justify-between pb-4  border-b border-gray-300 items-center">
-            <p className="mb-2 md:mb-0 text-sm sm:text-base lg:text-xl text-primary max-w-[70%] font-roboto">
-              {chapterName}
-            </p>
-            <div className="flex gap-1">
-              {pdfFile && (
-                <a
-                  href={pdfFile ?? ''}
-                  target="_blank"
-                  className="bg-red-800 w-fit text-white pl-1 cursor-pointer flex items-center gap-1 justify-center rounded-sm text-xs px-2 py-1"
+          {allPostsLoading || isLoading ? (
+            <HeaderLoader />
+          ) : (
+            <div className="flex flex-col md:flex-row justify-between pb-4  border-b border-gray-300 items-center">
+              <p className="mb-2 md:mb-0 text-sm sm:text-base lg:text-xl text-primary max-w-[70%] font-roboto">
+                {chapter?.title}
+              </p>
+              <div className="flex gap-1">
+                {chapter?.pdfFile && (
+                  <a
+                    href={chapter?.pdfFile ?? ''}
+                    target="_blank"
+                    className="bg-red-800 w-fit text-white pl-1 cursor-pointer flex items-center gap-1 justify-center rounded-sm text-xs px-2 py-1"
+                  >
+                    <PDFSVG className="w-4 h-4" />
+                    DOWNLOAD
+                  </a>
+                )}
+                <button
+                  onClick={() => {
+                    setShowDiscussion(!showDiscussion);
+                  }}
+                  className="bg-[#36394D] text-white pl-1 flex items-center gap-1 justify-center rounded-sm text-xs px-2 py-1"
                 >
-                  <PDFSVG className="w-4 h-4" />
-                  DOWNLOAD
-                </a>
-              )}
-              <button
-                onClick={() => {
-                  setShowDiscussion(!showDiscussion);
-                }}
-                className="bg-[#36394D] text-white pl-1 flex items-center gap-1 justify-center rounded-sm text-xs px-2 py-1"
-              >
-                <Icons iconName="discussion" className="h-4 w-4" />
-                {allPosts?.length} DISCUSSIONS
-              </button>
+                  <Icons iconName="discussion" className="h-4 w-4" />
+                  {allPosts?.length} DISCUSSIONS
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           {showCourseReport ? (
             <CourseReport />
@@ -279,13 +309,14 @@ const Page = () => {
             <>
               <div className="flex-1 overflow-y-auto mt-4 px-2 md:px-8">
                 {isLoading ? (
-                  'loading....'
+                  <MainContentLoader />
                 ) : selectedItem?.question ? (
                   <Question questionData={selectedItem} />
                 ) : (
                   <div>
                     <p className="mb-4">
-                      You have earned {trueCount} point(s) out of {trueCount + falseCount} point(s) thus far.
+                      You have earned {chapter?.quizzes?.length - (remainingQuestions?.length ?? 0)} point(s)
+                      out of {chapter?.quizzes?.length} point(s) thus far.
                     </p>
                     <div
                       className="text-[15px]"
@@ -297,16 +328,15 @@ const Page = () => {
               </div>
 
               <div className="flex justify-center gap-4 py-4 border-t border-gray-300">
-                <Button variant="secondary">Prev</Button>
                 <Button onClick={() => updateCourseProgress()}>{renderButtonText()}</Button>
               </div>
             </>
           )}
 
-          {isUpdateError && <AlertDestructive error={updateError} />}
+          {/* {isUpdateError && <AlertDestructive error={updateError} />} */}
         </div>
-        {showDiscussion && <DiscussionForum allPosts={allPosts} setShowDiscussion={setShowDiscussion} />}
       </>
+      {showDiscussion && <DiscussionForum allPosts={allPosts} setShowDiscussion={setShowDiscussion} />}
     </div>
   );
 };
@@ -350,5 +380,45 @@ const PDFSVG = ({ className }: any) => {
         <polygon style={{ fill: '#D1D3D3' }} points="219.821,50.525 270.346,50.525 219.821,0  " />
       </g>
     </svg>
+  );
+};
+
+const HeaderLoader = () => {
+  return (
+    <div className="flex justify-between pb-2 border-b border-gray-300">
+      <h1 className="text-2xl font-bold ">
+        <Skeleton width={300} height={22} />
+      </h1>{' '}
+      <div className="flex gap-2">
+        <h1 className="text-2xl font-bold ">
+          <Skeleton width={80} height={22} />
+        </h1>
+        <h1 className="text-2xl font-bold ">
+          <Skeleton width={80} height={22} />
+        </h1>
+      </div>
+    </div>
+  );
+};
+
+const MainContentLoader = () => {
+  return (
+    <div className="flex flex-col gap-4">
+      <h1 className="text-2xl font-bold ">
+        <Skeleton width={'100%'} height={22} />
+      </h1>{' '}
+      <h1 className="text-2xl font-bold ">
+        <Skeleton width={'100%'} height={22} />
+      </h1>{' '}
+      <h1 className="text-2xl font-bold ">
+        <Skeleton width={'100%'} height={22} />
+      </h1>{' '}
+      <h1 className="text-2xl font-bold ">
+        <Skeleton width={'100%'} height={22} />
+      </h1>{' '}
+      <h1 className="text-2xl font-bold ">
+        <Skeleton width={'100%'} height={22} />
+      </h1>
+    </div>
   );
 };

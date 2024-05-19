@@ -191,6 +191,10 @@ const PDFReport = ({
     }
     return statusClass;
   };
+  const renderQuizGrade = (row: any) => {
+    const percentage = (row.quizCorrect * 100) / row?.totalQuizzes;
+    return isNaN(percentage) ? 0 : percentage?.toFixed(2);
+  };
 
   return (
     <Page size="A4" style={styles.page}>
@@ -231,7 +235,9 @@ const PDFReport = ({
           </View>
           <View style={styles.progress}>
             <Text style={{ color: '#4B5563', fontSize: '10px' }}>Progress:</Text>
-            <Text style={{ color: '#374151', fontSize: '14px' }}>{courseProgressState}%</Text>
+            <Text style={{ color: '#374151', fontSize: '14px' }}>
+              {courseProgressState ? courseProgressState?.toFixed(2) : 0}%
+            </Text>
             <View style={styles.progressBar}>
               <View style={[styles.progressBarFill, { width: `100px` }]}></View>
             </View>
@@ -306,11 +312,9 @@ const PDFReport = ({
                     {row.quizCorrect}/{row?.totalQuizzes}
                   </Text>
                 </View>
+
                 <View style={[styles.tableBodyCell, { flex: 1 }]}>
-                  <Text>---</Text>
-                </View>
-                <View style={[styles.tableBodyCell, { flex: 1 }]}>
-                  <Text>---</Text>
+                  <Text>{renderQuizGrade(row)}%</Text>
                 </View>
               </View>
             ))}

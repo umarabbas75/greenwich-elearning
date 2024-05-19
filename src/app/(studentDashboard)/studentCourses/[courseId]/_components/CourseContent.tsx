@@ -69,13 +69,7 @@ const CourseContent = ({ modulesRecord, toggleAccordion, openAccordions, courseI
                         className="text-black"
                         key={index}
                         href={{
-                          pathname: `/studentCourse/${courseId}/${chapter.id}`,
-                          query: {
-                            chapterName: chapter.title,
-                            courseId,
-                            moduleId: item?.id,
-                            pdfFile: chapter?.pdfFile,
-                          },
+                          pathname: `/studentNewCourse/${courseId}/${chapter.id}/${item?.id}`,
                         }}
                       >
                         <li

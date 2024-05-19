@@ -36,7 +36,6 @@ export const options = {
             },
           });
           const userData = await res.json();
-          console.log('user/res', { userData, res });
           // //adding this temporarily-start
           // return {
           //   ...user,
@@ -68,7 +67,6 @@ export const options = {
             role: userData?.data?.user?.role ?? '',
           } as any;
         } catch (error) {
-          console.log({ error });
           if (error instanceof Error) {
             //  fetch(
             //   `${process.env.NEXT_PUBLIC_API_URI}/api/login/`,
@@ -119,7 +117,6 @@ export const options = {
             //console.error('Failed to update user');
           }
         } catch (error) {
-          console.log({ error });
           //console.error('Error updating user:', error);
         }
       }

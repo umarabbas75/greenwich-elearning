@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 
 import StatusComponent from '@/components/common/StatusComponent';
+import TableSkeletonLoader from '@/components/common/TableSkeletonLoader';
 import { Button } from '@/components/ui/button';
 import { useApiGet } from '@/lib/dashboard/client/user';
 import { courseProgressAtom, userPhotoAtom } from '@/store/course';
@@ -22,7 +23,7 @@ const Grades = ({
   const [courseProgressState, setCourseProgressState] = useAtom(courseProgressAtom);
   const [grades, setGrades] = useState<any>([]);
 
-  const columns = ['Name', 'Status', 'Progress', 'Contribution', 'Quiz Correct', 'Quiz Attempted', 'Grade'];
+  const columns = ['Name', 'Status', 'Progress', 'Contribution', 'Quiz Correct', 'Grade'];
 
   const { refetch, isLoading } = useApiGet<any, Error>({
     endpoint: `/courses/report/${courseIdParam}`,
@@ -58,7 +59,7 @@ const Grades = ({
                   LastSeenSection?.length > 0
                     ? chapterProgress === 100
                       ? 'completed'
-                      : 'seen'
+                      : 'Inprogress'
                     : 'notOpened',
                 progress: chapterProgress,
                 quizCorrect: QuizAnswer?.filter((item: any) => item?.isAnswerCorrect)?.length ?? 0,
@@ -89,6 +90,11 @@ const Grades = ({
     }
   }, [type]);
 
+  const renderQuizGrade = (row: any) => {
+    const percentage = (row.quizCorrect * 100) / row?.totalQuizzes;
+    return isNaN(percentage) ? 0 : percentage?.toFixed(2);
+  };
+
   return (
     <div>
       <div className="pb-8">
@@ -103,54 +109,59 @@ const Grades = ({
           grades={grades}
           courseNameProp={courseNameProp}
         />
-        <div className="py-4 overflow-x-auto">
-          <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
-            <table className="min-w-full leading-normal">
-              <thead>
-                <tr>
-                  {columns.map((column, index) => (
-                    <th
-                      key={index}
-                      className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                    >
-                      {column}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {grades?.map((item: any, index: any) => (
-                  <React.Fragment key={index}>
-                    <tr className="bg-gray-200">
-                      <td colSpan={columns.length} className="px-5 py-3 font-semibold text-left">
-                        {item.element}
-                      </td>
-                    </tr>
-                    {item.report.map((row: any, rowIndex: any) => (
-                      <tr key={rowIndex} className="bg-white">
-                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">{row.name}</td>
-                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                          {<StatusComponent status={row?.status} />}
-                        </td>
-                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                          {isNaN(row?.progress) ? 0 : row.progress?.toFixed(2)}%
-                        </td>
-                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                          {isNaN(row.progressContributionToCourse) ? 0 : row.progressContributionToCourse}%
-                        </td>
-                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                          {row.quizCorrect}/{row?.totalQuizzes}
-                        </td>{' '}
-                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">{'---'}</td>
-                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">{'---'}</td>
-                      </tr>
+        {isLoading ? (
+          <TableSkeletonLoader />
+        ) : (
+          <div className="py-4 overflow-x-auto">
+            <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
+              <table className="min-w-full leading-normal">
+                <thead>
+                  <tr>
+                    {columns.map((column, index) => (
+                      <th
+                        key={index}
+                        className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                      >
+                        {column}
+                      </th>
                     ))}
-                  </React.Fragment>
-                ))}
-              </tbody>
-            </table>
+                  </tr>
+                </thead>
+                <tbody>
+                  {grades?.map((item: any, index: any) => (
+                    <React.Fragment key={index}>
+                      <tr className="bg-gray-200">
+                        <td colSpan={columns.length} className="px-5 py-3 font-semibold text-left">
+                          {item.element}
+                        </td>
+                      </tr>
+                      {item.report.map((row: any, rowIndex: any) => (
+                        <tr key={rowIndex} className="bg-white">
+                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">{row.name}</td>
+                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                            {<StatusComponent status={row?.status} />}
+                          </td>
+                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                            {isNaN(row?.progress) ? 0 : row.progress?.toFixed(2)}%
+                          </td>
+                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                            {isNaN(row.progressContributionToCourse) ? 0 : row.progressContributionToCourse}%
+                          </td>
+                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                            {row.quizCorrect}/{row?.totalQuizzes}
+                          </td>{' '}
+                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                            {renderQuizGrade(row)}%
+                          </td>
+                        </tr>
+                      ))}
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -232,7 +243,7 @@ const ReportHeader = ({ courseProgressState, columns, grades, courseNameProp }: 
         </div>
         <div className="progress flex items-center gap-2">
           <span className="font-medium text-gray-700">Progress:</span>
-          <span className="text-gray-800">{courseProgressState}%</span>
+          <span className="text-gray-800">{courseProgressState ? courseProgressState?.toFixed(2) : 0}%</span>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div style={{ width: `${courseProgressState}%` }} className="bg-green-500 rounded-full h-2"></div>
           </div>

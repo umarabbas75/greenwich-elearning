@@ -128,7 +128,6 @@ const UserModal = () => {
 
     data ? editQuiz(payload) : addQuiz(payload);
   };
-  console.log({ options });
 
   return (
     <Modal open={userState.status} onClose={() => {}} title={data ? 'Edit Quiz' : 'New Quiz'}>
@@ -139,7 +138,7 @@ const UserModal = () => {
           {(isEditError || isAddError) && <AlertDestructive error={editError || addError} />}
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-4">
                 <FormField
                   control={control}
                   name="question"

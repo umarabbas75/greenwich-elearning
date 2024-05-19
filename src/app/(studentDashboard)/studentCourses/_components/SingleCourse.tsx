@@ -9,7 +9,7 @@ const SingleCourse = ({ item }: any) => {
       <Link
         href={{
           pathname: `/studentCourses/${item.id}`,
-          query: { percentage: item.percentage, id: item.id, title: item.title },
+          query: { title: item.title },
         }}
       >
         <img

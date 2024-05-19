@@ -17,7 +17,7 @@ const Page = () => {
   const { data: session } = useSession();
   const { data: assignedCourses, isLoading } = useApiGet<any, Error>({
     endpoint: `/courses/getAllAssignedCourses/${session?.user.id}`,
-    queryKey: ['get-sections', session?.user.id],
+    queryKey: ['get-all-assigned-courses', session?.user.id],
     config: {
       keepPreviousData: true,
     },
