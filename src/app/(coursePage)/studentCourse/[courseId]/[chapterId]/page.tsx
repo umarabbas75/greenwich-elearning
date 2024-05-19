@@ -191,6 +191,7 @@ const Page = () => {
   });
 
   const updateCourseProgress = () => {
+    console.log('update course progress');
     if (selectedItem.question) {
       if (!selectedAnswer) {
         return toast({
@@ -220,6 +221,7 @@ const Page = () => {
     else return 'Next';
   };
   const width = useWindowWidth();
+  console.log({ width });
   return (
     <div className="flex gap-4 min-h-full p-4">
       <>

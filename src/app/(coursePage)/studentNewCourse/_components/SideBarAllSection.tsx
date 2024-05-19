@@ -25,6 +25,7 @@ const SideBarAllSection = ({
 }: any) => {
   const params = useParams();
   const chapterId = params.slug?.[1] || '';
+  const moduleId = params.slug?.[2] || '';
 
   const completedSections = allSections?.filter((item: any) => item?.isCompleted);
   const totalSections = allSections?.filter((item: any) => item?.title);
@@ -81,6 +82,7 @@ const SideBarAllSection = ({
                                 const payload = {
                                   chapterId: chapterId,
                                   sectionId: item?.id,
+                                  moduleId,
                                 };
                                 updateLastSeenSection(payload);
                               }}

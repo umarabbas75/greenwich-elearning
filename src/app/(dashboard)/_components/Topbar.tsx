@@ -41,7 +41,10 @@ const Topbar = () => {
   });
   console.log({ authData });
   return (
-    <nav className="flex justify-between items-center h-20 px-9  shadow-app-header">
+    <nav
+      className="flex justify-between items-center h-20 px-9 "
+      style={{ boxShadow: '0 0 4px 4px rgba(0,0,0,0.08)' }}
+    >
       <div className="flex items-center">
         <div
           onClick={() => {

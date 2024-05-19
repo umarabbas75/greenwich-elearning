@@ -35,7 +35,7 @@ export const sidebarMenu: SidebarMenu = {
     {
       id: 'quiz',
       title: 'Quiz',
-      icon: 'bulb',
+      icon: 'pen',
       link: '/quiz',
     },
 

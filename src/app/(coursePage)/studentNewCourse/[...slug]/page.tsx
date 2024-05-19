@@ -100,6 +100,7 @@ const Page = () => {
           const payload = {
             chapterId: chapterId,
             sectionId: firstSection?.id,
+            moduleId,
           };
           updateLastSeenSection(payload);
           setSelectedSection(firstSection?.id);
