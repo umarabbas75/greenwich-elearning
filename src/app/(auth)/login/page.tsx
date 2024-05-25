@@ -11,14 +11,7 @@ export const metadata: Metadata = {
 const page = () => {
   return (
     <>
-      <div className="lg:p-8 relative h-full bg-themeGreen flex items-center justify-center">
-        {/* <Image
-          src="/assets/images/greenwich_logo.png"
-          className="absolute top-10 left-10"
-          width={80}
-          height={140}
-          alt="Greenwich logo"
-        /> */}
+      <div className="p-8 relative h-full bg-themeGreen flex items-center justify-center">
         <img
           src="/assets/images/greenwich_logo.png"
           alt="Greenwich logo"

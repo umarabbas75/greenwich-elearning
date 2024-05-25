@@ -111,7 +111,7 @@ const SingleTodoItem = ({ selectedTodo, todo, setSelectedTodo }: any) => {
             {formatDate(todo.createdAt)}
           </p>
           {todo.dueDate && (
-            <div className="flex items-center text-sm text-gray-500 mt-1">
+            <div className="flex flex-wrap items-center text-sm text-gray-500 mt-1">
               <span
                 className={`${
                   getDueDateDisplay(todo.dueDate).includes('Overdue')

@@ -168,7 +168,9 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
       header: 'Last post',
       cell: (props) => (
         <h1>
-          {props.row.original.ForumComment?.[props.row.original.ForumComment?.length - 1]?.user?.firstName}
+          {props.row.original.ForumComment?.[props.row.original.ForumComment?.length - 1]?.user?.firstName
+            ? props.row.original.ForumComment?.[props.row.original.ForumComment?.length - 1]?.user?.firstName
+            : '----'}
         </h1>
       ),
       footer: (props) => props.column.id,
@@ -179,9 +181,11 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
       header: 'Last post date',
       cell: (props) => (
         <h1>
-          {formatDate(
-            props.row.original.ForumComment?.[props.row.original.ForumComment?.length - 1]?.createdAt,
-          )}
+          {props.row.original.ForumComment?.[props.row.original.ForumComment?.length - 1]?.createdAt
+            ? formatDate(
+                props.row.original.ForumComment?.[props.row.original.ForumComment?.length - 1]?.createdAt,
+              )
+            : '----'}
         </h1>
       ),
       footer: (props) => props.column.id,

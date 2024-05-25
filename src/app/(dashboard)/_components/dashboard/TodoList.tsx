@@ -87,32 +87,32 @@ function TodoList() {
   }
 
   return (
-    <div className="bg-white flex flex-col  rounded-xl  shadow-md p-6">
-      <h2 className="text-2xl font-semibold mb-4  text-primary">Todo List</h2>
+    <div className="bg-white flex flex-col rounded-xl shadow-md p-6">
+      <h2 className="text-2xl font-semibold mb-4 text-primary">Todo List</h2>
 
-      <div className="flex justify-between mb-4">
-        <div>
-          <Button
-            onClick={() =>
-              setTodoState({
-                data: null,
-                status: true,
-              })
-            }
-          >
-            Add Todo
-          </Button>
-        </div>
-        <div className="flex items-center">
+      <div className="flex flex-col md:flex-row justify-between mb-4 space-y-4 md:space-y-0">
+        <Button
+          onClick={() =>
+            setTodoState({
+              data: null,
+              status: true,
+            })
+          }
+          className="md:mr-4"
+        >
+          Add Todo
+        </Button>
+        <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4">
           <Input
             value={search}
-            placeholder="search todo item"
+            placeholder="Search todo item"
             onChange={(e) => {
               handleTodoListSearch(e.target.value, filterOption);
             }}
+            className="w-full md:w-auto"
           />
           <select
-            className="ml-4 p-2 border rounded"
+            className="p-2 border rounded w-full md:w-auto"
             value={filterOption}
             onChange={(e) => onFilterOptionChange(e.target.value, search)}
           >
@@ -123,7 +123,8 @@ function TodoList() {
           </select>
         </div>
       </div>
-      <div className="w-full  bg-gray-100 rounded-lg p-5">
+
+      <div className="w-full">
         {filteredTodos?.length > 0 ? (
           <>
             {filteredTodos
@@ -136,7 +137,7 @@ function TodoList() {
                   selectedTodo={selectedTodo}
                 />
               ))}
-            <div className="flex-1 flex justify-end relative text-left">
+            <div className="flex justify-end mt-4">
               <PaginationComp
                 onPaginationClick={(index) => {
                   setCurrentPage(index);
