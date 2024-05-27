@@ -74,19 +74,32 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
     },
   });
 
+  const { mutate: favoriteForumThread } = useApiMutation<any>({
+    endpoint: `/forum-thread/favorite`,
+    method: 'post',
+    config: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['get-forum-threads'] });
+      },
+    },
+  });
+
+  const { mutate: unFavForumThread } = useApiMutation<any>({
+    endpoint: `/forum-thread/favorite`,
+    method: 'delete',
+    sendDataInParams: true,
+    config: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['get-forum-threads'] });
+      },
+    },
+  });
+
   const renderActions = (data: any) => {
     return (
       <div className="flex flex-col p-2 gap-1 ">
         <span
           className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
-          // onClick={() => {
-          //   const payload = {
-          //     status: data.status === 'inActive' ? 'active' : 'inActive',
-          //   };
-          //   setSelectedForumThread(data.id);
-          //   changeForumStatus(payload);
-
-          // }}
           onClick={() => {
             setSelectedForumThread(data.id);
             const payload = {
@@ -136,6 +149,35 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
   };
 
   const columns = [
+    columnHelper.accessor('favorite', {
+      header: '',
+      cell: (props) => {
+        return (
+          <div
+            className="cursor-pointer group"
+            onClick={(e) => {
+              e.stopPropagation();
+              const payload = {
+                threadId: props.row.original.id,
+              };
+              if (!props.row.original.isFavorite) {
+                favoriteForumThread(payload);
+              } else {
+                unFavForumThread(payload);
+              }
+            }}
+          >
+            <Icons
+              iconName="star"
+              className={`${
+                props.row.original.isFavorite ? 'fill-orange-500 opacity-100 ' : 'fill-gray-400 '
+              } group-hover:opacity-100`}
+            />
+          </div>
+        );
+      },
+      footer: (props) => props.column.id,
+    }),
     columnHelper.accessor('title', {
       header: 'Title',
       cell: (props) => {
