@@ -154,10 +154,14 @@ const SectionModal = () => {
                       id="quill"
                       modules={{
                         toolbar: [
-                          [{ header: [1, 2, false] }],
+                          [{ header: '1' }, { header: '2' }, { font: [] }],
+                          [{ size: [] }],
+
                           ['bold', 'italic', 'underline', 'strike', 'blockquote'],
                           [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
-                          ['link', 'image'],
+                          [{ align: [] }],
+                          ['link', 'image', 'video'],
+                          [{ color: [] }, { background: [] }],
                           ['clean'],
                         ],
                       }}

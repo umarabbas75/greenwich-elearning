@@ -17,7 +17,7 @@ const Syllabus = ({ control, syllabus, appendSyllabus, removeSyllabus }: any) =>
           name={`syllabusOverview`}
           render={({ field: { onChange, value } }) => (
             <ReactQuill
-              id="quill"
+              id="overview"
               modules={{
                 toolbar: [
                   [{ header: [1, 2, false] }],

@@ -47,7 +47,7 @@ const TableComponent: FC<TableProps<any>> = ({ table, onRowClick }) => {
           ))}
         </TableBody>
       </Table>
-      <div className="flex flex-col md:flex-row justify-end items-center gap-2 mt-5">
+      {/* <div className="flex flex-col md:flex-row justify-end items-center gap-2 mt-5">
         <div className="flex gap-1">
           <button
             className="border rounded p-1"
@@ -98,7 +98,7 @@ const TableComponent: FC<TableProps<any>> = ({ table, onRowClick }) => {
             className="border p-1 rounded w-16"
           />
         </span>
-        {/*  <select
+        <select
           value={table.getState().pagination.pageSize}
           onChange={(e) => {
             table.setPageSize(Number(e.target.value));
@@ -109,9 +109,9 @@ const TableComponent: FC<TableProps<any>> = ({ table, onRowClick }) => {
               Show {pageSize}
             </option>
           ))}
-        </select> */}
-        {/* {isFetching ? 'Loading...' : null} */}
-      </div>
+        </select>
+        {isFetching ? 'Loading...' : null}
+      </div> */}
     </div>
   );
 };

@@ -385,7 +385,7 @@ const Page = () => {
                       name={`overview`}
                       render={({ field: { onChange, value } }) => (
                         <ReactQuill
-                          id="quill"
+                          id="overview"
                           modules={{
                             toolbar: [
                               [{ header: [1, 2, false] }],

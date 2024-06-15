@@ -17,7 +17,7 @@ const Assessment = ({ control, assessments, appendAssessment, removeAssessment }
           name={`assessment`}
           render={({ field: { onChange, value } }) => (
             <ReactQuill
-              id="quill"
+              id="overview"
               modules={{
                 toolbar: [
                   [{ header: [1, 2, false] }],

@@ -348,7 +348,46 @@ html {
 .caption {
   font-size: 0.8em;
 }
-.ql-container {
+/* .ql-container {
   height: auto !important;
   min-height: 100px !important;
+} */
+.ql-container.ql-snow {
+  height: auto;
+}
+.ql-editor {
+  height: 150px;
+  overflow-y: scroll;
+}
+
+.ql-toolbar.ql-snow {
+  position: sticky;
+  top: -25px;
+  background: white;
+  z-index: 99999;
+}
+
+#overview .ql-toolbar.ql-snow {
+  position: sticky;
+  top: 0px;
+  background: white;
+  z-index: 99999;
+}
+.ql-size-small {
+  font-size: 10px;
+}
+.ql-size-normal {
+  font-size: 13px;
+}
+.ql-size-large {
+  font-size: 18px;
+}
+.ql-size-huge {
+  font-size: 32px;
+}
+.ql-size-xx-large {
+  font-size: 40px;
+}
+.ql-size-xxx-large {
+  font-size: 48px;
 }

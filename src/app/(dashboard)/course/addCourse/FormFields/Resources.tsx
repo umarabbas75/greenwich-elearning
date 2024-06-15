@@ -17,7 +17,7 @@ const Resources = ({ control, resources, appendResources, removeResources }: any
           name={`resourcesOverview`}
           render={({ field: { onChange, value } }) => (
             <ReactQuill
-              id="quill"
+              id="overview"
               modules={{
                 toolbar: [
                   [{ header: [1, 2, false] }],
