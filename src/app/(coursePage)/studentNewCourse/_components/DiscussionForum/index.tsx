@@ -11,7 +11,8 @@ import PostDetails from './PostDetails';
 import PostPreview from './PostPreview';
 
 const DiscussionForum = ({ allPosts, setShowDiscussion }: any) => {
-  const { courseId } = useParams();
+  const params = useParams();
+  const courseId = params.slug?.[0] || '';
   const [showPostDetails, setShowPostDetails] = useState<any>(null);
   const [newPostModalState, setCreateNewPostModalAtom] = useAtom(createNewPostModalAtom);
   return (
