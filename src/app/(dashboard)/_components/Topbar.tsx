@@ -12,6 +12,7 @@ import { sideBarDrawerAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
 import 'react-quill/dist/quill.snow.css';
 
+import Notification from './Notification';
 import ThemeToggler from './ThemeToggler';
 import UserInfo from './UserInfo';
 
@@ -67,9 +68,7 @@ const Topbar = () => {
         </div> */}
       </div>
       <div className="flex gap-2 items-center">
-        <div className="dark-icon border rounded  p-2 text-accent transition duration-300  hover:bg-dark-icon-hover hover:text-primary">
-          <Icons iconName="notification" className="h-6 w-6 cursor-pointer text-accent" />
-        </div>
+        <Notification />
         <ThemeToggler />
 
         <UserInfo />

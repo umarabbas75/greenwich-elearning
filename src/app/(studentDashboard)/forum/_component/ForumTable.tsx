@@ -1,6 +1,7 @@
 'use client';
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useAtom } from 'jotai';
+import { Pin, Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
@@ -95,50 +96,91 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
     },
   });
 
+  const { mutate: followForumThread } = useApiMutation<any>({
+    endpoint: `/forum-thread/subscribe`,
+    method: 'post',
+    config: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['get-forum-threads'] });
+      },
+    },
+  });
+
+  const { mutate: unFollowForumThread } = useApiMutation<any>({
+    endpoint: `/forum-thread/subscribe`,
+    method: 'delete',
+    sendDataInParams: true,
+    config: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['get-forum-threads'] });
+      },
+    },
+  });
+
   const renderActions = (data: any) => {
     return (
       <div className="flex flex-col p-2 gap-1 ">
+        {userData?.user?.role === 'admin' && (
+          <>
+            <span
+              className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
+              onClick={() => {
+                setSelectedForumThread(data.id);
+                const payload = {
+                  status: data.status === 'inActive' ? 'active' : 'inActive',
+                };
+                setUpdateStatusState({
+                  status: true,
+                  data: payload,
+                });
+              }}
+            >
+              <Icons iconName="toggle" />
+              {changingForumStatus ? 'loading...' : data.status === 'inActive' ? 'Activate' : 'Deactivate'}
+            </span>
+
+            <span
+              onClick={() => {
+                setForumState({
+                  status: true,
+                  data: data,
+                });
+              }}
+              className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
+            >
+              <Icons iconName="edit" className="w-6 h-6 cursor-pointer" />
+              Edit
+            </span>
+
+            <span
+              onClick={() => {
+                setConfirmState({
+                  status: true,
+                  data: data,
+                });
+              }}
+              className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
+            >
+              <Icons iconName="delete" className="w-6 h-6 cursor-pointer " />
+              Delete
+            </span>
+          </>
+        )}
         <span
           className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
           onClick={() => {
-            setSelectedForumThread(data.id);
             const payload = {
-              status: data.status === 'inActive' ? 'active' : 'inActive',
+              threadId: data.id,
             };
-            setUpdateStatusState({
-              status: true,
-              data: payload,
-            });
+            if (!data.isSubscribed) {
+              followForumThread(payload);
+            } else {
+              unFollowForumThread(payload);
+            }
           }}
         >
-          <Icons iconName="toggle" />
-          {changingForumStatus ? 'loading...' : data.status === 'inActive' ? 'Activate' : 'Deactivate'}
-        </span>
-
-        <span
-          onClick={() => {
-            setForumState({
-              status: true,
-              data: data,
-            });
-          }}
-          className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
-        >
-          <Icons iconName="edit" className="w-6 h-6 cursor-pointer" />
-          Edit
-        </span>
-
-        <span
-          onClick={() => {
-            setConfirmState({
-              status: true,
-              data: data,
-            });
-          }}
-          className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
-        >
-          <Icons iconName="delete" className="w-6 h-6 cursor-pointer " />
-          Delete
+          <Star />
+          {data.isSubscribed ? 'Un follow' : 'Follow'}
         </span>
       </div>
     );
@@ -167,11 +209,12 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
               }
             }}
           >
-            <Icons
-              iconName="star"
+            <Pin
               className={`${
-                props.row.original.isFavorite ? 'fill-orange-500 opacity-100 ' : 'fill-gray-400 '
-              } group-hover:opacity-100`}
+                props.row.original.isFavorite
+                  ? 'fill-orange-500  stroke-orange-500'
+                  : 'fill-gray-500 stroke-gray-500'
+              }`}
             />
           </div>
         );
@@ -182,7 +225,13 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
       header: 'Title',
       cell: (props) => {
         return (
-          <h1 className="flex  flex-col justify-center w-fit text-center items-center">
+          <h1 className="flex  flex-row gap-1 justify-center w-fit text-center items-center">
+            <sup>
+              {props?.row?.original?.isSubscribed && (
+                <Star className="w-4 h-4 fill-[#FF5722] stroke-[#FF5722]" />
+              )}
+            </sup>
+
             <span>{`${props.row.original.title ?? ''}`}</span>
           </h1>
         );
@@ -249,10 +298,11 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
         footer: (props) => props.column.id,
       }),
     );
+  }
+  if (userData?.user?.role === 'user' || userData?.user?.role === 'admin') {
     columns.push({
       id: 'actions',
-      cell: (props: any) =>
-        userData?.user?.role === 'admin' && <TableActions>{renderActions(props.row.original)}</TableActions>,
+      cell: (props: any) => <TableActions>{renderActions(props.row.original)}</TableActions>,
     });
   }
 

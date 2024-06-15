@@ -65,7 +65,6 @@ const Page = () => {
         </p>
         <p className="pl-2   font-medium  text-3xl">News & Announcements Forum</p>
       </div>
-      <p className="text-gray-600 mb-4 pl-2 font-medium">{title}</p>
 
       <div className=" p-4 rounded-xl border bg-white mb-4">
         <div className="flex gap-2  ">
@@ -82,7 +81,7 @@ const Page = () => {
 
             <div
               className="text-[15px]"
-              contentEditable="true"
+              contentEditable="false"
               dangerouslySetInnerHTML={{ __html: content }}
             ></div>
 
