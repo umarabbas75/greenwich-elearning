@@ -39,3 +39,28 @@ export function getNameInitials(fullName: string): string {
 
   return initials;
 }
+
+export function getInitials(name: string): string {
+  // Trim leading and trailing whitespace
+  name = name.trim();
+
+  // Check if the name is empty after trimming
+  if (name.length === 0) {
+    return '';
+  }
+
+  // Split the name by spaces
+  const parts = name.split(/\s+/);
+
+  // Handle single names
+  if (parts.length === 1) {
+    return parts[0].charAt(0).toUpperCase();
+  }
+
+  // Get the first character of the first two parts and capitalize them
+  const firstInitial = parts[0].charAt(0).toUpperCase();
+  const secondInitial = parts[1].charAt(0).toUpperCase();
+
+  // Combine the initials
+  return firstInitial + secondInitial;
+}

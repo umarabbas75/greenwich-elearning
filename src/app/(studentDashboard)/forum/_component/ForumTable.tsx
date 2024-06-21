@@ -1,31 +1,29 @@
 'use client';
-import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
+import { formatDistanceToNow } from 'date-fns';
 import { useAtom } from 'jotai';
-import { Pin, Star } from 'lucide-react';
+import { MessageCircle, Pin, Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
 import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
-import StatusComp from '@/components/common/Status';
-import TableComponent from '@/components/common/Table';
-import TableActions from '@/components/common/TableActions';
 import { toast } from '@/components/ui/use-toast';
 import { useApiMutation } from '@/lib/dashboard/client/user';
 import { confirmationModalAtom, forumModalAtom, updateStatusModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
-import { formatDate } from '@/utils/utils';
+import { cn, getInitials } from '@/utils/utils';
 
 import ForumModal from './ForumModal';
 
-const columnHelper = createColumnHelper<any>();
-
-const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
+const UserTable = ({ data }: any) => {
   const [forumState, setForumState] = useAtom(forumModalAtom);
+
   const [selectedForumThread, setSelectedForumThread] = useState('');
   const queryClient = useQueryClient();
   const { data: userData } = useSession();
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null); // Track open menu by ID
 
   const [updateStatusState, setUpdateStatusState] = useAtom(updateStatusModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
@@ -123,8 +121,8 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
         {userData?.user?.role === 'admin' && (
           <>
             <span
-              className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
-              onClick={() => {
+              className="dark-icon text-accent flex gap-2 p-2 font-medium transition-all easy-in duration-400 cursor-pointer hover:text-primary hover:bg-light-hover"
+              onClick={(e) => {
                 setSelectedForumThread(data.id);
                 const payload = {
                   status: data.status === 'inActive' ? 'active' : 'inActive',
@@ -133,6 +131,8 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
                   status: true,
                   data: payload,
                 });
+                setOpenMenuId(null);
+                e.stopPropagation();
               }}
             >
               <Icons iconName="toggle" />
@@ -182,155 +182,134 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
           <Star />
           {data.isSubscribed ? 'Un follow' : 'Follow'}
         </span>
+
+        <span
+          className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
+          onClick={() => {
+            const payload = {
+              threadId: data.id,
+            };
+            if (!data?.isFavorite) {
+              favoriteForumThread(payload);
+            } else {
+              unFavForumThread(payload);
+            }
+          }}
+        >
+          <Pin />
+          {data.isFavorite ? 'UnFavorite' : 'Favorite'}
+        </span>
       </div>
     );
   };
 
-  const renderStatus = (status: any) => {
-    return <StatusComp status={status} />;
-  };
-
-  const columns = [
-    columnHelper.accessor('favorite', {
-      header: '',
-      cell: (props) => {
-        return (
-          <div
-            className="cursor-pointer group"
-            onClick={(e) => {
-              e.stopPropagation();
-              const payload = {
-                threadId: props.row.original.id,
-              };
-              if (!props.row.original.isFavorite) {
-                favoriteForumThread(payload);
-              } else {
-                unFavForumThread(payload);
-              }
-            }}
-          >
-            <Pin
-              className={`${
-                props.row.original.isFavorite
-                  ? 'fill-orange-500  stroke-orange-500'
-                  : 'fill-gray-500 stroke-gray-500'
-              }`}
-            />
-          </div>
-        );
-      },
-      footer: (props) => props.column.id,
-    }),
-    columnHelper.accessor('title', {
-      header: 'Title',
-      cell: (props) => {
-        return (
-          <h1 className="flex  flex-row gap-1 justify-center w-fit text-center items-center">
-            <sup>
-              {props?.row?.original?.isSubscribed && (
-                <Star className="w-4 h-4 fill-[#FF5722] stroke-[#FF5722]" />
-              )}
-            </sup>
-
-            <span>{`${props.row.original.title ?? ''}`}</span>
-          </h1>
-        );
-      },
-      footer: (props) => props.column.id,
-    }),
-
-    columnHelper.accessor('user', {
-      id: 'startedBy',
-      header: 'Started by',
-      cell: (props) => (
-        <h1>{`${props.row.original.user?.firstName ?? ''} ${props.row.original.user?.lastName}`}</h1>
-      ),
-      footer: (props) => props.column.id,
-    }),
-    columnHelper.accessor('createdAt', {
-      id: 'createdAt',
-      header: 'Started date',
-      cell: (props) => <h1>{formatDate(props.row.original.createdAt)}</h1>,
-      footer: (props) => props.column.id,
-    }),
-
-    columnHelper.accessor('lastPostBy', {
-      id: 'lastPostBy',
-      header: 'Last post',
-      cell: (props) => (
-        <h1>
-          {props.row.original.ForumComment?.[props.row.original.ForumComment?.length - 1]?.user?.firstName
-            ? props.row.original.ForumComment?.[props.row.original.ForumComment?.length - 1]?.user?.firstName
-            : '----'}
-        </h1>
-      ),
-      footer: (props) => props.column.id,
-    }),
-
-    columnHelper.accessor('lastPostDate', {
-      id: 'lastPostDate',
-      header: 'Last post date',
-      cell: (props) => (
-        <h1>
-          {props.row.original.ForumComment?.[props.row.original.ForumComment?.length - 1]?.createdAt
-            ? formatDate(
-                props.row.original.ForumComment?.[props.row.original.ForumComment?.length - 1]?.createdAt,
-              )
-            : '----'}
-        </h1>
-      ),
-      footer: (props) => props.column.id,
-    }),
-    columnHelper.accessor('numOfReplies', {
-      id: 'numOfReplies',
-      header: 'Replies',
-      cell: (props) => <h1>{props.row.original?.ForumComment?.length}</h1>,
-      footer: (props) => props.column.id,
-    }),
-  ];
-
-  if (userData?.user?.role === 'admin') {
-    columns.push(
-      columnHelper.accessor('status', {
-        id: 'status',
-        header: 'Status',
-        cell: (props) => renderStatus(props.row.original.status),
-        footer: (props) => props.column.id,
-      }),
-    );
-  }
-  if (userData?.user?.role === 'user' || userData?.user?.role === 'admin') {
-    columns.push({
-      id: 'actions',
-      cell: (props: any) => <TableActions>{renderActions(props.row.original)}</TableActions>,
-    });
-  }
-
-  const table = useReactTable({
-    data: data?.data,
-    columns,
-    pageCount: Math.ceil(data?.data.length / 10),
-    state: {
-      pagination,
-    },
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    manualPagination: true,
-    debugTable: true,
-  });
   const onRowClick = (data: any) => {
     router.push(`/forum/${data.id}`);
   };
 
   return (
     <>
-      {forumState.status && <ForumModal />}
+      <div className="flex flex-col gap-8">
+        {data?.data?.map((item: any, index: number) => {
+          return (
+            <div
+              key={index}
+              onClick={() => {
+                console.log('row clicked');
+                onRowClick(item);
+              }}
+              className={` border-2 cursor-pointer ${
+                userData?.user?.role === 'admin'
+                  ? item?.status === 'active'
+                    ? 'border-green-400'
+                    : 'border-red-400'
+                  : 'border-gray-300'
+              } rounded-2xl p-4 shadow-md bg-white`}
+            >
+              <div className="flex justify-between  gap-6">
+                <div className="relative  rounded-full">
+                  <NameInitials initials={getInitials(`${item?.user?.firstName} ${item?.user?.lastName}`)} />
+                  {item?.isFavorite && (
+                    <div className="bg-orange-500 absolute right-0 top-2 z-10 p-1 rounded-full">
+                      <Pin className="fill-white  stroke-white w-3 h-3" />
+                    </div>
+                  )}
+                  {item?.isSubscribed && (
+                    <div
+                      className={`bg-[#FF5722] absolute ${
+                        item?.isFavorite ? 'right-3' : 'right-0'
+                      }  top-2 z-10 p-1 rounded-full`}
+                    >
+                      <Star className="fill-white  stroke-white w-3 h-3" />
+                    </div>
+                  )}
+                </div>
 
-      <div className=" border rounded bg-white p-4 pt-0">
-        {isLoading ? 'loading...' : <TableComponent table={table} onRowClick={onRowClick} />}
+                <div className="flex flex-col gap-0  w-[65%] ">
+                  <p className="text-gray-700 font-semibold text-xl line-clamp-2">{item?.title}</p>
+                  <p className="text-gray-500">
+                    <span className="font-semibold inline-block mr-1 capitalize">
+                      {item?.user?.firstName}
+                    </span>
+                    <span className="mr-1">started</span>
+                    {formatDistanceToNow(new Date(item?.createdAt))}
+                    <span className="ml-1">ago</span>
+                  </p>
 
-        <div className="h-4" />
+                  <div
+                    className="line-clamp-1 text-gray-500"
+                    contentEditable="false"
+                    dangerouslySetInnerHTML={{ __html: item?.content }}
+                  ></div>
+                </div>
+
+                <div className="m-auto">
+                  <div className="flex gap-0">
+                    {item?.commenters?.slice(0, 3).map((el: any, index: number) => {
+                      return (
+                        <NameInitials
+                          key={index}
+                          className={`h-8 w-8 font-normal text-xs shadow-sm border border-white ${
+                            index > 0 ? '-ml-2' : ''
+                          }`}
+                          initials={getInitials(`${el?.firstName} ${el?.lastName}`)}
+                        />
+                      );
+                    })}
+                    {item?.commenters?.length > 3 && (
+                      <NameInitials
+                        className="h-8 w-8 font-normal text-xs shadow-sm border bg-white -ml-2 text-gray-700"
+                        initials={`+${item?.commenters?.length - 3}`}
+                      />
+                    )}
+                  </div>
+                  <div className="flex items-center mt-2">
+                    <MessageCircle className="text-primary" />
+                    <span className="text-gray-500 text-sm">{item?.ForumComment?.length} comments</span>
+                  </div>
+                </div>
+                <div className="m-auto">
+                  <DropdownMenu
+                    onOpenChange={(open) => setOpenMenuId(open ? item.id : null)}
+                    open={openMenuId === item.id}
+                  >
+                    <DropdownMenuTrigger asChild>
+                      <div className="dark-icon rounded w-fit p-1 text-accent transition duration-300 hover:text-primary">
+                        <Icons iconName="action" className="h-6 w-6 text-gray rotate-90 cursor-pointer" />
+                      </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="bg-white" style={{ zIndex: '99999999' }}>
+                      {renderActions(item)}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
+
+      {forumState.status && <ForumModal />}
 
       {updateStatusState.status && (
         <ConfirmationModal
@@ -387,3 +366,17 @@ const UserTable = ({ data, pagination, setPagination, isLoading }: any) => {
 };
 
 export default UserTable;
+
+const NameInitials = ({ initials, className, ...rest }: any) => {
+  return (
+    <div
+      {...rest}
+      className={cn(
+        `h-20 w-20 cursor-pointer rounded-full bg-primary flex items-center justify-center text-white uppercase text-3xl font-semibold`,
+        className,
+      )}
+    >
+      {initials}
+    </div>
+  );
+};

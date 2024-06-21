@@ -23,6 +23,7 @@ const Notification = () => {
     queryKey: ['get-notifications'],
     config: {
       select: (res) => res?.data?.data,
+      refetchOnWindowFocus: true,
     },
   });
   const showNotificationDot = notificationsList?.filter((item: any) => item?.isRead === false)?.length;
