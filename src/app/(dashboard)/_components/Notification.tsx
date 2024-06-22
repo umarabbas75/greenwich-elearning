@@ -179,7 +179,7 @@ const Notification = () => {
               <div className="flex flex-col items-center justify-center h-full py-10">
                 <Icons iconName="bell" className="h-12 w-12 text-gray-400" />
                 <p className="mt-4 text-lg font-semibold text-gray-700">No Notifications</p>
-                <p className="mt-2 text-sm text-gray-500">You're all caught up!</p>
+                <p className="mt-2 text-sm text-gray-500">{`You're all caught up!`}</p>
               </div>
             )}
           </div>
