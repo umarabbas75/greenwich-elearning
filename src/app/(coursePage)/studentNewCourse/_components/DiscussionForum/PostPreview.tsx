@@ -61,12 +61,12 @@ const PostPreview = ({ onClick, item }: any) => {
     <>
       <div
         onClick={onClick}
-        className="bg-white  max-w-[28.5rem] mb-4 p-4 cursor-pointer"
+        className="bg-white dark:bg-black  max-w-[28.5rem] mb-4 p-4 cursor-pointer"
         style={{ boxShadow: '0 1px 2px 0 rgba(0,0,0,.35)' }}
       >
         <div className="flex justify-between items-center">
           <div className="">
-            <h5 className="text-[#36394D] text-base font-semibold mb-1">{item?.title}</h5>
+            <h5 className="text-[#36394D] dark:text-white/80 text-base font-semibold mb-1">{item?.title}</h5>
             <div className="flex gap-1 items-center">
               <Icons iconName="reply" />
               <span className="uppercase text-xs font-medium">{`${item?.user?.firstName ?? ''} ${

@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
 import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
+import NameInitials from '@/components/NameInitials';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -14,7 +15,7 @@ import { toast } from '@/components/ui/use-toast';
 import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
 import { confirmationModalAtom } from '@/store/modals';
 import { Icons } from '@/utils/icon';
-import { getNameInitials } from '@/utils/utils';
+import { getInitials, getNameInitials } from '@/utils/utils';
 
 const PostDetails = ({ showPostDetails, setShowPostDetails, setShowDiscussion }: any) => {
   const queryClient = useQueryClient();
@@ -106,7 +107,7 @@ const PostDetails = ({ showPostDetails, setShowPostDetails, setShowDiscussion }:
         <div className="line-clamp-1">{showPostDetails.title}</div>
         <Icons
           iconName="close"
-          className="cursor-pointer fill-red-500 stroke-red-500"
+          className="cursor-pointer fill-red-500 stroke-red-500 dark:[&>g>g]:fill-white"
           onClick={() => {
             setShowDiscussion(false);
           }}
@@ -114,17 +115,19 @@ const PostDetails = ({ showPostDetails, setShowPostDetails, setShowDiscussion }:
       </div>
 
       <div
-        className="bg-white max-w-[28.5rem] mb-4 p-4 "
+        className="bg-white dark:bg-black max-w-[28.5rem] mb-4 p-4 "
         style={{ boxShadow: '0 1px 2px 0 rgba(0,0,0,.35)' }}
       >
         <div className="flex justify-between items-center">
-          <h5 className="text-[#36394D] text-base font-semibold mb-1">{showPostDetails?.title}</h5>
-          <p className="text-gray-400 text-[10px] uppercase">
+          <h5 className="text-[#36394D] dark:text-white/80 text-base font-semibold mb-1">
+            {showPostDetails?.title}
+          </h5>
+          <p className="text-gray-400 dark:text-white/60  text-[10px] uppercase">
             {formatDistanceToNow(new Date(showPostDetails?.createdAt))} AGO
           </p>
         </div>
         <div
-          className="text-gray-800 text-sm"
+          className="text-gray-800 dark:text-white/80  text-sm"
           contentEditable="true"
           dangerouslySetInnerHTML={{ __html: showPostDetails?.content }}
         ></div>
@@ -145,13 +148,18 @@ const PostDetails = ({ showPostDetails, setShowPostDetails, setShowDiscussion }:
       <div>
         {postComments?.data?.map((item: any) => {
           return (
-            <div key={item.id} className="bg-white shadow-md rounded-md p-4 mb-4">
+            <div key={item.id} className="bg-white dark:bg-black shadow-md rounded-md p-4 mb-4">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <Icons iconName="customer" className="w-10 h-10 cursor-pointer text-accent" />
+                  {/* <Icons iconName="customer" className="w-10 h-10 cursor-pointer text-accent" /> */}
+
+                  <NameInitials
+                    className={`w-10 h-10 font-normal  shadow-sm border border-white text-sm`}
+                    initials={getInitials(`${item?.user?.firstName} ${item?.user?.lastName}`)}
+                  />
                   <div className="flex flex-col">
-                    <div className="text-sm font-semibold text-gray-800">{`${item?.user?.firstName} ${item?.user?.lastName}`}</div>
-                    <div className="text-gray-600 text-sm">
+                    <div className="text-sm font-semibold text-gray-800 dark:text-white/80">{`${item?.user?.firstName} ${item?.user?.lastName}`}</div>
+                    <div className="text-gray-600 text-sm dark:text-white/50">
                       {formatDistanceToNow(new Date(item?.createdAt))} ago
                     </div>
                   </div>
@@ -185,7 +193,7 @@ const PostDetails = ({ showPostDetails, setShowPostDetails, setShowDiscussion }:
                 {editComment?.id && editComment?.id === item?.id ? (
                   ''
                 ) : (
-                  <p className="text-sm">{item?.content}</p>
+                  <p className="text-sm dark:text-white/80">{item?.content}</p>
                 )}
                 {editComment?.id && editComment?.id === item?.id && (
                   <div className="relative">
@@ -218,9 +226,13 @@ const PostDetails = ({ showPostDetails, setShowPostDetails, setShowDiscussion }:
         })}
       </div>
 
-      <div className=" p-4 rounded-xl border bg-white">
+      <div className=" p-4 rounded-xl border bg-white dark:bg-black">
         <div className="flex gap-2 items-start ">
-          <Icons iconName="customer" className="w-16 h-16 cursor-pointer text-accent" />
+          {/* <Icons iconName="customer" className="w-16 h-16 cursor-pointer text-accent" /> */}
+          <NameInitials
+            className={`w-16 h-16 font-normal  shadow-sm border border-white text-sm`}
+            initials={getInitials(`${session?.data?.user?.firstName} ${session?.data?.user?.lastName}`)}
+          />
           <div className="flex-1 flex flex-col gap-4">
             <Textarea
               value={comment}

@@ -131,8 +131,10 @@ const Page = () => {
   return (
     <div className="mt-4">
       <div>
-        <div className="container mx-auto px-8 py-8 bg-gray-100 rounded-lg shadow-md">
-          <h1 className="text-3xl font-bold text-themeGreen mb-4">Policies and Procedures</h1>
+        <div className="container mx-auto px-8 py-8 bg-gray-100 dark:bg-black rounded-lg shadow-md">
+          <h1 className="text-3xl font-bold text-themeGreen dark:text-primary  mb-4">
+            Policies and Procedures
+          </h1>
           <p className="text-gray-600  mb-6">
             This page outlines the key policies and procedures that govern various aspects of our platform.
             Familiarizing yourself with these guidelines will ensure a smooth and positive learning
@@ -144,7 +146,7 @@ const Page = () => {
           <ul className="list-none space-y-4">
             {policies.map((policy: any, index) => (
               <li key={index} className="border-b border-gray-300 pt-3 pb-4">
-                <h2 className="text-2xl font-semibold text-themeGreen">{policy.title}</h2>
+                <h2 className="text-2xl font-semibold text-themeGreen dark:text-primary">{policy.title}</h2>
                 <p className="text-gray-600 mb-4">{policy.description}</p>
                 <FileCard
                   fileName={policy.fileName}

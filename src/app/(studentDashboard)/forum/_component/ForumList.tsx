@@ -206,7 +206,7 @@ const ForumList = ({ data }: any) => {
           }}
         >
           <Pin />
-          {data.isFavorite ? 'UnFavorite' : 'Favorite'}
+          {data.isFavorite ? 'Remove pin' : 'Pin this post'}
         </span>
       </div>
     );
@@ -219,106 +219,94 @@ const ForumList = ({ data }: any) => {
   return (
     <>
       <div className="flex flex-col gap-8">
-        {data?.data?.map((item: any, index: number) => {
-          return (
-            <div
-              key={index}
-              onClick={() => {
-                onRowClick(item);
-              }}
-              className={` border-2 relative cursor-pointer ${
-                userData?.user?.role === 'admin'
-                  ? item?.status === 'active'
-                    ? 'border-green-400'
-                    : 'border-red-400'
-                  : 'border-gray-300'
-              } rounded-2xl p-4 shadow-md bg-white dark:bg-black`}
-            >
-              <div className="flex justify-between  gap-6">
-                <div className="relative  rounded-full">
-                  <NameInitials initials={getInitials(`${item?.user?.firstName} ${item?.user?.lastName}`)} />
-                  {item?.isFavorite && (
-                    <div className="bg-orange-500 absolute right-0 top-2 z-10 p-1 rounded-full">
-                      <Pin className="fill-white  stroke-white w-3 h-3" />
-                    </div>
-                  )}
-                  {item?.isSubscribed && (
-                    <div
-                      className={`bg-[#FF5722] absolute ${
-                        item?.isFavorite ? 'right-3' : 'right-0'
-                      }  top-2 z-10 p-1 rounded-full`}
-                    >
-                      <Star className="fill-white  stroke-white w-3 h-3" />
-                    </div>
-                  )}
-                </div>
+        {data?.data?.map((item: any, index: number) => (
+          <div
+            key={index}
+            onClick={() => onRowClick(item)}
+            className={`border-2 relative cursor-pointer ${
+              userData?.user?.role === 'admin'
+                ? item?.status === 'active'
+                  ? 'border-green-400'
+                  : 'border-red-400'
+                : 'border-gray-300'
+            } rounded-2xl p-4 shadow-md bg-white dark:bg-black`}
+          >
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="relative rounded-full mb-4 md:mb-0 md:w-20 md:h-20">
+                <NameInitials initials={getInitials(`${item?.user?.firstName} ${item?.user?.lastName}`)} />
+                {item?.isFavorite && (
+                  <div className="bg-orange-500 absolute right-0 top-2 z-10 p-1 rounded-full">
+                    <Pin className="fill-white stroke-white w-3 h-3" />
+                  </div>
+                )}
+                {item?.isSubscribed && (
+                  <div className="bg-[#FF5722] absolute right-0 top-2 z-10 p-1 rounded-full">
+                    <Star className="fill-white stroke-white w-3 h-3" />
+                  </div>
+                )}
+              </div>
 
-                <div className="flex flex-col gap-0  w-[65%] ">
-                  <p className="text-gray-700 dark:text-white/90 font-semibold text-xl line-clamp-2">
-                    {item?.title}
-                  </p>
-                  <p className="text-gray-500 dark:text-white/70">
-                    <span className="font-semibold inline-block mr-1 capitalize text-sm">
-                      {item?.user?.firstName}
-                    </span>
-                    <span className="mr-1">started</span>
-                    {formatDistanceToNow(new Date(item?.createdAt))}
-                    <span className="ml-1">ago</span>
-                  </p>
+              <div className="flex-1">
+                <p className="text-gray-700 dark:text-white/90 font-semibold text-xl line-clamp-2 mb-2">
+                  {item?.title}
+                </p>
+                <p className="text-gray-500 dark:text-white/70 text-sm">
+                  <span className="font-semibold mr-1 capitalize">{item?.user?.firstName}</span>
+                  <span>started {formatDistanceToNow(new Date(item?.createdAt))} ago</span>
+                </p>
 
-                  <div
-                    className="line-clamp-1 text-gray-500 dark:text-white/70 text-sm"
-                    contentEditable="false"
-                    dangerouslySetInnerHTML={{ __html: item?.content }}
-                  ></div>
-                </div>
+                <div
+                  className="line-clamp-3 text-gray-500 dark:text-white/70 text-sm"
+                  dangerouslySetInnerHTML={{ __html: item?.content }}
+                ></div>
+              </div>
 
-                <div className="m-auto">
-                  <div className="flex gap-0">
-                    {item?.commenters?.slice(0, 3).map((el: any, index: number) => {
-                      return (
-                        <NameInitials
-                          key={index}
-                          className={`h-8 w-8 font-normal text-xs shadow-sm border border-white ${
-                            index > 0 ? '-ml-2' : ''
-                          }`}
-                          initials={getInitials(`${el?.firstName} ${el?.lastName}`)}
-                        />
-                      );
-                    })}
-                    {item?.commenters?.length > 3 && (
+              <div className="flex items-center mt-4 md:mt-0 md:ml-auto">
+                <div className="flex gap-1">
+                  {item?.commenters
+                    ?.slice(0, 3)
+                    .map((el: any, index: number) => (
                       <NameInitials
-                        className="h-8 w-8 font-normal text-xs shadow-sm border bg-white -ml-2 text-gray-700"
-                        initials={`+${item?.commenters?.length - 3}`}
+                        key={index}
+                        className={`h-8 w-8 font-normal text-xs shadow-sm border border-white ${
+                          index > 0 ? '-ml-2' : ''
+                        }`}
+                        initials={getInitials(`${el?.firstName} ${el?.lastName}`)}
                       />
-                    )}
-                  </div>
-                  <div className="flex items-center mt-2">
-                    <MessageCircle className="text-primary" />
-                    <span className="text-gray-500 text-sm ml-1">
-                      {`${item?.ForumComment?.length ?? 0} comments`}{' '}
-                    </span>
-                  </div>
+                    ))}
+                  {item?.commenters?.length > 3 && (
+                    <NameInitials
+                      className="h-8 w-8 font-normal text-xs shadow-sm border bg-white -ml-2 text-gray-700"
+                      initials={`+${item?.commenters?.length - 3}`}
+                    />
+                  )}
                 </div>
-                <div className="m-auto">
-                  <DropdownMenu
-                    onOpenChange={(open) => setOpenMenuId(open ? item.id : null)}
-                    open={openMenuId === item.id}
-                  >
-                    <DropdownMenuTrigger asChild>
-                      <div className="dark-icon rounded w-fit p-1 text-accent transition duration-300 hover:text-primary">
-                        <Icons iconName="action" className="h-6 w-6 text-gray rotate-90 cursor-pointer" />
-                      </div>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-white" style={{ zIndex: '99999999' }}>
-                      {renderActions(item)}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                <div className="flex items-center ml-2">
+                  <MessageCircle className="text-primary" />
+                  <span className="text-gray-500 text-xs ml-1">
+                    {`${item?.ForumComment?.length ?? 0} comments`}
+                  </span>
                 </div>
               </div>
+
+              <div className="md:m-auto">
+                <DropdownMenu
+                  onOpenChange={(open) => setOpenMenuId(open ? item.id : null)}
+                  open={openMenuId === item.id}
+                >
+                  <DropdownMenuTrigger asChild>
+                    <div className="dark-icon rounded w-fit p-1 text-accent transition duration-300 hover:text-primary">
+                      <Icons iconName="action" className="h-6 w-6 text-gray rotate-90 cursor-pointer" />
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-white" style={{ zIndex: '99999999' }}>
+                    {renderActions(item)}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
 
       {forumState.status && <ForumModal />}

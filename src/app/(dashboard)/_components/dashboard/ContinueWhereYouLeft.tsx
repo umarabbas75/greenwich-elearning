@@ -97,19 +97,40 @@ const SkeletonLoader = () => {
   return (
     <div className="grid grid-cols-3 gap-4">
       {[1, 2, 3].map((_, index) => (
-        <div key={index} className="col-span-3 md:col-span-1 bg-white rounded-lg shadow-md px-4 py-5">
+        <div
+          key={index}
+          className="col-span-3 md:col-span-1 bg-white dark:bg-[#141416] rounded-lg shadow-md px-4 py-5"
+        >
           <div className="course-info flex items-center">
-            <div className="w-20 h-20 rounded-full bg-gray-300 mr-4 animate-pulse"></div>
+            <div
+              className="w-20 h-20 rounded-full bg-gray-300 mr-4 animate-pulse"
+              style={{ backgroundColor: 'var(--skeleton-base-color)' }}
+            ></div>
             <div className="course-details flex-1">
-              <div className="h-6 bg-gray-300 rounded w-3/4 animate-pulse mb-2"></div>
-              <div className="h-4 bg-gray-300 rounded w-1/2 animate-pulse"></div>
+              <div
+                className="h-6 bg-gray-300 rounded w-3/4 animate-pulse mb-2"
+                style={{ backgroundColor: 'var(--skeleton-base-color)' }}
+              ></div>
+              <div
+                className="h-4 bg-gray-300 rounded w-1/2 animate-pulse"
+                style={{ backgroundColor: 'var(--skeleton-base-color)' }}
+              ></div>
             </div>
           </div>
           <div className="my-2">
-            <div className="h-2 bg-gray-300 rounded w-full animate-pulse"></div>
+            <div
+              className="h-2 bg-gray-300 rounded w-full animate-pulse"
+              style={{ backgroundColor: 'var(--skeleton-base-color)' }}
+            ></div>
           </div>
-          <small className="block h-4 bg-gray-300 rounded w-1/2 animate-pulse mb-2"></small>
-          <div className="h-10 bg-gray-300 rounded w-1/3 animate-pulse"></div>
+          <small
+            className="block h-4 bg-gray-300 rounded w-1/2 animate-pulse mb-2"
+            style={{ backgroundColor: 'var(--skeleton-base-color)' }}
+          ></small>
+          <div
+            className="h-10 bg-gray-300 rounded w-1/3 animate-pulse"
+            style={{ backgroundColor: 'var(--skeleton-base-color)' }}
+          ></div>
         </div>
       ))}
     </div>

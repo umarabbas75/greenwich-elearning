@@ -24,7 +24,7 @@ const DiscussionForum = ({ allPosts, setShowDiscussion }: any) => {
             <div>{allPosts?.length} Discussions</div>
             <Icons
               iconName="close"
-              className="cursor-pointer"
+              className="cursor-pointer dark:[&>g>g]:fill-white"
               onClick={() => {
                 setShowDiscussion(false);
               }}

@@ -19,22 +19,55 @@ const ProgressCourse = ({ courseData, courseDataLoading }: any) => {
 
   if (courseDataLoading) {
     return (
-      <div className="border rounded-sm bg-white" style={{ boxShadow: '0 0 10px rgba(0,0,0,.1)' }}>
+      <div
+        className="border rounded-sm bg-white dark:bg-gray-800"
+        style={{ boxShadow: '0 0 10px rgba(0,0,0,.1)' }}
+      >
         <div className="bg-primary w-full p-4 hidden md:flex justify-center items-center rounded-tr-sm rounded-tl-sm">
-          <Skeleton height={24} width={150} />
+          <Skeleton
+            height={24}
+            width={150}
+            baseColor="var(--skeleton-base-color)"
+            highlightColor="var(--skeleton-highlight-color)"
+          />
         </div>
         <div className="p-6 pt-4">
           <div className="flex justify-between">
-            <Skeleton width={80} height={20} />
-            <Skeleton width={20} height={20} />
+            <Skeleton
+              width={80}
+              height={20}
+              baseColor="var(--skeleton-base-color)"
+              highlightColor="var(--skeleton-highlight-color)"
+            />
+            <Skeleton
+              width={20}
+              height={20}
+              baseColor="var(--skeleton-base-color)"
+              highlightColor="var(--skeleton-highlight-color)"
+            />
           </div>
           <h1 className="text-2xl font-bold mt-4">
-            <Skeleton width={300} height={22} />
+            <Skeleton
+              width={300}
+              height={22}
+              baseColor="var(--skeleton-base-color)"
+              highlightColor="var(--skeleton-highlight-color)"
+            />
           </h1>
           <div className="mt-4">
-            <Skeleton width="100%" height={4} />
+            <Skeleton
+              width="100%"
+              height={4}
+              baseColor="var(--skeleton-base-color)"
+              highlightColor="var(--skeleton-highlight-color)"
+            />
             <div className="mt-1 flex gap-1 items-center">
-              <Skeleton width={100} height={16} />
+              <Skeleton
+                width={100}
+                height={16}
+                baseColor="var(--skeleton-base-color)"
+                highlightColor="var(--skeleton-highlight-color)"
+              />
             </div>
           </div>
         </div>

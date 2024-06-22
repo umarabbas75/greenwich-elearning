@@ -118,12 +118,27 @@ export default SideBarAllSection;
 const SectionLoader = () => {
   return (
     <div className="mt-4">
-      <Skeleton height={40} width="100%" />
+      <Skeleton
+        height={40}
+        width="100%"
+        baseColor="var(--skeleton-base-color)"
+        highlightColor="var(--skeleton-highlight-color)"
+      />
       <div className="mt-4">
         {Array.from({ length: 5 }).map((_, index) => (
           <div key={index} className="step cursor-pointer flex items-center gap-2">
-            <Skeleton circle={true} height={20} width={20} />
-            <Skeleton width={150} />
+            <Skeleton
+              circle={true}
+              height={20}
+              width={20}
+              baseColor="var(--skeleton-base-color)"
+              highlightColor="var(--skeleton-highlight-color)"
+            />
+            <Skeleton
+              width={150}
+              baseColor="var(--skeleton-base-color)"
+              highlightColor="var(--skeleton-highlight-color)"
+            />
           </div>
         ))}
       </div>

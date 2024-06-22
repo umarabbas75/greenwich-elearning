@@ -329,7 +329,12 @@ const Page = () => {
               </div>
 
               <div className="flex justify-center gap-4 py-4 border-t border-gray-300">
-                <Button onClick={() => updateCourseProgress()}>{renderButtonText()}</Button>
+                <Button
+                  disabled={updatingProgress || checkingQuizAnswer}
+                  onClick={() => !updatingProgress && !checkingQuizAnswer && updateCourseProgress()}
+                >
+                  {renderButtonText()}
+                </Button>
               </div>
             </>
           )}
@@ -386,16 +391,31 @@ const PDFSVG = ({ className }: any) => {
 
 const HeaderLoader = () => {
   return (
-    <div className="flex justify-between pb-2 border-b border-gray-300">
-      <h1 className="text-2xl font-bold ">
-        <Skeleton width={300} height={22} />
-      </h1>{' '}
+    <div className="flex justify-between pb-2 border-b border-gray-300 dark:border-gray-700">
+      <h1 className="text-2xl font-bold">
+        <Skeleton
+          width={300}
+          height={22}
+          baseColor="var(--skeleton-base-color)"
+          highlightColor="var(--skeleton-highlight-color)"
+        />
+      </h1>
       <div className="flex gap-2">
-        <h1 className="text-2xl font-bold ">
-          <Skeleton width={80} height={22} />
+        <h1 className="text-2xl font-bold">
+          <Skeleton
+            width={80}
+            height={22}
+            baseColor="var(--skeleton-base-color)"
+            highlightColor="var(--skeleton-highlight-color)"
+          />
         </h1>
-        <h1 className="text-2xl font-bold ">
-          <Skeleton width={80} height={22} />
+        <h1 className="text-2xl font-bold">
+          <Skeleton
+            width={80}
+            height={22}
+            baseColor="var(--skeleton-base-color)"
+            highlightColor="var(--skeleton-highlight-color)"
+          />
         </h1>
       </div>
     </div>
@@ -405,21 +425,16 @@ const HeaderLoader = () => {
 const MainContentLoader = () => {
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold ">
-        <Skeleton width={'100%'} height={22} />
-      </h1>{' '}
-      <h1 className="text-2xl font-bold ">
-        <Skeleton width={'100%'} height={22} />
-      </h1>{' '}
-      <h1 className="text-2xl font-bold ">
-        <Skeleton width={'100%'} height={22} />
-      </h1>{' '}
-      <h1 className="text-2xl font-bold ">
-        <Skeleton width={'100%'} height={22} />
-      </h1>{' '}
-      <h1 className="text-2xl font-bold ">
-        <Skeleton width={'100%'} height={22} />
-      </h1>
+      {[...Array(5)].map((_, index) => (
+        <h1 key={index} className="text-2xl font-bold">
+          <Skeleton
+            width="100%"
+            height={22}
+            baseColor="var(--skeleton-base-color)"
+            highlightColor="var(--skeleton-highlight-color)"
+          />
+        </h1>
+      ))}
     </div>
   );
 };

@@ -87,7 +87,7 @@ const Page = () => {
                 </p>
 
                 <div
-                  className="text-[15px]"
+                  className="text-[15px] dark:!text-white dark:[&>*]:!text-white dark:[&>*>*]:!text-white"
                   contentEditable="false"
                   dangerouslySetInnerHTML={{ __html: content }}
                 ></div>

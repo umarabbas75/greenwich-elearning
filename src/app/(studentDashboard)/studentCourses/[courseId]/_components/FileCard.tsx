@@ -13,7 +13,7 @@ const FileCard = ({ fileName, fileType, seen, onClick, file, item }: any) => {
     >
       <div className="flex items-center mb-3">
         <File className="w-12 h-12 mr-2 text-primary" />
-        <span className="text-base font-semibold">{fileName}</span>
+        <span className="text-base font-semibold dark:text-white/80">{fileName}</span>
       </div>
       <div className="flex items-center text-gray-500 text-sm mb-3">
         <span>{fileType}</span>

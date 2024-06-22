@@ -8,6 +8,8 @@ html {
 }
 @layer base {
   :root {
+    --skeleton-base-color: #e0e0e0;
+    --skeleton-highlight-color: #f0f0f0;
     --background: #fcfcfc;
     --foreground: #232323;
 
@@ -48,6 +50,8 @@ html {
   }
 
   .dark {
+    --skeleton-base-color: #333;
+    --skeleton-highlight-color: #444;
     --background: #353333;
     --foreground: #fcfcfc;
 
