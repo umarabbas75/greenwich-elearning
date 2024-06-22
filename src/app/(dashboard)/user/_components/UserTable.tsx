@@ -161,7 +161,7 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
       header: 'Courses',
       cell: (props) => (
         <h1
-          className="cursor-pointer text-themeBlue whitespace-nowrap"
+          className="cursor-pointer text-themeBlue dark:text-blue-500 whitespace-nowrap"
           onClick={() => {
             setUserCoursesState({
               status: true,

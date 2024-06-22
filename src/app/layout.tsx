@@ -40,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${oepnsans.className}  dark:bg-[#0d1117] h-full`}>
         <JotaiProvider>
           <QueryProvider>
-            <NextThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <NextThemeProvider attribute="class" defaultTheme="system" enableSystem={false}>
               <NextAuthProvider>
                 {children}
                 <Toaster />

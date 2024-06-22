@@ -32,12 +32,22 @@ const ReactSelect = (props: Props) => {
       classNamePrefix={classNamePrefix}
       options={options}
       value={value}
+      // menuIsOpen={true}
       placeholder={placeholder}
       onChange={onChange}
       getOptionLabel={getOptionLabel} // Use 'type' as label
       getOptionValue={getOptionValue} // Use 'value' as value
       isMulti={isMulti}
       isOptionDisabled={isOptionDisabled}
+      classNames={{
+        menuList: () => 'bg-white dark:bg-black',
+        option: () => `dark:hover:bg-[#2684FF]`,
+      }}
+      // components={{
+      //   MenuList : {{
+
+      //   }}
+      // }}
     />
   );
 };

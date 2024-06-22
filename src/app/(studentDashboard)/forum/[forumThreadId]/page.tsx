@@ -70,7 +70,7 @@ const Page = () => {
             <p className="pl-2 font-medium text-3xl">News & Announcements Forum</p>
           </div>
 
-          <div className="p-4 rounded-xl border bg-white mb-4">
+          <div className="p-4 rounded-xl border bg-white dark:bg-black mb-4">
             <div className="flex gap-2">
               <div className="w-[80px]">
                 <NameInitials
@@ -79,7 +79,7 @@ const Page = () => {
                 />
               </div>
               <div className="flex-1">
-                <p className="font-medium text-gray-900 text-lg">{title}</p>
+                <p className="font-medium text-gray-900 dark:text-white/80 text-lg">{title}</p>
                 <p className="flex gap-2 items-center">
                   <span>by</span>
                   <span className="text-primary">{`${user?.firstName} ${user?.lastName ?? ''}`} </span>
@@ -103,7 +103,7 @@ const Page = () => {
             </div>
           </div>
 
-          <div className="p-4 rounded-xl border bg-white">
+          <div className="p-4 rounded-xl border bg-white dark:bg-black">
             <div className="flex gap-2 items-start">
               <NameInitials
                 className={`w-16 h-16 font-normal shadow-sm border border-white text-2xl`}

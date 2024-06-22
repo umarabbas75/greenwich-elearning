@@ -44,7 +44,7 @@ const Page = () => {
           </Button>
         )}
       </div>
-      <p className="text-gray-600 mb-4">
+      <p className="text-gray-600 dark:text-white/80 mb-4">
         This forum serves as a central hub for news updates and crucial announcements, particularly those
         pertaining to examinations. Stay informed by regularly checking this space for the latest information
         and important notices. Keep yourself up-to-date with relevant news items and announcements that may

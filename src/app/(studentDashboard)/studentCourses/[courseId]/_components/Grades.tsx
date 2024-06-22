@@ -120,7 +120,7 @@ const Grades = ({
                     {columns.map((column, index) => (
                       <th
                         key={index}
-                        className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                        className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-black text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider"
                       >
                         {column}
                       </th>
@@ -130,27 +130,29 @@ const Grades = ({
                 <tbody>
                   {grades?.map((item: any, index: any) => (
                     <React.Fragment key={index}>
-                      <tr className="bg-gray-200">
+                      <tr className="bg-gray-200 dark:bg-gray-700">
                         <td colSpan={columns.length} className="px-5 py-3 font-semibold text-left">
                           {item.element}
                         </td>
                       </tr>
                       {item.report.map((row: any, rowIndex: any) => (
-                        <tr key={rowIndex} className="bg-white">
-                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">{row.name}</td>
-                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                        <tr key={rowIndex} className="bg-white dark:bg-black">
+                          <td className="px-5 py-5 border-b border-gray-200 bg-white dark:bg-black text-sm">
+                            {row.name}
+                          </td>
+                          <td className="px-5 py-5 border-b border-gray-200 bg-white dark:bg-black text-sm">
                             {<StatusComponent status={row?.status} />}
                           </td>
-                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                          <td className="px-5 py-5 border-b border-gray-200 bg-white dark:bg-black text-sm">
                             {isNaN(row?.progress) ? 0 : row.progress?.toFixed(2)}%
                           </td>
-                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                          <td className="px-5 py-5 border-b border-gray-200 bg-white dark:bg-black text-sm">
                             {isNaN(row.progressContributionToCourse) ? 0 : row.progressContributionToCourse}%
                           </td>
-                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                          <td className="px-5 py-5 border-b border-gray-200 bg-white dark:bg-black text-sm">
                             {row.quizCorrect}/{row?.totalQuizzes}
                           </td>{' '}
-                          <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                          <td className="px-5 py-5 border-b border-gray-200 bg-white dark:bg-black text-sm">
                             {renderQuizGrade(row)}%
                           </td>
                         </tr>
@@ -222,35 +224,39 @@ const ReportHeader = ({ courseProgressState, columns, grades, courseNameProp }: 
   }, [session, courseProgressState, grades]);
 
   return (
-    <div className="course-report grid grid-cols-1 md:grid-cols-5 gap-4 bg-white shadow-md rounded-lg overflow-hidden">
-      <div className="col-span-2 student-info px-6 py-4 flex flex-col items-center justify-center bg-gray-100">
+    <div className="course-report grid grid-cols-1 md:grid-cols-5 gap-4 bg-white dark:bg-black shadow-md rounded-lg overflow-hidden">
+      <div className="col-span-2 student-info px-6 py-4 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 ">
         <img
           className="w-24 h-24 rounded-full object-cover mb-4"
           src={userPhotoState ?? userPhoto}
           alt="User Photo"
         />
-        <h2 className="text-xl font-bold text-gray-800">{`${session.data?.user?.firstName} ${session.data?.user?.lastName}`}</h2>
-        <p className="text-gray-600 text-sm">{session.data?.user?.email}</p>
-        <p className="text-gray-600 text-sm">{session.data?.user?.phone}</p>
+        <h2 className="text-xl font-bold text-gray-800 dark:text-white/80">{`${session.data?.user?.firstName} ${session.data?.user?.lastName}`}</h2>
+        <p className="text-gray-600 dark:text-white/70 text-sm">{session.data?.user?.email}</p>
+        <p className="text-gray-600 dark:text-white/70 text-sm">{session.data?.user?.phone}</p>
       </div>
       <div className="col-span-3 course-details p-6 flex flex-col gap-4">
         <div className="flex justify-between items-start">
-          <h2 className="text-xl flex-1 font-bold text-gray-800">{courseName}</h2>
+          <h2 className="text-xl flex-1 font-bold text-gray-800 dark:text-white/80">{courseName}</h2>
           <div className="flex items-center justify-end gap-2">
-            <span className="font-medium text-gray-700">Status:</span>
-            <span className="text-gray-800">{courseProgressState === 100 ? 'Completed' : 'In progress'}</span>
+            <span className="font-medium text-gray-700 dark:text-white/80">Status:</span>
+            <span className="text-gray-800 dark:text-white/90">
+              {courseProgressState === 100 ? 'Completed' : 'In progress'}
+            </span>
           </div>
         </div>
         <div className="progress flex items-center gap-2">
-          <span className="font-medium text-gray-700">Progress:</span>
-          <span className="text-gray-800">{courseProgressState ? courseProgressState?.toFixed(2) : 0}%</span>
+          <span className="font-medium text-gray-700 dark:text-white">Progress:</span>
+          <span className="text-gray-800  dark:text-primary">
+            {courseProgressState ? courseProgressState?.toFixed(2) : 0}%
+          </span>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div style={{ width: `${courseProgressState}%` }} className="bg-green-500 rounded-full h-2"></div>
           </div>
         </div>
         <div className="institute-info">
-          <p className="text-gray-800">{instituteName}</p>
-          <p className="text-gray-800">{instituteAddress}</p>
+          <p className="text-gray-800 dark:text-white/80">{instituteName}</p>
+          <p className="text-gray-800 dark:text-white/80">{instituteAddress}</p>
         </div>
         <div className="flex justify-between items-center">
           <Button>

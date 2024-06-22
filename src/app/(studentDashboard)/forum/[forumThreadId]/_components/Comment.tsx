@@ -58,7 +58,7 @@ const Comment = ({ comment }: any) => {
     },
   });
   return (
-    <div className="bg-white shadow-md rounded-md p-4 mb-4">
+    <div className="bg-white dark:bg-black shadow-md rounded-md p-4 mb-4">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           {/* <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full mr-2" /> */}
@@ -68,8 +68,8 @@ const Comment = ({ comment }: any) => {
             initials={getInitials(`${comment?.user?.firstName} ${comment?.user?.lastName}`)}
           />
           <div className="flex flex-col">
-            <div className="text-sm font-semibold text-gray-800">{`${comment?.user?.firstName} ${comment?.user?.lastName}`}</div>
-            <div className="text-gray-600 text-sm">{formatDate(comment?.createdAt)}</div>
+            <div className="text-sm font-semibold text-gray-800 dark:text-white/80">{`${comment?.user?.firstName} ${comment?.user?.lastName}`}</div>
+            <div className="text-gray-600 dark:text-white/60 text-sm">{formatDate(comment?.createdAt)}</div>
           </div>
         </div>
         {userData?.user?.id === comment?.user?.id && (
@@ -98,7 +98,7 @@ const Comment = ({ comment }: any) => {
           </div>
         )}
       </div>
-      <div className="text-gray-700">
+      <div className="text-gray-700 dark:text-white/80">
         {!editComment?.id && comment?.content}
         {editComment?.id && (
           <div className="relative">
@@ -118,7 +118,7 @@ const Comment = ({ comment }: any) => {
                 editCommentApi(payload);
               }}
             >
-              {editingComment ? 'loading....' : <Send className="w-4 h-4" />}
+              {editingComment ? <small>loading....</small> : <Send className="w-4 h-4" />}
             </div>
           </div>
         )}

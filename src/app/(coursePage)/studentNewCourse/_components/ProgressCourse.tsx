@@ -42,7 +42,10 @@ const ProgressCourse = ({ courseData, courseDataLoading }: any) => {
     );
   }
   return (
-    <div className="border rounded-sm bg-white" style={{ boxShadow: '0 0 10px rgba(0,0,0,.1)' }}>
+    <div
+      className="border rounded-sm bg-white dark:bg-black"
+      style={{ boxShadow: '0 0 10px rgba(0,0,0,.1)' }}
+    >
       <div className="bg-primary w-full p-4 hidden md:flex justify-center items-center rounded-tr-sm rounded-tl-sm">
         <p className="text-white font-bold">Greenwich E-learning</p>
       </div>

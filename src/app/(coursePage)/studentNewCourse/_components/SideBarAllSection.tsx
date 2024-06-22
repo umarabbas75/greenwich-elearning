@@ -75,7 +75,9 @@ const SideBarAllSection = ({
                             <div
                               key={item.id}
                               className={`step cursor-pointer ${item.isCompleted ? '' : 'step-incomplete'} ${
-                                item.id === selectedSection ? 'step-active' : ''
+                                item.id === selectedSection
+                                  ? 'text-[#4285f4] bg-[#d3d3d3b3] dark:bg-gray-800'
+                                  : ''
                               }`}
                               onClick={() => {
                                 setSelectedSection(item?.id);

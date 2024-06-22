@@ -3,7 +3,7 @@ import { CheckCircle, File } from 'lucide-react';
 const FileCard = ({ fileName, fileType, seen, onClick, file, item }: any) => {
   return (
     <div
-      className={`bg-white block shadow-md rounded-lg p-4 w-64 cursor-pointer hover:bg-black/10 ${
+      className={`bg-white dark:bg-black border dark:border-white block shadow-md rounded-lg p-4 w-64 cursor-pointer hover:bg-black/10 ${
         seen ? 'border border-green-500' : ''
       }`}
       onClick={() => {

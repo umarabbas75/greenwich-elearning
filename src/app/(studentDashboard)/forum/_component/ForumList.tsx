@@ -232,7 +232,7 @@ const ForumList = ({ data }: any) => {
                     ? 'border-green-400'
                     : 'border-red-400'
                   : 'border-gray-300'
-              } rounded-2xl p-4 shadow-md bg-white`}
+              } rounded-2xl p-4 shadow-md bg-white dark:bg-black`}
             >
               <div className="flex justify-between  gap-6">
                 <div className="relative  rounded-full">
@@ -254,8 +254,10 @@ const ForumList = ({ data }: any) => {
                 </div>
 
                 <div className="flex flex-col gap-0  w-[65%] ">
-                  <p className="text-gray-700 font-semibold text-xl line-clamp-2">{item?.title}</p>
-                  <p className="text-gray-500">
+                  <p className="text-gray-700 dark:text-white/90 font-semibold text-xl line-clamp-2">
+                    {item?.title}
+                  </p>
+                  <p className="text-gray-500 dark:text-white/70">
                     <span className="font-semibold inline-block mr-1 capitalize text-sm">
                       {item?.user?.firstName}
                     </span>
@@ -265,7 +267,7 @@ const ForumList = ({ data }: any) => {
                   </p>
 
                   <div
-                    className="line-clamp-1 text-gray-500 text-sm"
+                    className="line-clamp-1 text-gray-500 dark:text-white/70 text-sm"
                     contentEditable="false"
                     dangerouslySetInnerHTML={{ __html: item?.content }}
                   ></div>
@@ -293,7 +295,9 @@ const ForumList = ({ data }: any) => {
                   </div>
                   <div className="flex items-center mt-2">
                     <MessageCircle className="text-primary" />
-                    <span className="text-gray-500 text-sm">{item?.ForumComment?.length} comments</span>
+                    <span className="text-gray-500 text-sm ml-1">
+                      {`${item?.ForumComment?.length ?? 0} comments`}{' '}
+                    </span>
                   </div>
                 </div>
                 <div className="m-auto">

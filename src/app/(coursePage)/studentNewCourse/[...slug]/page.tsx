@@ -256,7 +256,7 @@ const Page = () => {
             />
           </CourseSideBarDrawer>
         )}
-        <div className="flex-1 p-4 rounded-xl border bg-white h-[95vh] overflow-hidden overflow-y-auto flex flex-col">
+        <div className="flex-1 p-4 rounded-xl border bg-white dark:bg-black h-[95vh] overflow-hidden overflow-y-auto flex flex-col">
           <div className="bg-primary w-full p-4 flex lg:hidden justify-between items-center rounded-sm rounded-tl-sm mb-2">
             <div
               onClick={() => {
@@ -321,7 +321,7 @@ const Page = () => {
                     </p>
                     <div
                       className="text-[15px]"
-                      contentEditable="true"
+                      contentEditable="false"
                       dangerouslySetInnerHTML={{ __html: selectedItem?.description }}
                     ></div>
                   </div>

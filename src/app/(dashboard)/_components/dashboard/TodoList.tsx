@@ -87,7 +87,7 @@ function TodoList() {
   }
 
   return (
-    <div className="bg-white flex flex-col rounded-xl shadow-md p-6">
+    <div className="bg-white dark:bg-black flex flex-col rounded-xl shadow-md p-6">
       <h2 className="text-2xl font-semibold mb-4 text-primary">Todo List</h2>
 
       <div className="flex flex-col md:flex-row justify-between mb-4 space-y-4 md:space-y-0">
@@ -148,8 +148,8 @@ function TodoList() {
             </div>
           </>
         ) : (
-          <div className="bg-gray-100 border border-gray-200 p-4 rounded-md shadow-md text-center">
-            <p className="text-lg text-gray-700">Nothing on your todo list.</p>
+          <div className="bg-gray-100 dark:bg-black border border-gray-200 p-4 rounded-md shadow-md text-center">
+            <p className="text-lg text-gray-700 dark:text-white/80">Nothing on your todo list.</p>
           </div>
         )}
       </div>

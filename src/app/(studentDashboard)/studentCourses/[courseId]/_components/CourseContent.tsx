@@ -22,7 +22,7 @@ export type ChaptersDataResponse = {
 };
 const CourseContent = ({ modulesRecord, toggleAccordion, openAccordions, courseId }: any) => {
   return (
-    <div className="p-4 font-sans rounded-xl border bg-white">
+    <div className="p-4 font-sans rounded-xl border bg-white dark:bg-black/80">
       <>
         <div className="flex items-center justify-between">
           <h1 className="text-primary text-xl font-bold mb-3">Content</h1>
@@ -63,7 +63,7 @@ const CourseContent = ({ modulesRecord, toggleAccordion, openAccordions, courseI
                   )}
                 </AccordionTrigger>
                 <AccordionContent>
-                  <ul className="divide-y divide-gray-200">
+                  <ul className="divide-y divide-gray-200 ">
                     {item.chapters.map((chapter: any) => (
                       <Link
                         className="text-black"
@@ -74,11 +74,11 @@ const CourseContent = ({ modulesRecord, toggleAccordion, openAccordions, courseI
                       >
                         <li
                           key={chapter.id}
-                          className="p-4 cursor-pointer hover:bg-gray-100 rounded-md flex justify-between"
+                          className="p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-black/10 rounded-md flex justify-between"
                         >
                           <div>
-                            <h3 className="uppercase font-semibold">{chapter.title}</h3>
-                            <small>
+                            <h3 className="uppercase font-semibold dark:text-white/80">{chapter.title}</h3>
+                            <small className="dark:text-white/80">
                               {isNaN(chapter?.completedPercentage) ? 0 : +chapter?.completedPercentage}%
                               completed
                             </small>

@@ -5,7 +5,7 @@ interface SearchComponentProps {
 
 const SearchComponent: React.FC<SearchComponentProps> = ({ setSearch, search }) => {
   return (
-    <div className="w-full relative text-gray-600 focus-within:text-gray-400 border rounded-md bg-white md:max-w-xs">
+    <div className="w-full relative text-gray-600 dark:text-white/80 focus-within:text-gray-400 border rounded-md bg-white dark:bg-black md:max-w-xs">
       <span className="absolute inset-y-0 left-0 flex items-center pl-2">
         <svg
           fill="none"
@@ -22,7 +22,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ setSearch, search }) 
       <input
         type="search"
         name="q"
-        className="py-2 text-sm text-accent bg-white rounded-md pl-10 focus:outline-none h-full pr-2"
+        className="py-2 text-sm text-accent bg-white dark:text-white/80 dark:bg-black rounded-md pl-10 w-full focus:outline-none h-full pr-2"
         placeholder="Search..."
         value={search}
         onChange={(e) => {

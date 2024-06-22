@@ -16,6 +16,7 @@ const ThemeToggler = () => {
   const onMenuChange = () => {
     setOpenMenu((prev) => !prev);
   };
+  console.log({ theme });
   if (!mounted) {
     return (
       <div className=" dark-icon border  rounded  p-2 text-accent transition duration-300  hover:bg-dark-icon-hover hover:text-primary">
@@ -37,17 +38,21 @@ const ThemeToggler = () => {
       <DropdownMenuContent className="w-48 bg-white" align="end" side="top">
         <div className="flex flex-col p-2 gap-1 ">
           <span
-            className=" dark-icon text-accent text-sm flex items-center gap-2  p-2 font-sm transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
+            className={` dark-icon text-accent text-sm flex items-center gap-2  p-2 font-sm transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover  ${
+              theme === 'dark' ? 'text-primary bg-light-hover [&>svg>g>path]:!fill-primary' : ''
+            }`}
             onClick={() => {
               setTheme('dark');
               setOpenMenu(false);
             }}
           >
-            <Icons iconName="moon" className="h-6 w-6 cursor-pointer scale-150" />
+            <Icons iconName="moon" className={`h-6 w-6 cursor-pointer scale-150`} />
             Dark
           </span>
           <span
-            className="dark-icon text-accent text-sm flex items-center gap-2  p-2 font-sm transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
+            className={`dark-icon text-accent text-sm flex items-center gap-2  p-2 font-sm transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover ${
+              theme === 'light' ? 'text-primary bg-light-hover [&>svg>g>path]:!fill-primary' : ''
+            }`}
             onClick={() => {
               setTheme('light');
               setOpenMenu(false);
@@ -62,7 +67,9 @@ const ThemeToggler = () => {
               setTheme('system');
               setOpenMenu(false);
             }}
-            className="dark-icon text-accent text-sm flex items-center gap-2  p-2 font-sm transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
+            className={`dark-icon text-accent text-sm flex items-center gap-2  p-2 font-sm transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover ${
+              theme === 'system' ? 'text-primary bg-light-hover [&>svg>g>path]:!fill-primary' : ''
+            }`}
           >
             <Icons iconName="display" className="w-6 h-6 cursor-pointer" />
             System

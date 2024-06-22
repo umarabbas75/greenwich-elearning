@@ -97,10 +97,10 @@ const WorldClock = () => {
         <h2 className="text-2xl font-semibold mb-4 text-primary">World Clock</h2>
         <div className="flex items-center gap-4 justify-between">
           <div>
-            <p className="text-gray-700 font-medium">
+            <p className="text-gray-700 dark:text-white/80 font-medium">
               {new Date()?.toLocaleDateString('en-US', { timeZone: selectedTimezone, weekday: 'long' })}
             </p>
-            <p className="text-gray-700 font-medium">
+            <p className="text-gray-700 dark:text-white/80 font-medium">
               {new Date()?.toLocaleDateString('en-US', {
                 timeZone: selectedTimezone,
                 day: 'numeric',
@@ -108,18 +108,18 @@ const WorldClock = () => {
                 year: 'numeric',
               })}
             </p>
-            <p className="text-gray-700 font-medium">{selectedTimezone}</p>
+            <p className="text-gray-700 dark:text-white/80 font-medium">{selectedTimezone}</p>
           </div>
           <Clock
             format={'HH:mm:ss'}
             ticking={true}
             timezone={selectedTimezone}
-            className="text-white py-3 px-5 bg-[#4d4a4a] rounded-md  text-3xl font-medium"
+            className="text-white py-3 px-5 bg-[#4d4a4a]  rounded-md  text-3xl font-medium"
           />
         </div>
       </div>
-      <div className="bg-gray-200 px-6 py-6">
-        <p className="text-themeBlue flex items-center font-bold cursor-pointer">
+      <div className="bg-gray-200 dark:bg-gray-800 px-6 py-6">
+        <p className="text-blue-500/50 dark:text-blue-300 flex items-center font-bold cursor-pointer">
           Set home location <ArrowDown />{' '}
         </p>
         <div className="flex gap-2 items-center">

@@ -4,7 +4,7 @@ import React from 'react';
 import FileCard from './FileCard';
 const Assessment = ({ assessmentOverview, assessments }: any) => {
   return (
-    <div className=" p-4 rounded-xl border bg-white">
+    <div className=" p-4 rounded-xl border bg-white dark:bg-black">
       <h1 className="text-primary text-xl font-bold mb-3">Assessment</h1>
       <div
         className="text-[15px]"

@@ -54,10 +54,10 @@ const Notification = () => {
         </div>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="w-[500px] bg-white pb-12" align="end" side="top">
+      <DropdownMenuContent className="w-[500px] bg-white dark:bg-black pb-12" align="end" side="top">
         <div className="p-3">
-          <p className="text-base font-bold text-black mb-8">Your Notifications</p>
-          <div className="flex gap-4 flex-col">
+          <p className="text-base font-bold text-black dark:text-white/80 mb-8">Your Notifications</p>
+          <div className="flex gap-4 flex-col max-h-[70vh] overflow-y-scroll">
             {notificationsList?.length > 0 ? (
               notificationsList?.map((item: any, index: any) => {
                 if (item?.message === 'A new thread has been created by the admin.') {
@@ -67,7 +67,7 @@ const Notification = () => {
                       onMouseEnter={() => setHoveredIndex(index)}
                       onMouseLeave={() => setHoveredIndex(null)}
                       className={`flex cursor-pointer items-start gap-2 py-4 px-2 relative ${
-                        !item?.isRead ? 'bg-gray-100' : 'bg-white'
+                        !item?.isRead ? 'bg-gray-100 dark:bg-blue-500/50' : 'bg-white dark:bg-black'
                       } `}
                     >
                       <div>
@@ -108,8 +108,12 @@ const Notification = () => {
                           )}
                         </div>
                         <div className="flex justify-between items-center">
-                          <p className="text-sm text-gray-500">{formatDate(item?.createdAt)}</p>
-                          <p className="text-sm text-gray-500">{formatDistanceToNow(item?.createdAt)} ago</p>
+                          <p className="text-sm text-gray-500 dark:text-white/80">
+                            {formatDate(item?.createdAt)}
+                          </p>
+                          <p className="text-sm text-gray-500 dark:text-white/80">
+                            {formatDistanceToNow(item?.createdAt)} ago
+                          </p>
                         </div>
                       </div>
                     </div>

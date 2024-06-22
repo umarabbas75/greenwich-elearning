@@ -28,13 +28,17 @@ const ContinueWhereYouLeft = () => {
               return (
                 <div
                   key={index}
-                  className="col-span-3 md:col-span-1  bg-white rounded-lg shadow-md px-4 py-5"
+                  className="col-span-3 md:col-span-1  bg-white dark:bg-black dark:border dark:border-white rounded-lg shadow-md px-4 py-5"
                 >
                   <div className="course-info flex items-center">
                     <img className="w-20 h-20 rounded-full mr-4" src={item?.image} alt="Course Thumbnail" />
                     <div className="course-details">
-                      <h3 className="text-xl font-medium text-gray-800 line-clamp-2">{item?.title}</h3>
-                      <p className="text-gray-600 line-clamp-2">{item?.latestLastSeenSection?.title}</p>
+                      <h3 className="text-xl font-medium text-gray-800 dark:text-white/80 line-clamp-2">
+                        {item?.title}
+                      </h3>
+                      <p className="text-gray-600 line-clamp-2 dark:text-white/70">
+                        {item?.latestLastSeenSection?.title}
+                      </p>
                     </div>
                   </div>
 

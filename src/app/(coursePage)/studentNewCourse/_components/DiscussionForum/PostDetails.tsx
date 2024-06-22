@@ -106,7 +106,7 @@ const PostDetails = ({ showPostDetails, setShowPostDetails, setShowDiscussion }:
         <div className="line-clamp-1">{showPostDetails.title}</div>
         <Icons
           iconName="close"
-          className="cursor-pointer"
+          className="cursor-pointer fill-red-500 stroke-red-500"
           onClick={() => {
             setShowDiscussion(false);
           }}

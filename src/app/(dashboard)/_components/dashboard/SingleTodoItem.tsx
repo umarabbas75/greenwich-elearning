@@ -72,7 +72,7 @@ const SingleTodoItem = ({ selectedTodo, todo, setSelectedTodo }: any) => {
   return (
     <div
       key={todo.id}
-      className="flex relative justify-between items-center mb-2 px-2 py-1 bg-white rounded-md"
+      className="flex relative justify-between items-center mb-2 px-2 py-1 bg-white dark:bg-black rounded-md"
     >
       <div className="flex items-center">
         <Checkbox

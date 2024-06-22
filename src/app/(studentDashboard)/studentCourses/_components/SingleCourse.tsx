@@ -5,7 +5,7 @@ import { Progress } from '@/components/ui/progress';
 
 const SingleCourse = ({ item }: any) => {
   return (
-    <div className="bg-gray-200 rounded-sm p-4 col-span-1 cursor-pointer updateUserCourse/Progress">
+    <div className="bg-gray-200 dark:bg-black/80 rounded-sm p-4 col-span-1 cursor-pointer updateUserCourse/Progress">
       <Link
         href={{
           pathname: `/studentCourses/${item.id}`,

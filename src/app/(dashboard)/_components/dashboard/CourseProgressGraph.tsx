@@ -61,7 +61,7 @@ const CourseProgressGraph = () => {
             <CartesianGrid strokeDasharray="3 3" />
             <Tooltip content={<CustomTooltip />} />
             <Legend />
-            {[<Bar key={1} dataKey="percentage" name="percentage" stackId="a" />]}
+            {[<Bar key={1} dataKey="percentage" name="percentage" stackId="a" className="dark:fill-white" />]}
           </BarChart>
         </ResponsiveContainer>
       )}
