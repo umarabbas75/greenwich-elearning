@@ -4,11 +4,12 @@ import { useParams, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
+import NameInitials from '@/components/NameInitials';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
 import { Icons } from '@/utils/icon';
-import { formatDate } from '@/utils/utils';
+import { formatDate, getInitials } from '@/utils/utils';
 
 import Comment from './_components/Comment';
 
@@ -24,14 +25,17 @@ const Page = () => {
       enabled: !!forumThreadId,
     },
   });
+  console.log({ forumThreadId });
 
   const { data: threadComments, isLoading: fetchingThreadComments } = useApiGet<any>({
     endpoint: `/forum-thread-comment/${forumThreadId}`,
     queryKey: ['get-forum-thread-comments', forumThreadId],
     config: {
       enabled: !!forumThreadId,
+      select: (res) => res?.data?.data,
     },
   });
+  console.log({ threadComments });
   const queryClient = useQueryClient();
   const { title, content, user, createdAt } = forumData?.data || {};
   const { mutate: postComment, isLoading: postingComment } = useApiMutation<any>({
@@ -69,7 +73,11 @@ const Page = () => {
       <div className=" p-4 rounded-xl border bg-white mb-4">
         <div className="flex gap-2  ">
           <div className="w-[80px]">
-            <Icons iconName="customer" className="w-16 h-16 cursor-pointer text-accent" />
+            <NameInitials
+              className={`w-16 h-16 font-normal text-xs shadow-sm border border-white text-2xl`}
+              initials={getInitials(`${user?.firstName} ${user?.lastName ?? ''}`)}
+            />
+            {/* <Icons iconName="customer" className="w-16 h-16 cursor-pointer text-accent" /> */}
           </div>
           <div className="flex-1">
             <p className="font-medium text-gray-900 text-lg">{title}</p>
@@ -90,14 +98,7 @@ const Page = () => {
               <p className="font-medium">{threadComments?.length} Comments</p>
               <hr className="my-4" />
 
-              {threadComments?.map((comment: any) => (
-                <Comment
-                  key={comment.id}
-                  comment={comment}
-                  // You can pass edit and delete handlers here if needed
-                  // For example: onEdit={() => handleEdit(comment.id)} onDelete={() => handleDelete(comment.id)}
-                />
-              ))}
+              {threadComments?.map((comment: any) => <Comment key={comment.id} comment={comment} />)}
             </div>
           </div>
         </div>

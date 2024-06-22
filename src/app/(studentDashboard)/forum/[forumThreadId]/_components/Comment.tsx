@@ -5,12 +5,12 @@ import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
 import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
+import NameInitials from '@/components/NameInitials';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
 import { useApiMutation } from '@/lib/dashboard/client/user';
 import { confirmationModalAtom } from '@/store/modals';
-import { Icons } from '@/utils/icon';
-import { formatDate } from '@/utils/utils';
+import { formatDate, getInitials } from '@/utils/utils';
 
 const Comment = ({ comment }: any) => {
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
@@ -62,7 +62,11 @@ const Comment = ({ comment }: any) => {
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           {/* <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full mr-2" /> */}
-          <Icons iconName="customer" className="w-10 h-10 cursor-pointer text-accent" />
+          {/* <Icons iconName="customer" className="w-10 h-10 cursor-pointer text-accent" /> */}
+          <NameInitials
+            className={`w-10 h-10 font-normal  shadow-sm border border-white text-sm`}
+            initials={getInitials(`${comment?.user?.firstName} ${comment?.user?.lastName}`)}
+          />
           <div className="flex flex-col">
             <div className="text-sm font-semibold text-gray-800">{`${comment?.user?.firstName} ${comment?.user?.lastName}`}</div>
             <div className="text-gray-600 text-sm">{formatDate(comment?.createdAt)}</div>

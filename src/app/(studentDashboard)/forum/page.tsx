@@ -5,13 +5,13 @@ import Error from 'next/error';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
-import TableSkeletonLoader from '@/components/common/TableSkeletonLoader';
 import { Button } from '@/components/ui/button';
 import { useApiGet } from '@/lib/dashboard/client/user';
 import { forumModalAtom } from '@/store/modals';
 
+import ForumList from './_component/ForumList';
+import ForumListSkeletonLoader from './_component/ForumListSekeletonLoader';
 import ForumModal from './_component/ForumModal';
-import ForumTable from './_component/ForumTable';
 
 const Page = () => {
   const [forumState, setForumState] = useAtom(forumModalAtom);
@@ -51,16 +51,15 @@ const Page = () => {
         impact your academic journey.
       </p>
       {/* {isError && <AlertDestructive error={error} />} */}
-
       {forumThreads && forumThreads.data && forumThreads.data.length > 0 ? (
-        <ForumTable
+        <ForumList
           data={forumThreads}
           pagination={pagination}
           setPagination={setPagination}
           isLoading={isLoading}
         />
       ) : isLoading ? (
-        <TableSkeletonLoader />
+        <ForumListSkeletonLoader />
       ) : (
         <div className="flex item-center justify-center mt-4">
           <div className="flex flex-col items-center opacity-70">
