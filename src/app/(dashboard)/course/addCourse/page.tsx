@@ -50,6 +50,12 @@ const Page = () => {
 
   const [tabValue, setTabValue] = useState('default');
 
+  // useEffect(() => {
+  //   return () => {
+  //     setCourseModalState({ data: null, status: false });
+  //   };
+  // }, []);
+
   const {
     mutate: editCourse,
     isLoading: editingCourse,
@@ -109,7 +115,7 @@ const Page = () => {
     defaultValues,
     resolver: yupResolver(validationSchema) as any,
   });
-  const { handleSubmit, control, reset, setError, clearErrors, watch } = form;
+  const { handleSubmit, control, reset, setError, clearErrors, watch, getValues } = form;
 
   const {
     mutate: addCourse,
@@ -195,6 +201,7 @@ const Page = () => {
       ...watchResources?.[index],
     };
   });
+  console.log('getValues', getValues());
 
   const onSubmit = (values: any) => {
     values.resources = resources;

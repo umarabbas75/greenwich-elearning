@@ -3,7 +3,7 @@ import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from 
 import { useAtom } from 'jotai';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { useQueryClient } from 'react-query';
 
 import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
@@ -27,6 +27,10 @@ interface Props {
 const CourseTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) => {
   const router = useRouter();
   const [courseModalState, setCourseModalState] = useAtom(addCourseModalAtom);
+  useEffect(() => {
+    setCourseModalState({ status: false, data: null });
+  }, []);
+
   console.log({ courseModalState });
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const { toast } = useToast();
