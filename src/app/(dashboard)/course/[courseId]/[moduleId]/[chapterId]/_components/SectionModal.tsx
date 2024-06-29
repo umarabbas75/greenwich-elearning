@@ -20,7 +20,7 @@ import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
 import { addSectionModalAtom } from '@/store/modals';
 import 'react-quill/dist/quill.snow.css';
 const Image = Quill.import('formats/image');
-const ATTRIBUTES = [
+const ATTRIBUTES: any = [
   'alt',
   'height',
   'width',
@@ -29,8 +29,8 @@ const ATTRIBUTES = [
 ];
 
 class CustomImage extends Image {
-  static formats(domNode) {
-    return ATTRIBUTES.reduce((formats, attribute) => {
+  static formats(domNode: any) {
+    return ATTRIBUTES.reduce((formats: any, attribute: any) => {
       const copy = { ...formats };
 
       if (domNode.hasAttribute(attribute)) {
@@ -41,7 +41,7 @@ class CustomImage extends Image {
     }, {});
   }
 
-  format(name, value) {
+  format(name: any, value: any) {
     if (ATTRIBUTES.indexOf(name) > -1) {
       if (value) {
         this.domNode.setAttribute(name, value);
