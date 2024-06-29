@@ -109,10 +109,10 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
       cell: (props) => <h1>{props.row.original.description}</h1>,
       footer: (props) => props.column.id,
     }),
-    columnHelper.accessor('sections', {
+    columnHelper.accessor('_count', {
       id: 'sections',
       header: 'Lessons',
-      cell: (props) => <h1>{props.row.original.sections?.length}</h1>,
+      cell: (props) => <h1>{props.row.original?._count?.sections}</h1>,
       footer: (props) => props.column.id,
     }),
 
@@ -155,7 +155,7 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
             });
           }}
         >
-          {props.row.original?.quizzes?.length} Quizzes
+          {props.row.original?._count?.quizzes} Quizzes
         </h1>
       ),
       footer: (props) => props.column.id,

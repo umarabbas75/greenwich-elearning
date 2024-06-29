@@ -88,7 +88,7 @@ const ModuleTable: FC<Props> = ({ data, pagination, setPagination, isLoading, co
     columnHelper.accessor('chapters', {
       id: 'elements',
       header: 'Elements',
-      cell: (props) => <h1>{props.row.original.chapters.length}</h1>,
+      cell: (props) => <h1>{props.row.original?._count?.chapters}</h1>,
       footer: (props) => props.column.id,
     }),
 

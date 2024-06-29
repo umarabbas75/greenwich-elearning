@@ -111,10 +111,10 @@ const CourseTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) 
       footer: (props) => props.column.id,
     }),
 
-    columnHelper.accessor('modules', {
+    columnHelper.accessor('_count', {
       id: 'units',
       header: 'Units',
-      cell: (props) => <h1>{props.row.original.modules?.length}</h1>,
+      cell: (props) => <h1>{props.row.original._count?.modules}</h1>,
       footer: (props) => props.column.id,
     }),
 

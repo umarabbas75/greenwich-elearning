@@ -18,7 +18,8 @@ export type Course = {
   updatedAt: string;
   image: string;
   duration: string;
-  modules: any;
+  modules: string;
+  _count: any;
 };
 export type CoursesDataResponse = {
   message: string;

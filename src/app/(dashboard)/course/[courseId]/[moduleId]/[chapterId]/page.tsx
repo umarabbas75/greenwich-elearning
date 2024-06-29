@@ -20,6 +20,7 @@ export type Section = {
   id: string;
   createdAt: string;
   updatedAt: string;
+  shortDescription: string;
 };
 
 export type SectionsDataResponse = {

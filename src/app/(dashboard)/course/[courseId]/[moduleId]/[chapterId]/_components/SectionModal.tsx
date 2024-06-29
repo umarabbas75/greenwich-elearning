@@ -97,6 +97,16 @@ const SectionModal = () => {
   });
   const { handleSubmit, control } = form;
 
+  function getFirst20CharactersExcludingImgTags(inputString: string) {
+    // Remove all img tags and their content
+    const stringWithoutImgTags = inputString.replace(/<img[^>]*>/g, '');
+
+    // Extract the first 20 characters from the remaining string
+    const first20Characters = stringWithoutImgTags.substring(0, 350);
+
+    return first20Characters;
+  }
+
   const { data, isLoading: fetchingChapter } = useApiGet<any>({
     endpoint: `/courses/section/${sectionModalState?.data?.id}`,
     queryKey: ['get-chapter', sectionModalState?.data?.id],
@@ -111,7 +121,13 @@ const SectionModal = () => {
   });
 
   const onSubmit = (values: SectionFormTypes) => {
-    data ? editSection(values) : addSection({ ...values, id: chapterId });
+    const shortDesc = getFirst20CharactersExcludingImgTags(values?.description);
+    console.log({ shortDesc });
+    console.log({ shortDesc });
+
+    data
+      ? editSection({ ...values, shortDescription: shortDesc })
+      : addSection({ ...values, shortDescription: shortDesc, id: chapterId });
   };
 
   return (

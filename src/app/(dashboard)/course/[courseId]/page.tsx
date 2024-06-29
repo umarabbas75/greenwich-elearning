@@ -21,6 +21,7 @@ export type Module = {
   createdAt: string;
   updatedAt: string;
   chapters: any;
+  _count: any;
 };
 
 export type ModulesDataResponse = {

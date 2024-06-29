@@ -79,14 +79,14 @@ const SectionTable: FC<Props> = ({ data, pagination, setPagination, isLoading })
       footer: (props) => props.column.id,
     }),
 
-    columnHelper.accessor('description', {
-      id: 'description',
+    columnHelper.accessor('shortDescription', {
+      id: 'shortDescription',
       header: 'Description',
       cell: (props) => (
         <div
           contentEditable="true"
           className="line-clamp-3"
-          dangerouslySetInnerHTML={{ __html: props.row.original.description }}
+          dangerouslySetInnerHTML={{ __html: props.row.original.shortDescription }}
         ></div>
       ),
       footer: (props) => props.column.id,

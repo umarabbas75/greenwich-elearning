@@ -27,6 +27,7 @@ export type Chapter = {
   quizzes: string;
   sections: any;
   pdfFile: string;
+  _count: any;
 };
 
 export type ChaptersDataResponse = {
