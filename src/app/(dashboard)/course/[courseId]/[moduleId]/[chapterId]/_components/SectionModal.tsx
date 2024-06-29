@@ -1,8 +1,10 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useAtom } from 'jotai';
 import { useParams } from 'next/navigation';
+import BlotFormatter from 'quill-blot-formatter';
 import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
+import { Quill } from 'react-quill';
 import * as Yup from 'yup';
 
 import { AlertDestructive } from '@/components/common/FormError';
@@ -16,9 +18,46 @@ import { useToast } from '@/components/ui/use-toast';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
 import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
 import { addSectionModalAtom } from '@/store/modals';
+import 'react-quill/dist/quill.snow.css';
+const Image = Quill.import('formats/image');
+const ATTRIBUTES = [
+  'alt',
+  'height',
+  'width',
+  'class',
+  'style', // Had to add this line because the style was inlined
+];
 
-const ReactQuill = typeof window === 'object' ? require('react-quill') : () => false;
+class CustomImage extends Image {
+  static formats(domNode) {
+    return ATTRIBUTES.reduce((formats, attribute) => {
+      const copy = { ...formats };
 
+      if (domNode.hasAttribute(attribute)) {
+        copy[attribute] = domNode.getAttribute(attribute);
+      }
+
+      return copy;
+    }, {});
+  }
+
+  format(name, value) {
+    if (ATTRIBUTES.indexOf(name) > -1) {
+      if (value) {
+        this.domNode.setAttribute(name, value);
+      } else {
+        this.domNode.removeAttribute(name);
+      }
+    } else {
+      super.format(name, value);
+    }
+  }
+}
+const ReactQuillComponent = typeof window === 'object' ? require('react-quill') : () => false;
+
+// Register Blot Formatter
+Quill.register('modules/blotFormatter', BlotFormatter);
+Quill.register('formats/image', CustomImage);
 /* const MAX_FILE_SIZE = 102400; */
 
 type SectionFormTypes = {
@@ -166,7 +205,7 @@ const SectionModal = () => {
                   control={control}
                   name={`description`}
                   render={({ field: { onChange, value } }) => (
-                    <ReactQuill
+                    <ReactQuillComponent
                       id="quill"
                       modules={{
                         toolbar: [
@@ -180,10 +219,12 @@ const SectionModal = () => {
                           [{ color: [] }, { background: [] }],
                           ['clean'],
                         ],
+                        blotFormatter: {},
                       }}
                       // style={{ minHeight: '200px' }}
                       value={value}
                       onChange={(data: string) => {
+                        console.log({ data });
                         onChange(data);
                       }}
                     />
