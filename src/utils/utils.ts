@@ -64,3 +64,47 @@ export function getInitials(name: string): string {
   // Combine the initials
   return firstInitial + secondInitial;
 }
+
+export const extractPublicId = (url: string): string | null => {
+  try {
+    // Define the regular expression to match the public ID in the Cloudinary URL
+    const regex = /\/v\d+\/[^/]+\/([^/]+)\.[a-zA-Z]+$/;
+
+    // Execute the regular expression on the provided URL
+    const match = url.match(regex);
+
+    // If a match is found, return the first capturing group (public ID)
+    if (match && match[1]) {
+      return match[1];
+    }
+
+    // If no match is found, return null
+    return null;
+  } catch (error) {
+    // Handle any unexpected errors
+    console.error('Error extracting public ID:', error);
+    return null;
+  }
+};
+
+export const extractFileType = (url: string): string | null => {
+  try {
+    // Define the regular expression to match the file type in the Cloudinary URL
+    const regex = /\.([a-zA-Z0-9]+)$/;
+
+    // Execute the regular expression on the provided URL
+    const match = url.match(regex);
+
+    // If a match is found, return the first capturing group (file type)
+    if (match && match[1]) {
+      return match[1];
+    }
+
+    // If no match is found, return null
+    return null;
+  } catch (error) {
+    // Handle any unexpected errors
+    console.error('Error extracting file type:', error);
+    return null;
+  }
+};

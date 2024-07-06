@@ -1,6 +1,8 @@
 // Import file-saver to save files
 import React from 'react';
 
+import { extractFileType } from '@/utils/utils';
+
 import FileCard from './FileCard';
 const Syllabus = ({ syllabusOverview, syllabus }: any) => {
   return (
@@ -17,8 +19,8 @@ const Syllabus = ({ syllabusOverview, syllabus }: any) => {
           return (
             <FileCard
               key={item?.id}
-              fileName={item?.name}
-              fileType={item?.type}
+              fileName={item?.name || 'Syllabus'}
+              fileType={extractFileType(item?.file)?.toUpperCase()}
               file={item?.file}
               onClick={() => {
                 console.log('item', item);

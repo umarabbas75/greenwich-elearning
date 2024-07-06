@@ -1,6 +1,8 @@
 import { yupResolver } from '@hookform/resolvers/yup';
+import axios from 'axios';
 import { useAtom } from 'jotai';
 import { Trash } from 'lucide-react';
+import { useState } from 'react';
 import { FileUploader } from 'react-drag-drop-files';
 import { Controller, useForm } from 'react-hook-form';
 import { CountryData } from 'react-phone-input-2';
@@ -35,6 +37,7 @@ type UserFormTypes = {
 
 const UserModal = () => {
   const [userState, setUserState] = useAtom(userModalAtom);
+  const [imageLoading, setImageLoading] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const {
@@ -149,7 +152,7 @@ const UserModal = () => {
     defaultValues,
     resolver: yupResolver(validationSchema) as any,
   });
-  const { reset, handleSubmit, control } = form;
+  const { reset, handleSubmit, control, getValues } = form;
 
   // const { data, isLoading: fetchingUser } = useFetchUser({
   //   variables: {
@@ -196,6 +199,8 @@ const UserModal = () => {
     data ? editUser(editPayload) : addUser(addPayload);
   };
 
+  console.log('getvalues', getValues());
+
   return (
     <>
       <Modal
@@ -208,8 +213,15 @@ const UserModal = () => {
         {fetchingUser ? (
           <Spinner />
         ) : (
-          <>
+          <div className="relative">
             {(isEditError || isAddError) && <AlertDestructive error={editError || addError} />}
+            {imageLoading && (
+              <div className="absolute top-0 left-0 right-0 bottom-0 bg-[#ffffff36] z-[99999999]">
+                <div className="w-full h-full flex justify-center items-center">
+                  <Spinner className="!text-primary w-16 h-16" />
+                </div>
+              </div>
+            )}
             <Form {...form}>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
                 <div className="grid md:grid-cols-2 gap-4">
@@ -361,15 +373,32 @@ const UserModal = () => {
                             classes="upload-doc !w-full !min-w-full"
                             maxSize={1}
                             multiple={false}
-                            handleChange={(value: any) => {
-                              const file = value;
-                              const reader = new FileReader();
-                              reader.onload = (e: any) => {
-                                const base64 = e.target.result;
-                                onChange(base64);
-                              };
-
-                              reader.readAsDataURL(file);
+                            handleChange={async (value: any) => {
+                              const selectedFile = value;
+                              if (selectedFile) {
+                                const formData = new FormData();
+                                formData.append('file', selectedFile);
+                                formData.append('upload_preset', 'my_uploads');
+                                formData.append('cloud_name', 'dp9urvlsz');
+                                try {
+                                  setImageLoading(true);
+                                  const response = await axios.post(
+                                    'https://api.cloudinary.com/v1/image/upload',
+                                    formData,
+                                    {
+                                      headers: {
+                                        'Content-Type': 'multipart/form-data',
+                                      },
+                                    },
+                                  );
+                                  setImageLoading(false);
+                                  const { url } = response.data;
+                                  onChange(url);
+                                } catch (error) {
+                                  setImageLoading(false);
+                                  console.error('Error uploading image:', error);
+                                }
+                              }
                             }}
                             name="file"
                             value={value}
@@ -387,6 +416,7 @@ const UserModal = () => {
                               />
                             </div>
                           )}
+                          {imageLoading && <Spinner />}
                         </div>
                       );
                     }}
@@ -398,13 +428,18 @@ const UserModal = () => {
                     Cancel
                   </Button>
 
-                  <LoadingButton loading={addingUser || editingUser} type="submit" variant="default">
+                  <LoadingButton
+                    disabled={imageLoading}
+                    loading={addingUser || editingUser || imageLoading}
+                    type="submit"
+                    variant="default"
+                  >
                     Submit
                   </LoadingButton>
                 </div>
               </form>
             </Form>
-          </>
+          </div>
         )}
       </Modal>
     </>

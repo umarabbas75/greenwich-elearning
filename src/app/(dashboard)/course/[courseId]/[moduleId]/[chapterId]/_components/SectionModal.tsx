@@ -2,6 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useAtom } from 'jotai';
 import { useParams } from 'next/navigation';
 import BlotFormatter from 'quill-blot-formatter';
+import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
 import { Quill } from 'react-quill';
@@ -18,7 +19,9 @@ import { useToast } from '@/components/ui/use-toast';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
 import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
 import { addSectionModalAtom } from '@/store/modals';
+
 import 'react-quill/dist/quill.snow.css';
+import axios from 'axios';
 const Image = Quill.import('formats/image');
 const ATTRIBUTES: any = [
   'alt',
@@ -66,8 +69,11 @@ type SectionFormTypes = {
 };
 
 const SectionModal = () => {
+  const [imageLoading, setImageLoading] = useState(false);
+
   const [sectionModalState, setSectionModalState] = useAtom(addSectionModalAtom);
   const { toast } = useToast();
+  const quillRef: any = useRef(null);
   const queryClient = useQueryClient();
   const params = useParams();
   const { chapterId } = params || {};
@@ -161,12 +167,64 @@ const SectionModal = () => {
 
   const onSubmit = (values: SectionFormTypes) => {
     const shortDesc = getFirst20CharactersExcludingImgTags(values?.description);
-    console.log({ shortDesc });
-    console.log({ shortDesc });
 
     data
       ? editSection({ ...values, shortDescription: shortDesc })
       : addSection({ ...values, shortDescription: shortDesc, id: chapterId });
+  };
+
+  useEffect(() => {
+    console.log({ quillRef });
+    if (quillRef.current) {
+      console.log('quillll 0');
+      try {
+        const quill = quillRef.current?.getEditor();
+        quill.getModule('toolbar').addHandler('image', imageHandler);
+        console.log('quillll 1', { quill });
+      } catch (error) {
+        console.log({ error });
+      }
+    }
+  }, [quillRef, quillRef.current, fetchingChapter]);
+
+  const imageHandler = () => {
+    try {
+      console.log('imageHandler');
+      const input = document.createElement('input');
+      input.setAttribute('type', 'file');
+      input.setAttribute('accept', 'image/*');
+      input.click();
+
+      input.onchange = async () => {
+        const selectedFile = input?.files?.[0];
+        if (selectedFile) {
+          const formData = new FormData();
+          formData.append('file', selectedFile);
+          formData.append('upload_preset', 'my_uploads');
+          formData.append('cloud_name', 'dp9urvlsz');
+          try {
+            setImageLoading(true);
+            const response = await axios.post('https://api.cloudinary.com/v1/image/upload', formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            });
+
+            const url = response.data.url;
+            const quill = quillRef.current.getEditor();
+            const range = quill.getSelection();
+            quill.insertEmbed(range.index, 'image', url);
+            setImageLoading(false);
+          } catch (error) {
+            setImageLoading(false);
+
+            console.error('Error uploading image:', error);
+          }
+        }
+      };
+    } catch (error) {
+      console.log({ error });
+    }
   };
 
   return (
@@ -179,8 +237,15 @@ const SectionModal = () => {
       {fetchingChapter ? (
         <Spinner />
       ) : (
-        <>
+        <div className="relative">
           {(isEditError || isAddError) && <AlertDestructive error={editError || addError} />}
+          {imageLoading && (
+            <div className="absolute top-0 left-0 right-0 bottom-0 bg-[#ffffff36] z-[99999999]">
+              <div className="w-full h-full flex justify-center items-center">
+                <Spinner className="!text-primary w-16 h-16" />
+              </div>
+            </div>
+          )}
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               <div className="grid grid-cols-1 gap-4">
@@ -207,6 +272,7 @@ const SectionModal = () => {
                   render={({ field: { onChange, value } }) => (
                     <ReactQuillComponent
                       id="quill"
+                      ref={quillRef}
                       modules={{
                         toolbar: [
                           [{ header: '1' }, { header: '2' }, { font: [] }],
@@ -243,7 +309,7 @@ const SectionModal = () => {
               </div>
             </form>
           </Form>
-        </>
+        </div>
       )}
     </Modal>
   );

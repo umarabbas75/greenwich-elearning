@@ -8,6 +8,7 @@ const nextConfig = {
       'www.google.com',
       'avatar.iran.liara.run',
       'drive.google.com',
+      'res.cloudinary.com',
     ],
   },
 };

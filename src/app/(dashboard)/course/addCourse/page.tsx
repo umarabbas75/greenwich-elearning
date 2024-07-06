@@ -1,5 +1,6 @@
 'use client';
 import { yupResolver } from '@hookform/resolvers/yup';
+import axios from 'axios';
 import { useAtom } from 'jotai';
 import { ArrowLeft, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -49,6 +50,7 @@ const Page = () => {
   const [courseModalState] = useAtom(addCourseModalAtom);
 
   const [tabValue, setTabValue] = useState('default');
+  const [imageLoading, setImageLoading] = useState(false);
 
   // useEffect(() => {
   //   return () => {
@@ -204,9 +206,9 @@ const Page = () => {
   console.log('getValues', getValues());
 
   const onSubmit = (values: any) => {
-    values.resources = resources;
-    values.assessments = assessments;
-    values.syllabus = syllabus;
+    values.resources = getValues('resources');
+    values.assessments = getValues('assessments');
+    values.syllabus = getValues('syllabus');
     if (data) {
       // eslint-disable-next-line unused-imports/no-unused-vars
       const { id, ...rest } = values;
@@ -230,7 +232,14 @@ const Page = () => {
         back
       </button>
 
-      <div className=" w-[98%] sm:w-[90%] xl:w-3/4 m-auto mt-8">
+      <div className=" w-[98%] sm:w-[90%] xl:w-3/4 m-auto mt-8 relative">
+        {imageLoading && (
+          <div className="absolute top-0 left-0 right-0 bottom-0 bg-[#ffffff36] z-[99999999]">
+            <div className="w-full h-full flex justify-center items-center">
+              <Spinner className="!text-primary w-16 h-16" />
+            </div>
+          </div>
+        )}
         {(isEditError || isAddError) && <AlertDestructive error={editError || addError} />}
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -350,16 +359,41 @@ const Page = () => {
                               onSizeError={(err: any) => {
                                 setError('image', { message: `${err}, max size allowed is 0.5mb` });
                               }}
-                              handleChange={(value: any) => {
+                              handleChange={async (value: any) => {
                                 clearErrors(['image']);
-                                const file = value;
-                                const reader = new FileReader();
-                                reader.onload = (e: any) => {
-                                  const base64 = e.target.result;
-                                  onChange(base64);
-                                };
+                                // const file = value;
+                                // const reader = new FileReader();
+                                // reader.onload = (e: any) => {
+                                //   const base64 = e.target.result;
+                                //   onChange(base64);
+                                // };
 
-                                reader.readAsDataURL(file);
+                                // reader.readAsDataURL(file);
+                                const selectedFile = value;
+                                if (selectedFile) {
+                                  const formData = new FormData();
+                                  formData.append('file', selectedFile);
+                                  formData.append('upload_preset', 'my_uploads');
+                                  formData.append('cloud_name', 'dp9urvlsz');
+                                  try {
+                                    setImageLoading(true);
+                                    const response = await axios.post(
+                                      'https://api.cloudinary.com/v1/image/upload',
+                                      formData,
+                                      {
+                                        headers: {
+                                          'Content-Type': 'multipart/form-data',
+                                        },
+                                      },
+                                    );
+                                    setImageLoading(false);
+                                    const { url } = response.data;
+                                    onChange(url);
+                                  } catch (error) {
+                                    setImageLoading(false);
+                                    console.error('Error uploading image:', error);
+                                  }
+                                }
                               }}
                               name="file"
                               value={value}

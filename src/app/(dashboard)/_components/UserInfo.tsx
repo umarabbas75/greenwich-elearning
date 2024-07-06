@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 import { useState } from 'react';
 
+import NameInitials from '@/components/NameInitials';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { userPhotoAtom } from '@/store/course';
 import { Icons } from '@/utils/icon';
+import { getInitials } from '@/utils/utils';
 const UserInfo = () => {
   const [userPhotoState] = useAtom(userPhotoAtom);
 
@@ -55,9 +57,10 @@ const UserInfo = () => {
             <Image
               src={userPhotoState}
               className="rounded-full cursor-pointer"
-              width={22}
-              height={22}
+              width={28}
+              height={28}
               alt="Profile image"
+              objectFit="contain"
             />
           ) : (
             <Icons iconName="customer" className="h-6 w-6 cursor-pointer " />
@@ -70,7 +73,10 @@ const UserInfo = () => {
           {userPhotoState ? (
             <Image src={userPhotoState} className="rounded-full" width={50} height={50} alt="Profile image" />
           ) : (
-            <Icons iconName="customer" className="w-16 h-16 cursor-pointer text-accent" />
+            <NameInitials
+              className={`w-16 h-16 font-normal  shadow-sm border border-white text-sm`}
+              initials={getInitials(`${session?.user?.firstName} ${session?.user?.lastName}`)}
+            />
           )}
 
           <div className="flex flex-col gap-0">

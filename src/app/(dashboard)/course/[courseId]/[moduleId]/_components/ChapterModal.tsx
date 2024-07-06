@@ -1,6 +1,10 @@
 import { yupResolver } from '@hookform/resolvers/yup';
+import axios from 'axios';
 import { useAtom } from 'jotai';
+import { Trash } from 'lucide-react';
 import { useParams } from 'next/navigation';
+import { useState } from 'react';
+import { FileUploader } from 'react-drag-drop-files';
 import { useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
@@ -26,6 +30,8 @@ type ChapterFormTypes = {
 };
 
 const ChapterModal = () => {
+  const [imageLoading, setImageLoading] = useState(false);
+
   const [chapterModalState, setChapterModalState] = useAtom(addChapterModalAtom);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -120,8 +126,15 @@ const ChapterModal = () => {
       {fetchingChapter ? (
         <Spinner />
       ) : (
-        <>
+        <div className="relative">
           {(isEditError || isAddError) && <AlertDestructive error={editError || addError} />}
+          {imageLoading && (
+            <div className="absolute top-0 left-0 right-0 bottom-0 bg-[#ffffff36] z-[99999999]">
+              <div className="w-full h-full flex justify-center items-center">
+                <Spinner className="!text-primary w-16 h-16" />
+              </div>
+            </div>
+          )}
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               <FormField
@@ -144,16 +157,69 @@ const ChapterModal = () => {
               <FormField
                 control={control}
                 name="pdfFile"
-                render={({ field: { onChange, value }, formState: { errors } }) => {
+                render={({ field: { onChange, value } }) => {
                   return (
-                    <FormItem>
-                      <FormLabel>PDF file</FormLabel>
-                      <FormControl>
-                        <Input onChange={onChange} value={value} />
-                      </FormControl>
+                    // <FormItem>
+                    //   <FormLabel>PDF file</FormLabel>
+                    //   <FormControl>
+                    //     <Input onChange={onChange} value={value} />
+                    //   </FormControl>
 
-                      <FormMessage>{errors.pdfFile?.message}</FormMessage>
-                    </FormItem>
+                    //   <FormMessage>{errors.pdfFile?.message}</FormMessage>
+                    // </FormItem>
+                    <div className="flex flex-col space-y-2 justify-between">
+                      <FormLabel className="mt-3">PDF file</FormLabel>
+                      <FileUploader
+                        classes="upload-doc !w-full !min-w-full"
+                        maxSize={1}
+                        multiple={false}
+                        handleChange={async (value: any) => {
+                          const selectedFile = value;
+                          if (selectedFile) {
+                            const formData = new FormData();
+                            formData.append('file', selectedFile);
+                            formData.append('upload_preset', 'my_uploads');
+                            formData.append('cloud_name', 'dp9urvlsz');
+                            try {
+                              setImageLoading(true);
+                              const response = await axios.post(
+                                'https://api.cloudinary.com/v1/image/upload',
+                                formData,
+                                {
+                                  headers: {
+                                    'Content-Type': 'multipart/form-data',
+                                  },
+                                },
+                              );
+                              setImageLoading(false);
+                              const { url } = response.data;
+                              onChange(url);
+                            } catch (error) {
+                              setImageLoading(false);
+                              console.error('Error uploading image:', error);
+                            }
+                          }
+                        }}
+                        name="file"
+                        value={value}
+                        // disabled={true}
+                        types={['pdf']}
+                      />
+                      {value && (
+                        <div className="flex justify-between items-center border border-gray-200 p-2 border-dashed">
+                          <a href={value} target="_blank" className="text-themeBlue underline">
+                            PDF Document
+                          </a>
+                          <Trash
+                            className="cursor-pointer hover:text-red-500"
+                            onClick={() => {
+                              onChange('');
+                            }}
+                          />
+                        </div>
+                      )}
+                      {imageLoading && <Spinner />}
+                    </div>
                   );
                 }}
               />
@@ -185,7 +251,7 @@ const ChapterModal = () => {
               </div>
             </form>
           </Form>
-        </>
+        </div>
       )}
     </Modal>
   );

@@ -8,6 +8,7 @@ import { useQueryClient } from 'react-query';
 import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
 import TableComponent from '@/components/common/Table';
 import TableActions from '@/components/common/TableActions';
+import NameInitials from '@/components/NameInitials';
 import { useToast } from '@/components/ui/use-toast';
 import { useApiMutation } from '@/lib/dashboard/client/user';
 import {
@@ -18,6 +19,7 @@ import {
   viewUserCoursesModal,
 } from '@/store/modals';
 import { Icons } from '@/utils/icon';
+import { getInitials } from '@/utils/utils';
 
 import { UserData, UsersDataResponse } from '../page';
 
@@ -116,7 +118,10 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
                 className="rounded-full"
               />
             ) : (
-              <Icons iconName="avatar" className="h-12 w-12" />
+              <NameInitials
+                className={`h-12 w-12 font-normal  shadow-sm border border-white text-sm`}
+                initials={getInitials(`${props.row.original.firstName} ${props.row.original.lastName}`)}
+              />
             )}
           </h1>
         );
