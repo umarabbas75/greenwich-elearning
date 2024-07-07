@@ -101,6 +101,7 @@ const Page = () => {
             chapterId: chapterId,
             sectionId: firstSection?.id,
             moduleId,
+            courseId,
           };
           updateLastSeenSection(payload);
           setSelectedSection(firstSection?.id);

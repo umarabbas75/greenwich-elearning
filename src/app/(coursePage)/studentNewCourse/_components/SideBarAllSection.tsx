@@ -24,6 +24,7 @@ const SideBarAllSection = ({
   isLoading,
 }: any) => {
   const params = useParams();
+  const courseId = params.slug?.[0] || '';
   const chapterId = params.slug?.[1] || '';
   const moduleId = params.slug?.[2] || '';
 
@@ -85,6 +86,7 @@ const SideBarAllSection = ({
                                   chapterId: chapterId,
                                   sectionId: item?.id,
                                   moduleId,
+                                  courseId,
                                 };
                                 updateLastSeenSection(payload);
                               }}
