@@ -157,6 +157,7 @@ const Page = () => {
           console.log({ error });
         }
       },
+      keepPreviousData: true,
     },
   });
 
@@ -226,6 +227,7 @@ const Page = () => {
       courseId: courseId,
       chapterId: chapterId,
       sectionId: sectionId,
+      moduleId: moduleId,
     };
     !selectedItem?.isCompleted ? updateProgress(payload) : goToNextSection();
   };

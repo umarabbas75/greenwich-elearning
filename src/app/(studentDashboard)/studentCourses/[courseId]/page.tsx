@@ -33,8 +33,12 @@ const Page = () => {
   const params = useParams();
   const { courseId } = params;
   const [openAccordions, setOpenAccordions] = useState<any>([]);
-  const [modulesRecord, setModulesRecord] = useState([]);
-  const { isLoading: isModuleLoading, refetch } = useApiGet<any, Error>({
+  // const [modulesRecord, setModulesRecord] = useState([]);
+  const {
+    isLoading: isModuleLoading,
+    data: modulesRecord,
+    // refetch,
+  } = useApiGet<any, Error>({
     endpoint: `/courses/user/allModules/${courseId}`,
     queryKey: ['get-modules', courseId],
     config: {
@@ -42,49 +46,52 @@ const Page = () => {
       onSuccess: (res: any) => {
         setOpenAccordions(res.map((_: any, index: any) => index)); // Initially open all accordions
 
-        const modulesWithProgress = res?.map((module: any) => {
-          const totalModuleSections = module?.chapters?.reduce(
-            (total: any, chapter: any) => total + chapter?.sections?.length,
-            0,
-          );
-          const completedModuleSections = module?.course?.UserCourseProgress?.filter(
-            (progress: any) =>
-              module?.chapters?.some(
-                (chapter: any) =>
-                  chapter?.sections?.some((section: any) => section?.id === progress?.sectionId),
-              ),
-          ).length;
+        // const modulesWithProgress = res?.map((module: any) => {
+        //   const totalModuleSections = module?.chapters?.reduce(
+        //     (total: any, chapter: any) => total + chapter?.sections?.length,
+        //     0,
+        //   );
+        //   const completedModuleSections = module?.course?.UserCourseProgress?.filter(
+        //     (progress: any) =>
+        //       module?.chapters?.some(
+        //         (chapter: any) =>
+        //           chapter?.sections?.some((section: any) => section?.id === progress?.sectionId),
+        //       ),
+        //   ).length;
 
-          const moduleCompletedPercentage = (completedModuleSections / totalModuleSections) * 100;
+        //   const moduleCompletedPercentage = (completedModuleSections / totalModuleSections) * 100;
 
-          const chaptersWithProgress = module?.chapters?.map((chapter: any) => {
-            const totalChapterSections = chapter?.sections?.length;
-            const completedChapterSections = chapter?.sections?.filter(
-              (section: any) =>
-                module?.course?.UserCourseProgress?.some(
-                  (progress: any) => progress?.sectionId === section?.id,
-                ),
-            ).length;
+        //   const chaptersWithProgress = module?.chapters?.map((chapter: any) => {
+        //     const totalChapterSections = chapter?.sections?.length;
+        //     const completedChapterSections = chapter?.sections?.filter(
+        //       (section: any) =>
+        //         module?.course?.UserCourseProgress?.some(
+        //           (progress: any) => progress?.sectionId === section?.id,
+        //         ),
+        //     ).length;
 
-            const chapterCompletedPercentage = (completedChapterSections / totalChapterSections) * 100;
+        //     const chapterCompletedPercentage = (completedChapterSections / totalChapterSections) * 100;
 
-            return {
-              ...chapter,
-              completedPercentage: chapterCompletedPercentage.toFixed(2),
-            };
-          });
+        //     return {
+        //       ...chapter,
+        //       completedPercentage: chapterCompletedPercentage.toFixed(2),
+        //     };
+        //   });
 
-          return {
-            ...module,
-            completedPercentage: moduleCompletedPercentage.toFixed(2),
-            chapters: chaptersWithProgress,
-          };
-        });
-        setModulesRecord(modulesWithProgress);
-        console.log({ modulesWithProgress });
+        //   return {
+        //     ...module,
+        //     completedPercentage: moduleCompletedPercentage.toFixed(2),
+        //     chapters: chaptersWithProgress,
+        //   };
+        // });
+        // setModulesRecord(modulesWithProgress);
+        // console.log({ modulesWithProgress });
       },
+      keepPreviousData: true,
     },
   });
+
+  console.log({ modulesRecord });
 
   const { data: courseData } = useApiGet<any, Error>({
     endpoint: `/courses/${courseId}`,
@@ -112,9 +119,9 @@ const Page = () => {
         defaultValue={type}
         className="w-full"
         onValueChange={(route) => {
-          if (route === 'content') {
-            refetch();
-          }
+          // if (route === 'content') {
+          //   refetch();
+          // }
           setType(route);
         }}
       >

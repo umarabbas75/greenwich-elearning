@@ -76,7 +76,7 @@ const SectionModal = () => {
   const quillRef: any = useRef(null);
   const queryClient = useQueryClient();
   const params = useParams();
-  const { chapterId } = params || {};
+  const { chapterId, moduleId } = params || {};
 
   const {
     mutate: addSection,
@@ -169,8 +169,8 @@ const SectionModal = () => {
     const shortDesc = getFirst20CharactersExcludingImgTags(values?.description);
 
     data
-      ? editSection({ ...values, shortDescription: shortDesc })
-      : addSection({ ...values, shortDescription: shortDesc, id: chapterId });
+      ? editSection({ ...values, shortDescription: shortDesc, moduleId: moduleId })
+      : addSection({ ...values, shortDescription: shortDesc, id: chapterId, moduleId: moduleId });
   };
 
   useEffect(() => {

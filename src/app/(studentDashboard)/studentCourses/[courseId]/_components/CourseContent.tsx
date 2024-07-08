@@ -21,6 +21,11 @@ export type ChaptersDataResponse = {
   data: Chapter[];
 };
 const CourseContent = ({ modulesRecord, toggleAccordion, openAccordions, courseId }: any) => {
+  const calculateProgress = (completed: any, total: any) => {
+    console.log({ completed, total });
+    const percentage = (completed * 100) / total;
+    return isNaN(percentage) ? 0 : percentage?.toFixed(0);
+  };
   return (
     <div className="p-4 font-sans rounded-xl border bg-white dark:bg-black/80">
       <>
@@ -40,7 +45,12 @@ const CourseContent = ({ modulesRecord, toggleAccordion, openAccordions, courseI
                   <div className="flex items-center gap-2">
                     <div className="w-12 h-12">
                       <CircularProgressbar
-                        value={isNaN(item?.completedPercentage) ? 0 : +item?.completedPercentage}
+                        value={
+                          calculateProgress(
+                            item?._count?.UserCourseProgress,
+                            item?._count?.sections,
+                          ) as number
+                        }
                         styles={buildStyles({
                           pathColor: `#f88`,
                           trailColor: '#d6d6d6',
@@ -51,7 +61,8 @@ const CourseContent = ({ modulesRecord, toggleAccordion, openAccordions, courseI
                     <div className="flex flex-col gap-0 justify-start items-start">
                       <span className="font-medium uppercase text-white">{item.title}</span>
                       <small className="text-[#f88]">
-                        {isNaN(item?.completedPercentage) ? 0 : +item?.completedPercentage}% completed
+                        {calculateProgress(item?._count?.UserCourseProgress, item?._count?.sections)}%
+                        completed
                       </small>
                     </div>
                   </div>
@@ -79,13 +90,21 @@ const CourseContent = ({ modulesRecord, toggleAccordion, openAccordions, courseI
                           <div>
                             <h3 className="uppercase font-semibold dark:text-white/80">{chapter.title}</h3>
                             <small className="dark:text-white/80">
-                              {isNaN(chapter?.completedPercentage) ? 0 : +chapter?.completedPercentage}%
-                              completed
+                              {calculateProgress(
+                                chapter?._count?.UserCourseProgress,
+                                chapter?._count?.sections,
+                              )}
+                              % completed
                             </small>
                           </div>
                           <div className="w-8 h-8">
                             <CircularProgressbar
-                              value={isNaN(chapter?.completedPercentage) ? 0 : +chapter?.completedPercentage}
+                              value={
+                                calculateProgress(
+                                  chapter?._count?.UserCourseProgress,
+                                  chapter?._count?.sections,
+                                ) as number
+                              }
                               styles={buildStyles({
                                 pathColor: `#f88`,
                                 trailColor: '#d6d6d6',

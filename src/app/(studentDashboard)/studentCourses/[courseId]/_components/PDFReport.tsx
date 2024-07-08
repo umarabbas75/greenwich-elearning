@@ -1,4 +1,4 @@
-import { StyleSheet, Page, View, Text, Image } from '@react-pdf/renderer';
+import { StyleSheet, Page, View, Text } from '@react-pdf/renderer';
 import React from 'react';
 
 const PDFReport = ({
@@ -9,8 +9,7 @@ const PDFReport = ({
   instituteAddress,
   today,
   columns,
-  grades,
-  userPhotoState,
+  grades, // userPhotoState,
 }: any) => {
   const styles = StyleSheet.create({
     page: {
@@ -200,7 +199,7 @@ const PDFReport = ({
     <Page size="A4" style={styles.page}>
       <View style={styles.courseReport}>
         <View style={styles.studentInfo}>
-          <Image src={userPhotoState} style={{ borderRadius: '50%', width: '50px', height: '50px' }} />
+          {/* <Image src={userPhotoState} style={{ borderRadius: '50%', width: '50px', height: '50px' }} /> */}
           <Text
             style={styles.userInfo}
           >{`${session.data?.user?.firstName} ${session.data?.user?.lastName}`}</Text>
