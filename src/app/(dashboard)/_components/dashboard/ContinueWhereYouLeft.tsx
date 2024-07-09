@@ -14,6 +14,7 @@ const ContinueWhereYouLeft = () => {
     queryKey: ['get-all-assigned-courses', userData?.user.id],
     config: {
       select: (res) => res?.data?.data,
+      keepPreviousData: true,
     },
   });
   console.log({ isLoading });

@@ -161,7 +161,7 @@ const PDFReport = ({
       },
     };
     let statusClass: any = '';
-    switch (status.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case 'completed':
         statusClass = styles.completed;
         break;
@@ -191,10 +191,14 @@ const PDFReport = ({
     return statusClass;
   };
   const renderQuizGrade = (row: any) => {
-    const percentage = (row.quizCorrect * 100) / row?.totalQuizzes;
-    return isNaN(percentage) ? 0 : percentage?.toFixed(2);
+    const percentage = (row._count?.QuizAnswer * 100) / row?._count?.quizzes;
+    return isNaN(percentage) ? 0 : percentage;
   };
-
+  const renderStatus = (row: any) => {
+    const status =
+      row?._count?.LastSeenSection > 0 ? (+row?.progress === 100 ? 'completed' : 'Inprogress') : 'notOpened';
+    return status;
+  };
   return (
     <Page size="A4" style={styles.page}>
       <View style={styles.courseReport}>
@@ -271,14 +275,14 @@ const PDFReport = ({
             <View style={index % 2 === 0 ? styles.evenRow : styles.oddRow}>
               <View style={{ flexDirection: 'row' }}>
                 <View style={{ ...styles.tableBodyCell, fontWeight: 'bold' }}>
-                  <Text>{item.element}</Text>
+                  <Text>{item.title}</Text>
                 </View>
                 {Array.from({ length: columns.length - 1 }).map((_, i) => (
                   <View key={i} style={styles.tableBodyCell}></View>
                 ))}
               </View>
             </View>
-            {item.report.map((row: any, rowIndex: any) => (
+            {item.chapters.map((row: any, rowIndex: any) => (
               <View
                 key={rowIndex}
                 style={
@@ -288,27 +292,27 @@ const PDFReport = ({
                 }
               >
                 <View style={[styles.tableBodyCell, { width: '150px' }]}>
-                  <Text>{row.name}</Text>
+                  <Text>{row.title}</Text>
                 </View>
                 <View style={[styles.tableBodyCell, { width: '80px' }]}>
                   <Text
                     style={[
-                      getStyles(row?.status),
+                      getStyles(renderStatus(row)),
                       { padding: '2px', width: 'auto', display: 'flex', justifyContent: 'justify-center' },
                     ]}
                   >
-                    {formatCamelCase(row?.status)}
+                    {formatCamelCase(renderStatus(row))}
                   </Text>
                 </View>
                 <View style={[styles.tableBodyCell, { flex: 1 }]}>
-                  <Text>{isNaN(row?.progress) ? 0 : row.progress?.toFixed(2)}%</Text>
+                  <Text>{isNaN(row?.progress) ? 0 : row.progress}%</Text>
                 </View>
                 <View style={[styles.tableBodyCell, { width: '100px' }]}>
-                  <Text>{row.progressContributionToCourse}%</Text>
+                  <Text>{row.contribution}%</Text>
                 </View>
                 <View style={[styles.tableBodyCell, { flex: 1 }]}>
                   <Text>
-                    {row.quizCorrect}/{row?.totalQuizzes}
+                    {row._count?.QuizAnswer}/{row._count?.quizzes}
                   </Text>
                 </View>
 

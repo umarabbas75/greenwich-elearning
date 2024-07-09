@@ -24,6 +24,7 @@ const CourseProgressGraph = () => {
         });
         return updatedResult;
       },
+      keepPreviousData: true,
     },
   });
   const CustomTooltip = ({ active, payload }: any) => {

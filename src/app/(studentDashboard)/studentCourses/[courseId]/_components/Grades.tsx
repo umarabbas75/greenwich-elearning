@@ -9,102 +9,120 @@ import StatusComponent from '@/components/common/StatusComponent';
 import TableSkeletonLoader from '@/components/common/TableSkeletonLoader';
 import { Button } from '@/components/ui/button';
 import { useApiGet } from '@/lib/dashboard/client/user';
-import { courseProgressAtom, userPhotoAtom } from '@/store/course';
+import { userPhotoAtom } from '@/store/course';
 
 import PDFReport from './PDFReport';
 
 const Grades = ({
-  type,
   courseIdProp,
   courseNameProp,
 }: { courseIdProp?: any; courseNameProp?: any; type?: string } = {}) => {
   const { courseId } = useParams();
   const courseIdParam = courseId ?? courseIdProp;
-  const [courseProgressState, setCourseProgressState] = useAtom(courseProgressAtom);
-  const [grades, setGrades] = useState<any>([]);
+  // const [courseProgressState, setCourseProgressState] = useAtom(courseProgressAtom);
 
   const columns = ['Name', 'Status', 'Progress', 'Contribution', 'Quiz Correct', 'Grade'];
 
-  const { refetch, isLoading } = useApiGet<any, Error>({
+  const { data: grades, isLoading } = useApiGet<any, Error>({
     endpoint: `/courses/report/${courseIdParam}`,
     queryKey: ['get-chapters', courseIdParam],
     config: {
       enabled: !!courseIdParam,
       select: (res) => res?.data?.data,
       keepPreviousData: true,
-      onSuccess: (res) => {
-        const updatedData = res?.map((item: any, index: number, arr: any) => {
-          const data = {
-            element: item?.title,
-            report: item?.chapters?.map((el: any) => {
-              const { UserCourseProgress, sections, LastSeenSection, title, QuizAnswer, quizzes } = el || {};
+      // onSuccess: (res) => {
+      //   const updatedData = res?.map((item: any, index: number, arr: any) => {
+      //     const data = {
+      //       element: item?.title,
+      //       report: item?.chapters?.map((el: any) => {
+      //         const { UserCourseProgress, sections, LastSeenSection, title, QuizAnswer, quizzes } = el || {};
 
-              let chapterProgress = (UserCourseProgress?.length * 100) / sections?.length;
-              chapterProgress = isNaN(chapterProgress) ? 0 : chapterProgress;
-              let totalSections = arr?.reduce((acc: any, course: any) => {
-                const sectionsCount = course.chapters.reduce((acc: any, chapter: any) => {
-                  return acc + chapter.sections.length;
-                }, 0);
-                return acc + sectionsCount;
-              }, 0);
-              totalSections = isNaN(totalSections) ? '' : totalSections;
-              let progressContributionToCourse = (UserCourseProgress?.length * 100) / totalSections;
-              progressContributionToCourse = isNaN(progressContributionToCourse)
-                ? 0
-                : progressContributionToCourse;
+      //         let chapterProgress = (UserCourseProgress?.length * 100) / sections?.length;
+      //         chapterProgress = isNaN(chapterProgress) ? 0 : chapterProgress;
+      //         let totalSections = arr?.reduce((acc: any, course: any) => {
+      //           const sectionsCount = course.chapters.reduce((acc: any, chapter: any) => {
+      //             return acc + chapter.sections.length;
+      //           }, 0);
+      //           return acc + sectionsCount;
+      //         }, 0);
+      //         totalSections = isNaN(totalSections) ? '' : totalSections;
+      //         let progressContributionToCourse = (UserCourseProgress?.length * 100) / totalSections;
+      //         progressContributionToCourse = isNaN(progressContributionToCourse)
+      //           ? 0
+      //           : progressContributionToCourse;
 
-              return {
-                name: title,
-                status:
-                  LastSeenSection?.length > 0
-                    ? chapterProgress === 100
-                      ? 'completed'
-                      : 'Inprogress'
-                    : 'notOpened',
-                progress: chapterProgress,
-                quizCorrect: QuizAnswer?.filter((item: any) => item?.isAnswerCorrect)?.length ?? 0,
-                totalQuizzes: quizzes?.length,
-                progressContributionToCourse: progressContributionToCourse?.toFixed(2),
-              };
-            }),
-          };
+      //         return {
+      //           name: title,
+      //           status:
+      //             LastSeenSection?.length > 0
+      //               ? chapterProgress === 100
+      //                 ? 'completed'
+      //                 : 'Inprogress'
+      //               : 'notOpened',
+      //           progress: chapterProgress,
+      //           quizCorrect: QuizAnswer?.filter((item: any) => item?.isAnswerCorrect)?.length ?? 0,
+      //           totalQuizzes: quizzes?.length,
+      //           progressContributionToCourse: progressContributionToCourse?.toFixed(2),
+      //         };
+      //       }),
+      //     };
 
-          return { ...data };
-        });
+      //     return { ...data };
+      //   });
 
-        const totalProgress = updatedData?.reduce((acc: any, element: any) => {
-          const elementProgress = element.report.reduce((elementAcc: any, report: any) => {
-            return elementAcc + parseFloat(report.progressContributionToCourse);
-          }, 0);
-          return acc + elementProgress;
-        }, 0);
-        setCourseProgressState(totalProgress);
+      //   const totalProgress = updatedData?.reduce((acc: any, element: any) => {
+      //     const elementProgress = element.report.reduce((elementAcc: any, report: any) => {
+      //       return elementAcc + parseFloat(report.progressContributionToCourse);
+      //     }, 0);
+      //     return acc + elementProgress;
+      //   }, 0);
+      //   setCourseProgressState(totalProgress);
 
-        setGrades(updatedData);
-      },
+      //   setGrades(updatedData);
+      // },
     },
   });
-  useEffect(() => {
-    if (type === 'grades' && !isLoading) {
-      refetch();
+  // useEffect(() => {
+  //   if (type === 'grades' && !isLoading) {
+  //     refetch();
+  //   }
+  // }, [type]);
+  // Function to calculate sum of contributions
+  function calculateTotalContribution(data: any) {
+    let sum = 0;
+
+    // Loop through each module using for...of
+    // eslint-disable-next-line @next/next/no-assign-module-variable
+    for (const module of data) {
+      // Loop through each chapter within the module using for...of
+      for (const chapter of module.chapters) {
+        // Add the contribution value to the sum
+        sum += parseFloat(chapter.contribution);
+      }
     }
-  }, [type]);
+
+    return sum;
+  }
+
+  const courseProgress = grades?.length > 0 ? calculateTotalContribution(grades) : 0;
 
   const renderQuizGrade = (row: any) => {
-    const percentage = (row.quizCorrect * 100) / row?.totalQuizzes;
-    return isNaN(percentage) ? 0 : percentage?.toFixed(2);
+    const percentage = (row._count?.QuizAnswer * 100) / row?._count?.quizzes;
+    return isNaN(percentage) ? 0 : percentage;
   };
+
+  const renderStatus = (row: any) => {
+    const status =
+      row?._count?.LastSeenSection > 0 ? (+row?.progress === 100 ? 'completed' : 'Inprogress') : 'notOpened';
+    return status;
+  };
+  console.log({ grades });
 
   return (
     <div>
       <div className="pb-8">
-        {/* <div>
-          <h2 className="text-2xl font-semibold leading-tight">
-            NEBOSH International Diploma in Environmental Management- course report
-          </h2>
-        </div> */}
         <ReportHeader
-          courseProgressState={courseProgressState}
+          courseProgressState={courseProgress}
           columns={columns}
           grades={grades}
           courseNameProp={courseNameProp}
@@ -132,25 +150,25 @@ const Grades = ({
                     <React.Fragment key={index}>
                       <tr className="bg-gray-200 dark:bg-gray-700">
                         <td colSpan={columns.length} className="px-5 py-3 font-semibold text-left">
-                          {item.element}
+                          {item.title}
                         </td>
                       </tr>
-                      {item.report.map((row: any, rowIndex: any) => (
+                      {item?.chapters?.map((row: any, rowIndex: any) => (
                         <tr key={rowIndex} className="bg-white dark:bg-black">
                           <td className="px-5 py-5 border-b border-gray-200 bg-white dark:bg-black text-sm">
-                            {row.name}
+                            {row.title}
                           </td>
                           <td className="px-5 py-5 border-b border-gray-200 bg-white dark:bg-black text-sm">
-                            {<StatusComponent status={row?.status} />}
+                            {<StatusComponent status={renderStatus(row)} />}
                           </td>
                           <td className="px-5 py-5 border-b border-gray-200 bg-white dark:bg-black text-sm">
-                            {isNaN(row?.progress) ? 0 : row.progress?.toFixed(2)}%
+                            {isNaN(row?.progress) ? 0 : row.progress}%
                           </td>
                           <td className="px-5 py-5 border-b border-gray-200 bg-white dark:bg-black text-sm">
-                            {isNaN(row.progressContributionToCourse) ? 0 : row.progressContributionToCourse}%
+                            {isNaN(row.contribution) ? 0 : row.contribution}%
                           </td>
                           <td className="px-5 py-5 border-b border-gray-200 bg-white dark:bg-black text-sm">
-                            {row.quizCorrect}/{row?.totalQuizzes}
+                            {row._count?.QuizAnswer}/{row?._count?.quizzes}
                           </td>{' '}
                           <td className="px-5 py-5 border-b border-gray-200 bg-white dark:bg-black text-sm">
                             {renderQuizGrade(row)}%
@@ -177,7 +195,6 @@ const ReportHeader = ({ courseProgressState, columns, grades, courseNameProp }: 
   const courseName = search.get('title') ?? courseNameProp;
   const [userPhotoState] = useAtom(userPhotoAtom);
 
-  const userPhoto = 'https://via.placeholder.com/150'; // Placeholder image
   const instituteName = 'Greenwich Training and consulting';
   const instituteAddress = 'I-8/4, Islamabad';
   const today = new Date().toLocaleDateString();
@@ -226,11 +243,7 @@ const ReportHeader = ({ courseProgressState, columns, grades, courseNameProp }: 
   return (
     <div className="course-report grid grid-cols-1 md:grid-cols-5 gap-4 bg-white dark:bg-black shadow-md rounded-lg overflow-hidden">
       <div className="col-span-2 student-info px-6 py-4 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 ">
-        <img
-          className="w-24 h-24 rounded-full object-cover mb-4"
-          src={userPhotoState ?? userPhoto}
-          alt="User Photo"
-        />
+        <img className="w-24 h-24 rounded-full object-cover mb-4" src={userPhotoState} alt="User Photo" />
         <h2 className="text-xl font-bold text-gray-800 dark:text-white/80">{`${session.data?.user?.firstName} ${session.data?.user?.lastName}`}</h2>
         <p className="text-gray-600 dark:text-white/70 text-sm">{session.data?.user?.email}</p>
         <p className="text-gray-600 dark:text-white/70 text-sm">{session.data?.user?.phone}</p>
