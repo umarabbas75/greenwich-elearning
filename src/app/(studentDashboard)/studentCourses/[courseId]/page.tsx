@@ -1,6 +1,7 @@
 'use client';
 import { Tabs } from '@radix-ui/react-tabs';
 import { useParams } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import React, { useState } from 'react';
 
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -31,6 +32,7 @@ export type ModulesDataResponse = {
 const Page = () => {
   const [type, setType] = useState('overview');
   const params = useParams();
+  const session = useSession();
   const { courseId } = params;
   const [openAccordions, setOpenAccordions] = useState<any>([]);
   // const [modulesRecord, setModulesRecord] = useState([]);
@@ -151,7 +153,7 @@ const Page = () => {
           <CourseOverview courseOverview={courseData?.overview} />
         </div>{' '}
         <div className={`${type === 'grades' ? 'block' : 'hidden'}`}>
-          <Grades type={type} />
+          <Grades type={type} userId={session?.data?.user?.id} />
         </div>{' '}
         {(courseData?.assessment || courseData?.assessments?.length > 0) && (
           <div className={`${type === 'assessment' ? 'block' : 'hidden'}`}>

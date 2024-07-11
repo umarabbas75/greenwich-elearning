@@ -133,6 +133,7 @@ const ViewUserCoursesModal = () => {
           closeModal();
         }}
         title={'Assigned Courses'}
+        className="max-w-[80vw] h-[100vh] !w-[100vw]"
       >
         {fetchingUser ? (
           <Spinner />
@@ -152,7 +153,11 @@ const ViewUserCoursesModal = () => {
                   </button>
                 </div>
 
-                <Grades courseIdProp={selectedCourseId?.id} courseNameProp={selectedCourseId?.title} />
+                <Grades
+                  userId={userCoursesState?.data?.id}
+                  courseIdProp={selectedCourseId?.id}
+                  courseNameProp={selectedCourseId?.title}
+                />
               </div>
             ) : (
               <TableComponent table={table} />

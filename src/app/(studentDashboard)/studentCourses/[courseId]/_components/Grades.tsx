@@ -14,9 +14,10 @@ import { userPhotoAtom } from '@/store/course';
 import PDFReport from './PDFReport';
 
 const Grades = ({
+  userId,
   courseIdProp,
   courseNameProp,
-}: { courseIdProp?: any; courseNameProp?: any; type?: string } = {}) => {
+}: { courseIdProp?: any; courseNameProp?: any; type?: string; userId?: string } = {}) => {
   const { courseId } = useParams();
   const courseIdParam = courseId ?? courseIdProp;
   // const [courseProgressState, setCourseProgressState] = useAtom(courseProgressAtom);
@@ -24,7 +25,7 @@ const Grades = ({
   const columns = ['Name', 'Status', 'Progress', 'Contribution', 'Quiz Correct', 'Grade'];
 
   const { data: grades, isLoading } = useApiGet<any, Error>({
-    endpoint: `/courses/report/${courseIdParam}`,
+    endpoint: `/courses/report/${courseIdParam}/${userId}`,
     queryKey: ['get-chapters', courseIdParam],
     config: {
       enabled: !!courseIdParam,
