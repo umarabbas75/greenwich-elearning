@@ -250,7 +250,7 @@ const ReportHeader = ({ courseProgressState, columns, grades, courseNameProp }: 
         <p className="text-gray-600 dark:text-white/70 text-sm">{session.data?.user?.phone}</p>
       </div>
       <div className="col-span-3 course-details p-6 flex flex-col gap-4">
-        <div className="flex justify-between items-start">
+        <div className="flex justify-between gap-2 items-start">
           <h2 className="text-xl flex-1 font-bold text-gray-800 dark:text-white/80">{courseName}</h2>
           <div className="flex items-center justify-end gap-2">
             <span className="font-medium text-gray-700 dark:text-white/80">Status:</span>

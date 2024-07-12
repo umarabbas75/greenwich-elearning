@@ -22,7 +22,7 @@ const CourseReport = () => {
       enabled: !!moduleId,
       onSuccess: (res) => {
         const elements = res?.data;
-        elements?.reverse().forEach((item, index) => {
+        elements?.forEach((item, index) => {
           if (item.id === chapterId) {
             setNextElement(elements?.[index + 1]);
           }

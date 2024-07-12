@@ -34,10 +34,10 @@ const ContinueWhereYouLeft = () => {
                   <div className="course-info flex items-center">
                     <img className="w-20 h-20 rounded-full mr-4" src={item?.image} alt="Course Thumbnail" />
                     <div className="course-details">
-                      <h3 className="text-xl font-medium text-gray-800 dark:text-white/80 line-clamp-2">
+                      <h3 className="text-lg font-medium text-gray-800 dark:text-white/80 line-clamp-2">
                         {item?.title}
                       </h3>
-                      <p className="text-gray-600 line-clamp-2 dark:text-white/70">
+                      <p className="text-gray-600  text-sm line-clamp-2 dark:text-white/70">
                         {item?.latestLastSeenSection?.title}
                       </p>
                     </div>
