@@ -1,16 +1,19 @@
 import { formatDistanceToNow } from 'date-fns';
 import { MailOpen } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
 import Dot from '@/components/common/Dot';
+import NameInitials from '@/components/NameInitials';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
 import { Icons } from '@/utils/icon';
-import { formatDate } from '@/utils/utils';
+import { formatDate, getInitials } from '@/utils/utils';
 
 const Notification = () => {
+  const router = useRouter();
   const [openMenu, setOpenMenu] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const onMenuChange = () => {
@@ -66,6 +69,11 @@ const Notification = () => {
                       key={index}
                       onMouseEnter={() => setHoveredIndex(index)}
                       onMouseLeave={() => setHoveredIndex(null)}
+                      onClick={() => {
+                        router.push(`/forum/${item?.threadId}`);
+                        onMenuChange();
+                        markAsRead(item);
+                      }}
                       className={`flex cursor-pointer items-start gap-2 py-4 px-2 relative ${
                         !item?.isRead ? 'bg-gray-100 dark:bg-blue-500/50' : 'bg-white dark:bg-black'
                       } `}
@@ -94,7 +102,10 @@ const Notification = () => {
                                   <TooltipTrigger asChild>
                                     <div
                                       className={`p-2  hover:bg-gray-200 cursor-pointer rounded-full transition duration-300`}
-                                      onClick={() => markAsRead(item)}
+                                      onClick={(e) => {
+                                        markAsRead(item);
+                                        e.stopPropagation();
+                                      }}
                                     >
                                       <MailOpen className="w-4 h-4" />
                                     </div>
@@ -127,13 +138,27 @@ const Notification = () => {
                       className={`flex cursor-pointer items-start gap-2 py-4 px-2 relative ${
                         !item?.isRead ? 'bg-gray-100' : 'bg-white'
                       } `}
+                      onClick={() => {
+                        router.push(`/forum/${item?.threadId}`);
+                        onMenuChange();
+                        markAsRead(item);
+                      }}
                     >
                       <div>
-                        <img
-                          src={item?.commenter?.photo}
-                          className="w-12 h-12 rounded-full object-cover"
-                          alt=""
-                        />
+                        {item?.commenter?.photo ? (
+                          <img
+                            src={item?.commenter?.photo}
+                            className="w-12 h-12 rounded-full object-cover"
+                            alt=""
+                          />
+                        ) : (
+                          <NameInitials
+                            className={`w-10 h-10 font-normal  shadow-sm border border-white text-sm`}
+                            initials={getInitials(
+                              `${item?.commenter?.firstName} ${item?.commenter?.lastName}`,
+                            )}
+                          />
+                        )}
                       </div>
                       <div className="flex-1 flex flex-col gap-2">
                         <div className="flex flex-col gap-2">

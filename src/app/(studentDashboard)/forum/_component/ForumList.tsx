@@ -240,7 +240,11 @@ const ForumList = ({ data }: any) => {
                   </div>
                 )}
                 {item?.isSubscribed && (
-                  <div className="bg-[#FF5722] absolute right-0 top-2 z-10 p-1 rounded-full">
+                  <div
+                    className={`bg-[#FF5722] absolute ${
+                      item?.isFavorite ? 'right-3' : 'right-0'
+                    }  top-2 z-10 p-1 rounded-full`}
+                  >
                     <Star className="fill-white stroke-white w-3 h-3" />
                   </div>
                 )}
@@ -263,21 +267,19 @@ const ForumList = ({ data }: any) => {
 
               <div className="flex items-center mt-4 md:mt-0 md:ml-auto">
                 <div className="flex gap-1">
-                  {item?.commenters
-                    ?.slice(0, 3)
-                    .map((el: any, index: number) => (
-                      <NameInitials
-                        key={index}
-                        className={`h-8 w-8 font-normal text-xs shadow-sm border border-white ${
-                          index > 0 ? '-ml-2' : ''
-                        }`}
-                        initials={getInitials(`${el?.firstName} ${el?.lastName}`)}
-                      />
-                    ))}
-                  {item?.commenters?.length > 3 && (
+                  {item?.ForumComment?.slice(0, 3).map((el: any, index: number) => (
+                    <NameInitials
+                      key={index}
+                      className={`h-8 w-8 font-normal text-xs shadow-sm border border-white ${
+                        index > 0 ? '-ml-2' : ''
+                      }`}
+                      initials={getInitials(`${el?.user?.firstName} ${el?.user?.lastName}`)}
+                    />
+                  ))}
+                  {item?.ForumComment?.length > 3 && (
                     <NameInitials
                       className="h-8 w-8 font-normal text-xs shadow-sm border bg-white -ml-2 text-gray-700"
-                      initials={`+${item?.commenters?.length - 3}`}
+                      initials={`+${item?.ForumComment?.length - 3}`}
                     />
                   )}
                 </div>
