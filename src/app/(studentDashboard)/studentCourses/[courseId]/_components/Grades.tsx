@@ -1,15 +1,15 @@
 import ReactPDF from '@react-pdf/renderer';
 import { Document } from '@react-pdf/renderer';
-import { useAtom } from 'jotai';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 
 import StatusComponent from '@/components/common/StatusComponent';
 import TableSkeletonLoader from '@/components/common/TableSkeletonLoader';
+import NameInitials from '@/components/NameInitials';
 import { Button } from '@/components/ui/button';
 import { useApiGet } from '@/lib/dashboard/client/user';
-import { userPhotoAtom } from '@/store/course';
+import { getInitials } from '@/utils/utils';
 
 import PDFReport from './PDFReport';
 
@@ -24,70 +24,19 @@ const Grades = ({
 
   const columns = ['Name', 'Status', 'Progress', 'Contribution', 'Quiz Correct', 'Grade'];
 
-  const { data: grades, isLoading } = useApiGet<any, Error>({
+  const { data, isLoading } = useApiGet<any, Error>({
     endpoint: `/courses/report/${courseIdParam}/${userId}`,
     queryKey: ['get-chapters', courseIdParam],
     config: {
       enabled: !!courseIdParam,
-      select: (res) => res?.data?.data,
+      select: (res) => res?.data,
       keepPreviousData: true,
-      // onSuccess: (res) => {
-      //   const updatedData = res?.map((item: any, index: number, arr: any) => {
-      //     const data = {
-      //       element: item?.title,
-      //       report: item?.chapters?.map((el: any) => {
-      //         const { UserCourseProgress, sections, LastSeenSection, title, QuizAnswer, quizzes } = el || {};
-
-      //         let chapterProgress = (UserCourseProgress?.length * 100) / sections?.length;
-      //         chapterProgress = isNaN(chapterProgress) ? 0 : chapterProgress;
-      //         let totalSections = arr?.reduce((acc: any, course: any) => {
-      //           const sectionsCount = course.chapters.reduce((acc: any, chapter: any) => {
-      //             return acc + chapter.sections.length;
-      //           }, 0);
-      //           return acc + sectionsCount;
-      //         }, 0);
-      //         totalSections = isNaN(totalSections) ? '' : totalSections;
-      //         let progressContributionToCourse = (UserCourseProgress?.length * 100) / totalSections;
-      //         progressContributionToCourse = isNaN(progressContributionToCourse)
-      //           ? 0
-      //           : progressContributionToCourse;
-
-      //         return {
-      //           name: title,
-      //           status:
-      //             LastSeenSection?.length > 0
-      //               ? chapterProgress === 100
-      //                 ? 'completed'
-      //                 : 'Inprogress'
-      //               : 'notOpened',
-      //           progress: chapterProgress,
-      //           quizCorrect: QuizAnswer?.filter((item: any) => item?.isAnswerCorrect)?.length ?? 0,
-      //           totalQuizzes: quizzes?.length,
-      //           progressContributionToCourse: progressContributionToCourse?.toFixed(2),
-      //         };
-      //       }),
-      //     };
-
-      //     return { ...data };
-      //   });
-
-      //   const totalProgress = updatedData?.reduce((acc: any, element: any) => {
-      //     const elementProgress = element.report.reduce((elementAcc: any, report: any) => {
-      //       return elementAcc + parseFloat(report.progressContributionToCourse);
-      //     }, 0);
-      //     return acc + elementProgress;
-      //   }, 0);
-      //   setCourseProgressState(totalProgress);
-
-      //   setGrades(updatedData);
-      // },
     },
   });
-  // useEffect(() => {
-  //   if (type === 'grades' && !isLoading) {
-  //     refetch();
-  //   }
-  // }, [type]);
+
+  const grades = data?.data;
+  const userDetails = data?.user;
+
   // Function to calculate sum of contributions
   function calculateTotalContribution(data: any) {
     let sum = 0;
@@ -106,7 +55,6 @@ const Grades = ({
   }
 
   const courseProgress = grades?.length > 0 ? calculateTotalContribution(grades) : 0;
-
   const renderQuizGrade = (row: any) => {
     const percentage = (row._count?.QuizAnswer * 100) / row?._count?.quizzes;
     return isNaN(percentage) ? 0 : percentage;
@@ -127,6 +75,7 @@ const Grades = ({
           columns={columns}
           grades={grades}
           courseNameProp={courseNameProp}
+          userDetails={userDetails}
         />
         {isLoading ? (
           <TableSkeletonLoader />
@@ -190,11 +139,10 @@ const Grades = ({
 
 export default Grades;
 
-const ReportHeader = ({ courseProgressState, columns, grades, courseNameProp }: any) => {
+const ReportHeader = ({ courseProgressState, columns, grades, courseNameProp, userDetails }: any) => {
   const session = useSession();
   const search = useSearchParams();
   const courseName = search.get('title') ?? courseNameProp;
-  const [userPhotoState] = useAtom(userPhotoAtom);
 
   const instituteName = 'Greenwich Training and consulting';
   const instituteAddress = 'I-8/4, Islamabad';
@@ -206,7 +154,7 @@ const ReportHeader = ({ courseProgressState, columns, grades, courseNameProp }: 
         <Document>
           <PDFReport
             session={session}
-            userPhotoState={userPhotoState}
+            userDetails={userDetails}
             courseName={courseName}
             courseProgressState={courseProgressState}
             instituteName={instituteName}
@@ -244,10 +192,23 @@ const ReportHeader = ({ courseProgressState, columns, grades, courseNameProp }: 
   return (
     <div className="course-report grid grid-cols-1 md:grid-cols-5 gap-4 bg-white dark:bg-black shadow-md rounded-lg overflow-hidden">
       <div className="col-span-2 student-info px-6 py-4 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 ">
-        <img className="w-24 h-24 rounded-full object-cover mb-4" src={userPhotoState} alt="User Photo" />
-        <h2 className="text-xl font-bold text-gray-800 dark:text-white/80">{`${session.data?.user?.firstName} ${session.data?.user?.lastName}`}</h2>
-        <p className="text-gray-600 dark:text-white/70 text-sm">{session.data?.user?.email}</p>
-        <p className="text-gray-600 dark:text-white/70 text-sm">{session.data?.user?.phone}</p>
+        {userDetails?.photo ? (
+          <img
+            className="w-24 h-24 rounded-full object-cover mb-4"
+            src={userDetails?.photo}
+            alt="User Photo"
+          />
+        ) : (
+          <NameInitials
+            className={`w-20 h-20 font-normal  shadow-sm border border-white text-xl`}
+            initials={getInitials(`${userDetails?.firstName} ${userDetails?.lastName}`)}
+          />
+        )}
+        <h2 className="text-xl font-bold text-gray-800 dark:text-white/80">{`${
+          userDetails?.firstName ?? ''
+        } ${userDetails?.lastName ?? ''}`}</h2>
+        <p className="text-gray-600 dark:text-white/70 text-sm">{userDetails?.email ?? ''}</p>
+        <p className="text-gray-600 dark:text-white/70 text-sm">{userDetails?.phone ?? ''}</p>
       </div>
       <div className="col-span-3 course-details p-6 flex flex-col gap-4">
         <div className="flex justify-between gap-2 items-start">

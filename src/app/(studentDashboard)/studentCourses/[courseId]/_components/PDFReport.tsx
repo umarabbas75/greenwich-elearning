@@ -2,14 +2,14 @@ import { StyleSheet, Page, View, Text } from '@react-pdf/renderer';
 import React from 'react';
 
 const PDFReport = ({
-  session,
   courseName,
   courseProgressState,
   instituteName,
   instituteAddress,
   today,
   columns,
-  grades, // userPhotoState,
+  grades,
+  userDetails,
 }: any) => {
   const styles = StyleSheet.create({
     page: {
@@ -204,11 +204,9 @@ const PDFReport = ({
       <View style={styles.courseReport}>
         <View style={styles.studentInfo}>
           {/* <Image src={userPhotoState} style={{ borderRadius: '50%', width: '50px', height: '50px' }} /> */}
-          <Text
-            style={styles.userInfo}
-          >{`${session.data?.user?.firstName} ${session.data?.user?.lastName}`}</Text>
-          <Text style={styles.userEmail}>{session.data?.user?.email}</Text>
-          <Text style={styles.userEmail}>{session.data?.user?.phone}</Text>
+          <Text style={styles.userInfo}>{`${userDetails?.firstName} ${userDetails?.lastName}`}</Text>
+          <Text style={styles.userEmail}>{userDetails?.email}</Text>
+          <Text style={styles.userEmail}>{userDetails?.phone}</Text>
         </View>
 
         <View style={styles.courseDetails}>
