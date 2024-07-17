@@ -371,7 +371,6 @@ const UserModal = () => {
                           <FormLabel className="mt-3">Photo</FormLabel>
                           <FileUploader
                             classes="upload-doc !w-full !min-w-full"
-                            maxSize={1}
                             multiple={false}
                             handleChange={async (value: any) => {
                               const selectedFile = value;

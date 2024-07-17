@@ -62,7 +62,6 @@ const Assessment = ({ control, assessments, appendAssessment, removeAssessment }
                           <div>
                             <FileUploader
                               classes="upload-doc !w-full !min-w-full"
-                              maxSize={1}
                               multiple={false}
                               handleChange={async (value: any) => {
                                 const selectedFile = value;

@@ -171,7 +171,6 @@ const ChapterModal = () => {
                       <FormLabel className="mt-3">PDF file</FormLabel>
                       <FileUploader
                         classes="upload-doc !w-full !min-w-full"
-                        maxSize={1}
                         multiple={false}
                         handleChange={async (value: any) => {
                           const selectedFile = value;

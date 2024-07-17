@@ -354,7 +354,6 @@ const Page = () => {
                           <div className="flex flex-col space-y-2 justify-between">
                             <FormLabel className="mt-3">Image</FormLabel>
                             <FileUploader
-                              maxSize={0.5}
                               multiple={false}
                               onSizeError={(err: any) => {
                                 setError('image', { message: `${err}, max size allowed is 0.5mb` });

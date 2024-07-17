@@ -67,7 +67,6 @@ const UpdateImageForm = ({ isEdit, setIsEdit }: { isEdit: boolean; setIsEdit: an
               disabled={!isEdit}
               classes="custom-file-uploader"
               multiple={false}
-              maxSize={1}
               handleChange={(value: any) => {
                 const file = value;
                 const reader = new FileReader();
