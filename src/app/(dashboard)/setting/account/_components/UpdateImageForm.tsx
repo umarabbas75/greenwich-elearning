@@ -1,52 +1,32 @@
-import { useAtom } from 'jotai';
+import axios from 'axios';
 import { DeleteIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FileUploader } from 'react-drag-drop-files';
 
 import LoadingButton from '@/components/common/LoadingButton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/components/ui/use-toast';
-import { useApiMutation } from '@/lib/dashboard/client/user';
-import { userPhotoAtom } from '@/store/course';
 
 const UpdateImageForm = ({ isEdit, setIsEdit }: { isEdit: boolean; setIsEdit: any }) => {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const { toast } = useToast();
-  const [userPhotoState, setUserPhotoAtom] = useAtom(userPhotoAtom);
 
-  const [file, setFile] = useState<string>(userPhotoState);
+  const [file, setFile] = useState<any>({});
 
-  useEffect(() => {
-    if (userPhotoState) {
-      setFile(userPhotoState);
-    }
-  }, [userPhotoState]);
+  console.log({ file });
 
-  const { mutate: editUser, isLoading } = useApiMutation<any>({
-    endpoint: `/users/${session?.user?.id}`,
-    method: 'put',
-    config: {
-      onSuccess: async () => {
-        setUserPhotoAtom(file);
-        setIsEdit(false);
-        toast({
-          variant: 'success',
-          title: 'Profile Picture Updated',
-        });
-        setFile('');
-      },
-    },
-  });
-  const updatePhoto = () => {
-    if (file) {
-      const payload = {
-        photo: file,
-      };
-      if (session?.user?.id) {
-        editUser(payload);
-      }
-    }
+  const updatePhoto = async () => {
+    await update({
+      photo: file?.photo,
+      photoBase64: file?.photoBase64,
+    });
+    toast({
+      variant: 'success',
+      title: 'Name Updated',
+    });
+    setIsEdit(false);
+    setFile({});
   };
 
   return (
@@ -59,7 +39,10 @@ const UpdateImageForm = ({ isEdit, setIsEdit }: { isEdit: boolean; setIsEdit: an
         <div className="flex flex-col gap-4">
           <div className="flex flex-col md:flex-row items-center gap-4">
             <Avatar className="h-28 w-28">
-              <AvatarImage src={file ? file : session?.user?.photo ?? ''} alt="user profile pic" />
+              <AvatarImage
+                src={file?.photo ? file?.photo : session?.user?.photo ?? ''}
+                alt="user profile pic"
+              />
               <AvatarFallback className="text-2xl">{session?.user?.firstName}</AvatarFallback>
             </Avatar>
 
@@ -67,15 +50,41 @@ const UpdateImageForm = ({ isEdit, setIsEdit }: { isEdit: boolean; setIsEdit: an
               disabled={!isEdit}
               classes="custom-file-uploader"
               multiple={false}
-              handleChange={(value: any) => {
+              handleChange={async (value: any) => {
                 const file = value;
                 const reader = new FileReader();
                 reader.onload = (e: any) => {
                   const base64 = e.target.result;
-                  setFile(base64);
+                  setFile({ ...file, photoBase64: base64 });
                 };
 
                 reader.readAsDataURL(file);
+
+                const selectedFile = value;
+                if (selectedFile) {
+                  const formData = new FormData();
+                  formData.append('file', selectedFile);
+                  formData.append('upload_preset', 'my_uploads');
+                  formData.append('cloud_name', 'dp9urvlsz');
+                  try {
+                    const response = await axios.post(
+                      'https://api.cloudinary.com/v1/image/upload',
+                      formData,
+                      {
+                        headers: {
+                          'Content-Type': 'multipart/form-data',
+                        },
+                      },
+                    );
+                    const { url } = response.data;
+                    setFile((prev: any) => ({
+                      ...prev,
+                      photo: url,
+                    }));
+                  } catch (error) {
+                    console.error('Error uploading image:', error);
+                  }
+                }
               }}
               name="file"
               value={file}
@@ -83,12 +92,12 @@ const UpdateImageForm = ({ isEdit, setIsEdit }: { isEdit: boolean; setIsEdit: an
             />
             {isEdit && file && (
               <div className="flex justify-between mt-1 p-2 hover:bg-gray-200 cursor-pointer">
-                <DeleteIcon className="cursor-pointer" onClick={() => setFile('')} />
+                <DeleteIcon className="cursor-pointer" onClick={() => setFile({})} />
               </div>
             )}
           </div>
           {isEdit && (
-            <LoadingButton loading={isLoading} onClick={updatePhoto} className="w-fit" variant="default">
+            <LoadingButton onClick={updatePhoto} className="w-fit" variant="default">
               Submit
             </LoadingButton>
           )}

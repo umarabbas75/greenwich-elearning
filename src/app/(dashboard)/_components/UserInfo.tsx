@@ -1,5 +1,4 @@
 'use client';
-import { useAtom } from 'jotai';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
@@ -12,12 +11,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { userPhotoAtom } from '@/store/course';
 import { Icons } from '@/utils/icon';
 import { getInitials } from '@/utils/utils';
 const UserInfo = () => {
-  const [userPhotoState] = useAtom(userPhotoAtom);
-
   const [openMenu, setOpenMenu] = useState(false);
   const [loading, setIsLoading] = useState(false);
 
@@ -27,18 +23,8 @@ const UserInfo = () => {
   const logoutUser = async () => {
     setIsLoading(true);
 
-    // const response = await loginUser({
-    //   method: 'post',
-    //   path: '/api/login',
-    //   data: {
-    //     name: 'umar',
-    //     password: '124',
-    //   },
-    // });
-
     await signOut({ callbackUrl: '/login' });
     setIsLoading(false);
-    //router.push('/login');
   };
 
   const onMenuChange = () => {
@@ -53,9 +39,9 @@ const UserInfo = () => {
             openMenu ? 'bg-dark-icon-hover text-primary active-icon' : ''
           } `}
         >
-          {userPhotoState ? (
+          {session?.user?.photo ? (
             <Image
-              src={userPhotoState}
+              src={session?.user?.photo}
               className="rounded-full cursor-pointer"
               width={28}
               height={28}
@@ -70,8 +56,14 @@ const UserInfo = () => {
 
       <DropdownMenuContent className="w-64 bg-white" align="end" side="top">
         <div className="flex gap-2 items-center p-2">
-          {userPhotoState ? (
-            <Image src={userPhotoState} className="rounded-full" width={50} height={50} alt="Profile image" />
+          {session?.user?.photo ? (
+            <Image
+              src={session?.user?.photo}
+              className="rounded-full"
+              width={50}
+              height={50}
+              alt="Profile image"
+            />
           ) : (
             <NameInitials
               className={`w-16 h-16 font-normal  shadow-sm border border-white text-sm`}

@@ -121,7 +121,32 @@ export const options = {
         }
       }
       if (trigger === 'update' && session.photo) {
-        token.photo = session.photo;
+        const payload = {
+          photo: session.photo,
+          photoBase64: session.photoBase64,
+        };
+
+        try {
+          const axiosOptions = {
+            method: 'put', // Use lower case for HTTP methods in Axios
+            url: `${process.env.NEXT_PUBLIC_API_URI}/users/${token.id}`,
+            data: payload, // Use 'data' instead of 'body' for FormData in Axios
+            headers: {
+              Authorization: `Bearer ${token.access}`, // Add custom headers here
+            },
+          };
+
+          const res = await axios(axiosOptions);
+
+          if (res.status === 200) {
+            token.photo = session.photo;
+            token.photoBase64 = session.photoBase64;
+          } else {
+            //console.error('Failed to update user');
+          }
+        } catch (error) {
+          //console.error('Error updating user:', error);
+        }
       }
       if (trigger === 'update' && session.access && session.refresh) {
         token.access = session.access;
