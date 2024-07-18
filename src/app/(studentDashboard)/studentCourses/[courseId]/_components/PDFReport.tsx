@@ -240,7 +240,7 @@ const PDFReport = ({
               {courseProgressState ? courseProgressState?.toFixed(2) : 0}%
             </Text>
             <View style={styles.progressBar}>
-              <View style={[styles.progressBarFill, { width: `100px` }]}></View>
+              <View style={[styles.progressBarFill, { width: `${courseProgressState}%` }]}></View>
             </View>
           </View>
           <View style={styles.instituteInfo}>

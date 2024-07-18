@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
 import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
+import Spinner from '@/components/common/Spinner';
 import NameInitials from '@/components/NameInitials';
 import { toast } from '@/components/ui/use-toast';
 import { useApiMutation } from '@/lib/dashboard/client/user';
@@ -25,7 +26,7 @@ const ForumList = ({ data }: any) => {
   const queryClient = useQueryClient();
   const { data: userData } = useSession();
   const [openMenuId, setOpenMenuId] = useState<string | null>(null); // Track open menu by ID
-
+  const [selectedForum, setSelectedForum] = useState('');
   const [updateStatusState, setUpdateStatusState] = useAtom(updateStatusModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
   const router = useRouter();
@@ -74,7 +75,7 @@ const ForumList = ({ data }: any) => {
     },
   });
 
-  const { mutate: favoriteForumThread } = useApiMutation<any>({
+  const { mutate: favoriteForumThread, isLoading: favoriteLoading } = useApiMutation<any>({
     endpoint: `/forum-thread/favorite`,
     method: 'post',
     config: {
@@ -84,7 +85,7 @@ const ForumList = ({ data }: any) => {
     },
   });
 
-  const { mutate: unFavForumThread } = useApiMutation<any>({
+  const { mutate: unFavForumThread, isLoading: unfavoriteLoading } = useApiMutation<any>({
     endpoint: `/forum-thread/favorite`,
     method: 'delete',
     sendDataInParams: true,
@@ -95,22 +96,28 @@ const ForumList = ({ data }: any) => {
     },
   });
 
-  const { mutate: followForumThread } = useApiMutation<any>({
+  const {
+    mutate: followForumThread,
+    isLoading: followingForumThread,
+    data: followingData,
+  } = useApiMutation<any>({
     endpoint: `/forum-thread/subscribe`,
     method: 'post',
     config: {
       onSuccess: () => {
+        setSelectedForum('');
         queryClient.invalidateQueries({ queryKey: ['get-forum-threads'] });
       },
     },
   });
 
-  const { mutate: unFollowForumThread } = useApiMutation<any>({
+  const { mutate: unFollowForumThread, isLoading: unFollowingForumThread } = useApiMutation<any>({
     endpoint: `/forum-thread/subscribe`,
     method: 'delete',
     sendDataInParams: true,
     config: {
       onSuccess: () => {
+        setSelectedForum('');
         queryClient.invalidateQueries({ queryKey: ['get-forum-threads'] });
       },
     },
@@ -174,6 +181,7 @@ const ForumList = ({ data }: any) => {
         <span
           className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
           onClick={(e) => {
+            setSelectedForum(data?.id);
             const payload = {
               threadId: data.id,
             };
@@ -193,6 +201,7 @@ const ForumList = ({ data }: any) => {
         <span
           className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
           onClick={(e) => {
+            setSelectedForum(data?.id);
             const payload = {
               threadId: data.id,
             };
@@ -215,6 +224,7 @@ const ForumList = ({ data }: any) => {
   const onRowClick = (data: any) => {
     router.push(`/forum/${data.id}`);
   };
+  console.log({ followingData });
 
   return (
     <>
@@ -223,7 +233,7 @@ const ForumList = ({ data }: any) => {
           <div
             key={index}
             onClick={() => onRowClick(item)}
-            className={`border-2 relative cursor-pointer ${
+            className={`border-2  cursor-pointer relative ${
               userData?.user?.role === 'admin'
                 ? item?.status === 'active'
                   ? 'border-green-400'
@@ -307,6 +317,15 @@ const ForumList = ({ data }: any) => {
                 </DropdownMenu>
               </div>
             </div>
+
+            {(followingForumThread || unFollowingForumThread || favoriteLoading || unfavoriteLoading) &&
+              selectedForum === item?.id && (
+                <div className="absolute top-0 left-0 right-0 bottom-0 bg-black/10">
+                  <div className="w-full flex justify-center h-full items-center">
+                    <Spinner className="!text-primary" />
+                  </div>
+                </div>
+              )}
           </div>
         ))}
       </div>

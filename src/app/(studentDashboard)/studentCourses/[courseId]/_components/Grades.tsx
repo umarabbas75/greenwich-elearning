@@ -255,6 +255,7 @@ const ReportHeader = ({ courseProgressState, columns, grades, courseNameProp, us
           <Document style={{ width: '600px' }}>
             <PDFReport
               session={session}
+              userDetails={userDetails}
               courseName={courseName}
               courseProgressState={courseProgressState}
               instituteName={instituteName}
