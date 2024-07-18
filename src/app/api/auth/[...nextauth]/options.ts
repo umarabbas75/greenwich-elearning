@@ -123,7 +123,7 @@ export const options = {
       if (trigger === 'update' && session.photo) {
         const payload = {
           photo: session.photo,
-          photoBase64: session.photoBase64,
+          // photoBase64: session.photoBase64,
         };
 
         try {

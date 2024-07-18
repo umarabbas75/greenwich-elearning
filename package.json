@@ -57,6 +57,7 @@
     "next": "^14.0.4",
     "next-auth": "^4.24.7",
     "next-themes": "^0.2.1",
+    "nextjs-toploader": "^1.6.12",
     "postcss": "8.4.29",
     "pusher-js": "^8.3.0",
     "quill-blot-formatter": "^1.0.5",

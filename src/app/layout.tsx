@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Open_Sans } from 'next/font/google';
+import NextTopLoader from 'nextjs-toploader';
 
 import { Toaster } from '@/components/ui/toaster';
 
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         ></script>
       </head>
       <body className={`${oepnsans.className}  dark:bg-[#0d1117] h-full`}>
+        <NextTopLoader />
         <JotaiProvider>
           <QueryProvider>
             <NextThemeProvider attribute="class" defaultTheme="system" enableSystem={false}>

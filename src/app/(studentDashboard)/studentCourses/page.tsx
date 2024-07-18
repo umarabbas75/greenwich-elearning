@@ -22,6 +22,8 @@ const Page = () => {
       keepPreviousData: true,
     },
   });
+  const activeCourses = assignedCourses?.data?.filter((item: any) => item?.percentage !== 100);
+  const completedCourses = assignedCourses?.data?.filter((item: any) => item?.percentage === 100);
 
   return (
     <div>
@@ -33,23 +35,15 @@ const Page = () => {
         }}
       >
         <TabsList className="md:grid md:w-[400px] grid-cols-2">
-          <TabsTrigger value="active">Active Courses</TabsTrigger>
+          <TabsTrigger value="active">Active Courses - {activeCourses?.length ?? 0}</TabsTrigger>
 
-          <TabsTrigger value="completed">Completed Courses</TabsTrigger>
+          <TabsTrigger value="completed">Completed Courses - {completedCourses?.length ?? 0}</TabsTrigger>
         </TabsList>
 
         {isLoading && <CourseCardSkeleton />}
 
-        {(type == 'active' || !type) && (
-          <ActiveCourses
-            assignedCourses={assignedCourses?.data?.filter((item: any) => item?.percentage !== 100)}
-          />
-        )}
-        {type == 'completed' && (
-          <CompletedCourses
-            assignedCourses={assignedCourses?.data?.filter((item: any) => item?.percentage === 100)}
-          />
-        )}
+        {(type == 'active' || !type) && <ActiveCourses assignedCourses={activeCourses} />}
+        {type == 'completed' && <CompletedCourses assignedCourses={completedCourses} />}
       </Tabs>
     </div>
   );

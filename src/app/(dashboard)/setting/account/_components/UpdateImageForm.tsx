@@ -5,32 +5,114 @@ import { useState } from 'react';
 import { FileUploader } from 'react-drag-drop-files';
 
 import LoadingButton from '@/components/common/LoadingButton';
+import Spinner from '@/components/common/Spinner';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/components/ui/use-toast';
+import { useApiMutation } from '@/lib/dashboard/client/user';
 
 const UpdateImageForm = ({ isEdit, setIsEdit }: { isEdit: boolean; setIsEdit: any }) => {
   const { data: session, update } = useSession();
   const { toast } = useToast();
 
   const [file, setFile] = useState<any>({});
+  const [isLoading, setIsLoading] = useState<any>(false);
 
-  console.log({ file });
+  const { mutate: editUser } = useApiMutation<any>({
+    endpoint: `/users/${session?.user?.id}`,
+    method: 'put',
+  });
 
   const updatePhoto = async () => {
+    setIsLoading(true);
     await update({
       photo: file?.photo,
-      photoBase64: file?.photoBase64,
     });
+
+    const payload = {
+      photoBase64: file?.photoBase64,
+    };
+
+    editUser(payload);
     toast({
       variant: 'success',
-      title: 'Name Updated',
+      title: 'Image Updated',
     });
     setIsEdit(false);
     setFile({});
+
+    setIsLoading(false);
+  };
+
+  const resizeImage = (image: any, maxWidth: any, maxHeight: any) => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx: any = canvas.getContext('2d');
+
+      let { width, height } = image;
+      if (width > maxWidth) {
+        height *= maxWidth / width;
+        width = maxWidth;
+      }
+      if (height > maxHeight) {
+        width *= maxHeight / height;
+        height = maxHeight;
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      ctx.drawImage(image, 0, 0, width, height);
+
+      resolve(canvas.toDataURL('image/jpeg', 0.7)); // Adjust quality as needed
+    });
+  };
+
+  const handleFileChange = async (value: any) => {
+    const file = value;
+    const reader = new FileReader();
+
+    reader.onload = async (e: any) => {
+      const image: any = new Image();
+      image.src = e.target.result;
+
+      image.onload = async () => {
+        const resizedBase64 = await resizeImage(image, 300, 300); // Set max dimensions as needed
+        setFile({ ...file, photoBase64: resizedBase64 });
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'my_uploads');
+        formData.append('cloud_name', 'dp9urvlsz');
+
+        try {
+          setIsLoading(true);
+          const response = await axios.post('https://api.cloudinary.com/v1/image/upload', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          toast({
+            variant: 'success',
+            title: 'Press submit button to save it',
+          });
+          setIsLoading(false);
+          const { url } = response.data;
+          setFile((prev: any) => ({
+            ...prev,
+            photo: url,
+          }));
+        } catch (error) {
+          setIsLoading(false);
+
+          console.error('Error uploading image:', error);
+        }
+      };
+    };
+
+    reader.readAsDataURL(file);
   };
 
   return (
-    <div className="grid grid-cols-3  items-center py-4 border-b ">
+    <div className="grid grid-cols-3  items-center py-4 border-b relative">
       <div className="col-span-3 md:col-span-1">
         <h3 className="text-xl font-bold">Photo</h3>
         <p className="text-accent">Update your profile picture</p>
@@ -50,42 +132,43 @@ const UpdateImageForm = ({ isEdit, setIsEdit }: { isEdit: boolean; setIsEdit: an
               disabled={!isEdit}
               classes="custom-file-uploader"
               multiple={false}
-              handleChange={async (value: any) => {
-                const file = value;
-                const reader = new FileReader();
-                reader.onload = (e: any) => {
-                  const base64 = e.target.result;
-                  setFile({ ...file, photoBase64: base64 });
-                };
+              // handleChange={async (value: any) => {
+              //   const file = value;
+              //   const reader = new FileReader();
+              //   reader.onload = (e: any) => {
+              //     const base64 = e.target.result;
+              //     setFile({ ...file, photoBase64: base64 });
+              //   };
 
-                reader.readAsDataURL(file);
+              //   reader.readAsDataURL(file);
 
-                const selectedFile = value;
-                if (selectedFile) {
-                  const formData = new FormData();
-                  formData.append('file', selectedFile);
-                  formData.append('upload_preset', 'my_uploads');
-                  formData.append('cloud_name', 'dp9urvlsz');
-                  try {
-                    const response = await axios.post(
-                      'https://api.cloudinary.com/v1/image/upload',
-                      formData,
-                      {
-                        headers: {
-                          'Content-Type': 'multipart/form-data',
-                        },
-                      },
-                    );
-                    const { url } = response.data;
-                    setFile((prev: any) => ({
-                      ...prev,
-                      photo: url,
-                    }));
-                  } catch (error) {
-                    console.error('Error uploading image:', error);
-                  }
-                }
-              }}
+              //   const selectedFile = value;
+              //   if (selectedFile) {
+              //     const formData = new FormData();
+              //     formData.append('file', selectedFile);
+              //     formData.append('upload_preset', 'my_uploads');
+              //     formData.append('cloud_name', 'dp9urvlsz');
+              //     try {
+              //       const response = await axios.post(
+              //         'https://api.cloudinary.com/v1/image/upload',
+              //         formData,
+              //         {
+              //           headers: {
+              //             'Content-Type': 'multipart/form-data',
+              //           },
+              //         },
+              //       );
+              //       const { url } = response.data;
+              //       setFile((prev: any) => ({
+              //         ...prev,
+              //         photo: url,
+              //       }));
+              //     } catch (error) {
+              //       console.error('Error uploading image:', error);
+              //     }
+              //   }
+              // }}
+              handleChange={handleFileChange}
               name="file"
               value={file}
               types={['jpeg', 'png', 'jpg', 'svg+xml', 'webp']}
@@ -103,6 +186,14 @@ const UpdateImageForm = ({ isEdit, setIsEdit }: { isEdit: boolean; setIsEdit: an
           )}
         </div>
       </div>
+
+      {isLoading && (
+        <div className="absolute top-0 left-0 right-0 bottom-0 bg-black/10">
+          <div className="w-full flex justify-center items-center h-full">
+            <Spinner className="!text-primary" />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
