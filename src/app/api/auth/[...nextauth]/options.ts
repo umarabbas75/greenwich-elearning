@@ -50,7 +50,7 @@ export const options = {
             email: userData?.data?.user?.email ?? '',
             timezone: userData?.data?.user?.timezone ?? '',
             id: userData?.data?.user?.id ?? '',
-            photo: '',
+            photo: userData?.data?.user?.photo ?? '',
             role: userData?.data?.user?.role ?? '',
           } as any;
         } catch (error) {
