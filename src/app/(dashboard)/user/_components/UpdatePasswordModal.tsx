@@ -33,7 +33,7 @@ const UpdatePasswordModal = () => {
     isError: isEditError,
     error: editError,
   } = useApiMutation<any>({
-    endpoint: `/users/${updatePasswordState?.data?.id}`,
+    endpoint: `/users/updatePassword/${updatePasswordState?.data?.id}`,
     method: 'put',
     config: {
       onSuccess: () => {
