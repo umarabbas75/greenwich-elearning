@@ -108,3 +108,26 @@ export const extractFileType = (url: string): string | null => {
     return null;
   }
 };
+
+export const resizeImage = (image: any, maxWidth: any, maxHeight: any) => {
+  return new Promise((resolve) => {
+    const canvas = document.createElement('canvas');
+    const ctx: any = canvas.getContext('2d');
+
+    let { width, height } = image;
+    if (width > maxWidth) {
+      height *= maxWidth / width;
+      width = maxWidth;
+    }
+    if (height > maxHeight) {
+      width *= maxHeight / height;
+      height = maxHeight;
+    }
+
+    canvas.width = width;
+    canvas.height = height;
+    ctx.drawImage(image, 0, 0, width, height);
+
+    resolve(canvas.toDataURL('image/jpeg', 0.7)); // Adjust quality as needed
+  });
+};

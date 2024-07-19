@@ -9,6 +9,7 @@ import Spinner from '@/components/common/Spinner';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/components/ui/use-toast';
 import { useApiMutation } from '@/lib/dashboard/client/user';
+import { resizeImage } from '@/utils/utils';
 
 const UpdateImageForm = ({ isEdit, setIsEdit }: { isEdit: boolean; setIsEdit: any }) => {
   const { data: session, update } = useSession();
@@ -20,50 +21,30 @@ const UpdateImageForm = ({ isEdit, setIsEdit }: { isEdit: boolean; setIsEdit: an
   const { mutate: editUser } = useApiMutation<any>({
     endpoint: `/users/${session?.user?.id}`,
     method: 'put',
+    config: {
+      onSuccess: async () => {
+        await update({
+          photo: file?.photo,
+        });
+        setIsLoading(false);
+        toast({
+          variant: 'success',
+          title: 'Image Updated',
+        });
+        setIsEdit(false);
+        setFile({});
+      },
+    },
   });
 
   const updatePhoto = async () => {
     setIsLoading(true);
-    await update({
-      photo: file?.photo,
-    });
 
     const payload = {
       photoBase64: file?.photoBase64,
     };
 
     editUser(payload);
-    toast({
-      variant: 'success',
-      title: 'Image Updated',
-    });
-    setIsEdit(false);
-    setFile({});
-
-    setIsLoading(false);
-  };
-
-  const resizeImage = (image: any, maxWidth: any, maxHeight: any) => {
-    return new Promise((resolve) => {
-      const canvas = document.createElement('canvas');
-      const ctx: any = canvas.getContext('2d');
-
-      let { width, height } = image;
-      if (width > maxWidth) {
-        height *= maxWidth / width;
-        width = maxWidth;
-      }
-      if (height > maxHeight) {
-        width *= maxHeight / height;
-        height = maxHeight;
-      }
-
-      canvas.width = width;
-      canvas.height = height;
-      ctx.drawImage(image, 0, 0, width, height);
-
-      resolve(canvas.toDataURL('image/jpeg', 0.7)); // Adjust quality as needed
-    });
   };
 
   const handleFileChange = async (value: any) => {
@@ -75,7 +56,7 @@ const UpdateImageForm = ({ isEdit, setIsEdit }: { isEdit: boolean; setIsEdit: an
       image.src = e.target.result;
 
       image.onload = async () => {
-        const resizedBase64 = await resizeImage(image, 300, 300); // Set max dimensions as needed
+        const resizedBase64 = await resizeImage(image, 400, 400); // Set max dimensions as needed
         setFile({ ...file, photoBase64: resizedBase64 });
 
         const formData = new FormData();

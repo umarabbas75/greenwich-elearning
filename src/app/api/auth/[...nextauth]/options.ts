@@ -36,24 +36,11 @@ export const options = {
             },
           });
           const userData = await res.json();
-          // //adding this temporarily-start
-          // return {
-          //   ...user,
-          //   access: '123345dfg4354r23c2d423x',
-          //   refresh: '35434c4d435364554',
-          //   firstName: user?.firstName ?? 'umar',
-          //   lastName: user?.lastName ?? 'abbas',
-          //   email: user?.email ?? 'umarabbas75@gmail.com',
-          //   id: user?.id ?? '12345',
-          //   photo:
-          //     user?.photo ??
-          //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXuzt2s8nfTKBrSQTx1lNn9M8vIRY0xujttj2HD75gu1yTGxF8Gz75KAMpWf1qlgMlV_U&usqp=CAU',
-          //   role: user?.role ?? 'admin',
-          // } as any;
-          // //adding this temporarily-end
+
           if (!res.ok) {
             throw new Error('Something went wrong');
           }
+          console.log({ userData }, userData?.data?.user, res.ok);
           return {
             ...userData.data.user,
             access: userData?.data.jwt,
@@ -68,16 +55,6 @@ export const options = {
           } as any;
         } catch (error) {
           if (error instanceof Error) {
-            //  fetch(
-            //   `${process.env.NEXT_PUBLIC_API_URI}/api/login/`,
-            //   {
-            //     method: 'POST',
-            //     body: JSON.stringify(payload),
-            //     headers: {
-            //       'Content-Type': 'application/json',
-            //     },
-            //   },
-            // );
             throw new Error(error.message ?? 'Something went wrong');
           } else {
             throw new Error('Something went wrong');
@@ -123,7 +100,6 @@ export const options = {
       if (trigger === 'update' && session.photo) {
         const payload = {
           photo: session.photo,
-          // photoBase64: session.photoBase64,
         };
 
         try {
@@ -140,7 +116,6 @@ export const options = {
 
           if (res.status === 200) {
             token.photo = session.photo;
-            token.photoBase64 = session.photoBase64;
           } else {
             //console.error('Failed to update user');
           }

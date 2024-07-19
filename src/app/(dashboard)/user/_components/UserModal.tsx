@@ -22,6 +22,7 @@ import { useToast } from '@/components/ui/use-toast';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
 import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
 import { userModalAtom } from '@/store/modals';
+import { resizeImage } from '@/utils/utils';
 /* const MAX_FILE_SIZE = 102400; */
 
 type UserFormTypes = {
@@ -30,6 +31,7 @@ type UserFormTypes = {
   confirmPassword?: string | undefined;
   role: string;
   photo: null | undefined | string;
+  photoBase64: null | undefined | string;
   firstName: string;
   lastName: string;
   phone: string;
@@ -152,7 +154,7 @@ const UserModal = () => {
     defaultValues,
     resolver: yupResolver(validationSchema) as any,
   });
-  const { reset, handleSubmit, control, getValues } = form;
+  const { reset, handleSubmit, control, getValues, setValue } = form;
 
   // const { data, isLoading: fetchingUser } = useFetchUser({
   //   variables: {
@@ -186,6 +188,7 @@ const UserModal = () => {
       phone: values.phone,
       role: values.role,
       photo: values?.photo,
+      photoBase64: values?.photoBase64,
     };
     const addPayload = {
       firstName: values.firstName,
@@ -193,6 +196,7 @@ const UserModal = () => {
       phone: values.phone,
       role: values.role,
       photo: values?.photo,
+      photoBase64: values?.photoBase64,
       email: values?.email,
       password: values?.password,
     };
@@ -373,31 +377,73 @@ const UserModal = () => {
                             classes="upload-doc !w-full !min-w-full"
                             multiple={false}
                             handleChange={async (value: any) => {
-                              const selectedFile = value;
-                              if (selectedFile) {
-                                const formData = new FormData();
-                                formData.append('file', selectedFile);
-                                formData.append('upload_preset', 'my_uploads');
-                                formData.append('cloud_name', 'dp9urvlsz');
-                                try {
-                                  setImageLoading(true);
-                                  const response = await axios.post(
-                                    'https://api.cloudinary.com/v1/image/upload',
-                                    formData,
-                                    {
-                                      headers: {
-                                        'Content-Type': 'multipart/form-data',
+                              // const selectedFile = value;
+                              // if (selectedFile) {
+                              //   const formData = new FormData();
+                              //   formData.append('file', selectedFile);
+                              //   formData.append('upload_preset', 'my_uploads');
+                              //   formData.append('cloud_name', 'dp9urvlsz');
+                              //   try {
+                              //     setImageLoading(true);
+                              //     const response = await axios.post(
+                              //       'https://api.cloudinary.com/v1/image/upload',
+                              //       formData,
+                              //       {
+                              //         headers: {
+                              //           'Content-Type': 'multipart/form-data',
+                              //         },
+                              //       },
+                              //     );
+                              //     setImageLoading(false);
+                              //     const { url } = response.data;
+                              //     onChange(url);
+                              //   } catch (error) {
+                              //     setImageLoading(false);
+                              //     console.error('Error uploading image:', error);
+                              //   }
+                              // }
+
+                              const file = value;
+                              const reader = new FileReader();
+
+                              reader.onload = async (e: any) => {
+                                const image: any = new Image();
+                                image.src = e.target.result;
+
+                                image.onload = async () => {
+                                  const resizedBase64: any = await resizeImage(image, 400, 400); // Set max dimensions as needed
+                                  setValue('photoBase64', resizedBase64);
+
+                                  const formData = new FormData();
+                                  formData.append('file', file);
+                                  formData.append('upload_preset', 'my_uploads');
+                                  formData.append('cloud_name', 'dp9urvlsz');
+
+                                  try {
+                                    setImageLoading(true);
+                                    const response = await axios.post(
+                                      'https://api.cloudinary.com/v1/image/upload',
+                                      formData,
+                                      {
+                                        headers: {
+                                          'Content-Type': 'multipart/form-data',
+                                        },
                                       },
-                                    },
-                                  );
-                                  setImageLoading(false);
-                                  const { url } = response.data;
-                                  onChange(url);
-                                } catch (error) {
-                                  setImageLoading(false);
-                                  console.error('Error uploading image:', error);
-                                }
-                              }
+                                    );
+
+                                    setImageLoading(false);
+
+                                    const { url } = response.data;
+                                    onChange(url);
+                                  } catch (error) {
+                                    setImageLoading(false);
+
+                                    console.error('Error uploading image:', error);
+                                  }
+                                };
+                              };
+
+                              reader.readAsDataURL(file);
                             }}
                             name="file"
                             value={value}
