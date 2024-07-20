@@ -1,16 +1,61 @@
 import axios from 'axios';
 import { Trash } from 'lucide-react';
+import BlotFormatter from 'quill-blot-formatter';
 import React, { useState } from 'react';
 import { FileUploader } from 'react-drag-drop-files';
 import { Controller } from 'react-hook-form';
+import { Quill } from 'react-quill';
 
 import Spinner from '@/components/common/Spinner';
 import { FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-const ReactQuill = typeof window === 'object' ? require('react-quill') : () => false;
 
-const Resources = ({ control, resources, appendResources, removeResources }: any) => {
+import useQuillHook from '../quill.hook';
+
+const Image = Quill.import('formats/image');
+const ATTRIBUTES: any = [
+  'alt',
+  'height',
+  'width',
+  'class',
+  'style', // Had to add this line because the style was inlined
+];
+
+class CustomImage extends Image {
+  static formats(domNode: any) {
+    return ATTRIBUTES.reduce((formats: any, attribute: any) => {
+      const copy = { ...formats };
+
+      if (domNode.hasAttribute(attribute)) {
+        copy[attribute] = domNode.getAttribute(attribute);
+      }
+
+      return copy;
+    }, {});
+  }
+
+  format(name: any, value: any) {
+    if (ATTRIBUTES.indexOf(name) > -1) {
+      if (value) {
+        this.domNode.setAttribute(name, value);
+      } else {
+        this.domNode.removeAttribute(name);
+      }
+    } else {
+      super.format(name, value);
+    }
+  }
+}
+const ReactQuillComponent = typeof window === 'object' ? require('react-quill') : () => false;
+
+// Register Blot Formatter
+Quill.register('modules/blotFormatter', BlotFormatter);
+Quill.register('formats/image', CustomImage);
+/* const MAX_FILE_SIZE = 102400; */
+
+const Resources = ({ control, resources, appendResources, removeResources, fetchingCourse }: any) => {
   const [imageLoading, setImageLoading] = useState(false);
+  const { quillRef } = useQuillHook({ fetchingCourse, setImageLoading });
 
   return (
     <div className="relative">
@@ -28,8 +73,9 @@ const Resources = ({ control, resources, appendResources, removeResources }: any
           control={control}
           name={`resourcesOverview`}
           render={({ field: { onChange, value } }) => (
-            <ReactQuill
+            <ReactQuillComponent
               id="overview"
+              ref={quillRef}
               modules={{
                 toolbar: [
                   [{ header: [1, 2, false] }],
@@ -38,6 +84,7 @@ const Resources = ({ control, resources, appendResources, removeResources }: any
                   ['link', 'image'],
                   ['clean'],
                 ],
+                blotFormatter: {},
               }}
               value={value}
               onChange={(data: string) => {

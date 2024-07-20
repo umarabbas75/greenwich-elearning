@@ -174,13 +174,10 @@ const SectionModal = () => {
   };
 
   useEffect(() => {
-    console.log({ quillRef });
     if (quillRef.current) {
-      console.log('quillll 0');
       try {
         const quill = quillRef.current?.getEditor();
         quill.getModule('toolbar').addHandler('image', imageHandler);
-        console.log('quillll 1', { quill });
       } catch (error) {
         console.log({ error });
       }
@@ -189,7 +186,6 @@ const SectionModal = () => {
 
   const imageHandler = () => {
     try {
-      console.log('imageHandler');
       const input = document.createElement('input');
       input.setAttribute('type', 'file');
       input.setAttribute('accept', 'image/*');
@@ -290,7 +286,6 @@ const SectionModal = () => {
                       // style={{ minHeight: '200px' }}
                       value={value}
                       onChange={(data: string) => {
-                        console.log({ data });
                         onChange(data);
                       }}
                     />

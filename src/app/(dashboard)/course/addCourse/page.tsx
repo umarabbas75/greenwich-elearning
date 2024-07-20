@@ -4,11 +4,13 @@ import axios from 'axios';
 import { useAtom } from 'jotai';
 import { ArrowLeft, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import BlotFormatter from 'quill-blot-formatter';
 import { useState } from 'react';
 import React from 'react';
 import { FileUploader } from 'react-drag-drop-files';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
+import { Quill } from 'react-quill';
 import * as Yup from 'yup';
 
 import { AlertDestructive } from '@/components/common/FormError';
@@ -24,7 +26,47 @@ import { addCourseModalAtom } from '@/store/modals';
 import Assessment from './FormFields/Assessment';
 import Resources from './FormFields/Resources';
 import Syllabus from './FormFields/Syllabus';
-const ReactQuill = typeof window === 'object' ? require('react-quill') : () => false;
+import useQuillHook from './quill.hook';
+
+const Image = Quill.import('formats/image');
+const ATTRIBUTES: any = [
+  'alt',
+  'height',
+  'width',
+  'class',
+  'style', // Had to add this line because the style was inlined
+];
+
+class CustomImage extends Image {
+  static formats(domNode: any) {
+    return ATTRIBUTES.reduce((formats: any, attribute: any) => {
+      const copy = { ...formats };
+
+      if (domNode.hasAttribute(attribute)) {
+        copy[attribute] = domNode.getAttribute(attribute);
+      }
+
+      return copy;
+    }, {});
+  }
+
+  format(name: any, value: any) {
+    if (ATTRIBUTES.indexOf(name) > -1) {
+      if (value) {
+        this.domNode.setAttribute(name, value);
+      } else {
+        this.domNode.removeAttribute(name);
+      }
+    } else {
+      super.format(name, value);
+    }
+  }
+}
+const ReactQuillComponent = typeof window === 'object' ? require('react-quill') : () => false;
+
+// Register Blot Formatter
+Quill.register('modules/blotFormatter', BlotFormatter);
+Quill.register('formats/image', CustomImage);
 
 type Syllabus = {
   file: string;
@@ -46,17 +88,12 @@ type CourseFormTypes = {
 const Page = () => {
   const router = useRouter();
   const { toast } = useToast();
+
   const queryClient = useQueryClient();
   const [courseModalState] = useAtom(addCourseModalAtom);
 
   const [tabValue, setTabValue] = useState('default');
   const [imageLoading, setImageLoading] = useState(false);
-
-  // useEffect(() => {
-  //   return () => {
-  //     setCourseModalState({ data: null, status: false });
-  //   };
-  // }, []);
 
   const {
     mutate: editCourse,
@@ -85,27 +122,6 @@ const Page = () => {
     resourcesOverview: '',
     assessment: '',
     syllabusOverview: '',
-    // syllabus: [
-    //   {
-    //     file: '',
-    //     name: '',
-    //     type: '',
-    //   },
-    // ],
-    // assessments: [
-    //   {
-    //     file: '',
-    //     name: '',
-    //     type: '',
-    //   },
-    // ],
-    // resources: [
-    //   {
-    //     file: '',
-    //     name: '',
-    //     type: '',
-    //   },
-    // ],
   };
   const validationSchema = Yup.object().shape({
     title: Yup.string().required('title is required'),
@@ -153,6 +169,8 @@ const Page = () => {
       },
     },
   });
+
+  const { quillRef } = useQuillHook({ fetchingCourse, setImageLoading });
 
   const {
     fields: syllabusFields,
@@ -203,7 +221,6 @@ const Page = () => {
       ...watchResources?.[index],
     };
   });
-  console.log('getValues', getValues());
 
   const onSubmit = (values: any) => {
     values.resources = getValues('resources');
@@ -217,6 +234,7 @@ const Page = () => {
       addCourse(values);
     }
   };
+
   if (fetchingCourse) {
     return <Spinner />;
   }
@@ -290,192 +308,185 @@ const Page = () => {
               </button>
             </div>
 
-            {tabValue === 'default' && (
-              <>
-                <div className="grid grid-cols-2 gap-4">
+            <div className={`${tabValue === 'default' ? 'block' : 'hidden'}`}>
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={control}
+                  name="title"
+                  render={({ field: { onChange, value }, formState: { errors } }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel>Title</FormLabel>
+                        <FormControl>
+                          <Input onChange={onChange} value={value} />
+                        </FormControl>
+
+                        <FormMessage>{errors.title?.message}</FormMessage>
+                      </FormItem>
+                    );
+                  }}
+                />
+
+                <FormField
+                  control={control}
+                  name="duration"
+                  render={({ field: { onChange, value }, formState: { errors } }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel>Duration</FormLabel>
+                        <FormControl>
+                          <Input onChange={onChange} value={value} />
+                        </FormControl>
+
+                        <FormMessage>{errors.duration?.message}</FormMessage>
+                      </FormItem>
+                    );
+                  }}
+                />
+                <div className="col-span-2">
                   <FormField
                     control={control}
-                    name="title"
+                    name="description"
                     render={({ field: { onChange, value }, formState: { errors } }) => {
                       return (
                         <FormItem>
-                          <FormLabel>Title</FormLabel>
+                          <FormLabel>Description</FormLabel>
                           <FormControl>
                             <Input onChange={onChange} value={value} />
                           </FormControl>
 
-                          <FormMessage>{errors.title?.message}</FormMessage>
+                          <FormMessage>{errors.description?.message}</FormMessage>
                         </FormItem>
                       );
                     }}
                   />
-
-                  <FormField
-                    control={control}
-                    name="duration"
-                    render={({ field: { onChange, value }, formState: { errors } }) => {
-                      return (
-                        <FormItem>
-                          <FormLabel>Duration</FormLabel>
-                          <FormControl>
-                            <Input onChange={onChange} value={value} />
-                          </FormControl>
-
-                          <FormMessage>{errors.duration?.message}</FormMessage>
-                        </FormItem>
-                      );
-                    }}
-                  />
-                  <div className="col-span-2">
-                    <FormField
-                      control={control}
-                      name="description"
-                      render={({ field: { onChange, value }, formState: { errors } }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>Description</FormLabel>
-                            <FormControl>
-                              <Input onChange={onChange} value={value} />
-                            </FormControl>
-
-                            <FormMessage>{errors.description?.message}</FormMessage>
-                          </FormItem>
-                        );
-                      }}
-                    />
-                  </div>
-
-                  <div className="col-span-2">
-                    <Controller
-                      control={control}
-                      name="image"
-                      render={({ field: { onChange, value }, formState: { errors } }) => {
-                        return (
-                          <div className="flex flex-col space-y-2 justify-between">
-                            <FormLabel className="mt-3">Image</FormLabel>
-                            <FileUploader
-                              multiple={false}
-                              onSizeError={(err: any) => {
-                                setError('image', { message: `${err}, max size allowed is 0.5mb` });
-                              }}
-                              handleChange={async (value: any) => {
-                                clearErrors(['image']);
-                                // const file = value;
-                                // const reader = new FileReader();
-                                // reader.onload = (e: any) => {
-                                //   const base64 = e.target.result;
-                                //   onChange(base64);
-                                // };
-
-                                // reader.readAsDataURL(file);
-                                const selectedFile = value;
-                                if (selectedFile) {
-                                  const formData = new FormData();
-                                  formData.append('file', selectedFile);
-                                  formData.append('upload_preset', 'my_uploads');
-                                  formData.append('cloud_name', 'dp9urvlsz');
-                                  try {
-                                    setImageLoading(true);
-                                    const response = await axios.post(
-                                      'https://api.cloudinary.com/v1/image/upload',
-                                      formData,
-                                      {
-                                        headers: {
-                                          'Content-Type': 'multipart/form-data',
-                                        },
-                                      },
-                                    );
-                                    setImageLoading(false);
-                                    const { url } = response.data;
-                                    onChange(url);
-                                  } catch (error) {
-                                    setImageLoading(false);
-                                    console.error('Error uploading image:', error);
-                                  }
-                                }
-                              }}
-                              name="file"
-                              value={value}
-                              // disabled={true}
-                              types={['jpeg', 'png', 'jpg', 'svg+xml', 'webp']}
-                            />
-                            <FormMessage>{errors.image?.message}</FormMessage>
-                            {value && (
-                              <div className="flex justify-between items-center border border-gray-200 p-2 border-dashed">
-                                <img src={value} className="w-12 h-12 rounded-full" alt="" />
-                                <Trash
-                                  className="cursor-pointer hover:text-red-500"
-                                  onClick={() => {
-                                    onChange('');
-                                  }}
-                                />
-                              </div>
-                            )}
-                          </div>
-                        );
-                      }}
-                    />
-                  </div>
-
-                  <div className="col-span-2">
-                    <FormLabel className="mb-3 block">Overview</FormLabel>
-
-                    <Controller
-                      control={control}
-                      name={`overview`}
-                      render={({ field: { onChange, value } }) => (
-                        <ReactQuill
-                          id="overview"
-                          modules={{
-                            toolbar: [
-                              [{ header: [1, 2, false] }],
-                              ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-                              [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
-                              ['link', 'image'],
-                              ['clean'],
-                            ],
-                          }}
-                          value={value}
-                          onChange={(data: string) => {
-                            onChange(data);
-                          }}
-                        />
-                      )}
-                    />
-                  </div>
                 </div>
-              </>
-            )}
-            {tabValue === 'syllabus' && (
-              <>
-                <Syllabus
-                  control={control}
-                  syllabus={syllabus}
-                  appendSyllabus={appendSyllabus}
-                  removeSyllabus={removeSyllabus}
-                />
-              </>
-            )}
-            {tabValue === 'assessment' && (
-              <>
-                <Assessment
-                  control={control}
-                  assessments={assessments}
-                  appendAssessment={appendAssessment}
-                  removeAssessment={removeAssessment}
-                />
-              </>
-            )}
-            {tabValue === 'resources' && (
-              <>
-                <Resources
-                  control={control}
-                  resources={resources}
-                  appendResources={appendResources}
-                  removeResources={removeResources}
-                />
-              </>
-            )}
+
+                <div className="col-span-2">
+                  <Controller
+                    control={control}
+                    name="image"
+                    render={({ field: { onChange, value }, formState: { errors } }) => {
+                      return (
+                        <div className="flex flex-col space-y-2 justify-between">
+                          <FormLabel className="mt-3">Image</FormLabel>
+                          <FileUploader
+                            multiple={false}
+                            onSizeError={(err: any) => {
+                              setError('image', { message: `${err}, max size allowed is 0.5mb` });
+                            }}
+                            handleChange={async (value: any) => {
+                              clearErrors(['image']);
+
+                              const selectedFile = value;
+                              if (selectedFile) {
+                                const formData = new FormData();
+                                formData.append('file', selectedFile);
+                                formData.append('upload_preset', 'my_uploads');
+                                formData.append('cloud_name', 'dp9urvlsz');
+                                try {
+                                  setImageLoading(true);
+                                  const response = await axios.post(
+                                    'https://api.cloudinary.com/v1/image/upload',
+                                    formData,
+                                    {
+                                      headers: {
+                                        'Content-Type': 'multipart/form-data',
+                                      },
+                                    },
+                                  );
+                                  setImageLoading(false);
+                                  const { url } = response.data;
+                                  onChange(url);
+                                } catch (error) {
+                                  setImageLoading(false);
+                                  console.error('Error uploading image:', error);
+                                }
+                              }
+                            }}
+                            name="file"
+                            value={value}
+                            // disabled={true}
+                            types={['jpeg', 'png', 'jpg', 'svg+xml', 'webp']}
+                          />
+                          <FormMessage>{errors.image?.message}</FormMessage>
+                          {value && (
+                            <div className="flex justify-between items-center border border-gray-200 p-2 border-dashed">
+                              <img src={value} className="w-12 h-12 rounded-full" alt="" />
+                              <Trash
+                                className="cursor-pointer hover:text-red-500"
+                                onClick={() => {
+                                  onChange('');
+                                }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      );
+                    }}
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <FormLabel className="mb-3 block">Overview</FormLabel>
+
+                  <Controller
+                    control={control}
+                    name={`overview`}
+                    render={({ field: { onChange, value } }) => (
+                      <ReactQuillComponent
+                        id="overview"
+                        ref={quillRef}
+                        modules={{
+                          toolbar: [
+                            [{ header: [1, 2, false] }],
+                            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+                            [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
+                            ['link', 'image'],
+                            ['clean'],
+                          ],
+                          blotFormatter: {},
+                        }}
+                        value={value}
+                        onChange={(data: string) => {
+                          onChange(data);
+                        }}
+                      />
+                    )}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className={`${tabValue === 'syllabus' ? 'block' : 'hidden'}`}>
+              <Syllabus
+                control={control}
+                syllabus={syllabus}
+                appendSyllabus={appendSyllabus}
+                removeSyllabus={removeSyllabus}
+                fetchingCourse={fetchingCourse}
+              />
+            </div>
+
+            <div className={`${tabValue === 'assessment' ? 'block' : 'hidden'}`}>
+              <Assessment
+                control={control}
+                assessments={assessments}
+                appendAssessment={appendAssessment}
+                removeAssessment={removeAssessment}
+                fetchingCourse={fetchingCourse}
+              />
+            </div>
+
+            <div className={`${tabValue === 'resources' ? 'block' : 'hidden'}`}>
+              <Resources
+                control={control}
+                resources={resources}
+                appendResources={appendResources}
+                removeResources={removeResources}
+                fetchingCourse={fetchingCourse}
+              />
+            </div>
 
             <div className="flex items-center justify-end gap-2">
               {/* <Button variant={'outline'} onClick={closeModal}>

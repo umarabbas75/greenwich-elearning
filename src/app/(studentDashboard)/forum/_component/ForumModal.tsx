@@ -1,9 +1,13 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useAtom } from 'jotai';
+import BlotFormatter from 'quill-blot-formatter';
+import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
+import { Quill } from 'react-quill';
 import * as Yup from 'yup';
 
+import useQuillHook from '@/app/(dashboard)/course/addCourse/quill.hook';
 import { AlertDestructive } from '@/components/common/FormError';
 import LoadingButton from '@/components/common/LoadingButton';
 import Modal from '@/components/common/Modal';
@@ -15,13 +19,52 @@ import { useToast } from '@/components/ui/use-toast';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
 import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
 import { forumModalAtom } from '@/store/modals';
-const ReactQuill = typeof window === 'object' ? require('react-quill') : () => false;
 
-/* const MAX_FILE_SIZE = 102400; */
+const Image = Quill.import('formats/image');
+const ATTRIBUTES: any = [
+  'alt',
+  'height',
+  'width',
+  'class',
+  'style', // Had to add this line because the style was inlined
+];
+
+class CustomImage extends Image {
+  static formats(domNode: any) {
+    return ATTRIBUTES.reduce((formats: any, attribute: any) => {
+      const copy = { ...formats };
+
+      if (domNode.hasAttribute(attribute)) {
+        copy[attribute] = domNode.getAttribute(attribute);
+      }
+
+      return copy;
+    }, {});
+  }
+
+  format(name: any, value: any) {
+    if (ATTRIBUTES.indexOf(name) > -1) {
+      if (value) {
+        this.domNode.setAttribute(name, value);
+      } else {
+        this.domNode.removeAttribute(name);
+      }
+    } else {
+      super.format(name, value);
+    }
+  }
+}
+const ReactQuillComponent = typeof window === 'object' ? require('react-quill') : () => false;
+
+// Register Blot Formatter
+Quill.register('modules/blotFormatter', BlotFormatter);
+Quill.register('formats/image', CustomImage);
 
 const ForumModal = () => {
   const [forumState, setForumState] = useAtom(forumModalAtom);
   const { toast } = useToast();
+  const [imageLoading, setImageLoading] = useState(false);
+
   const queryClient = useQueryClient();
   const {
     mutate: addForum,
@@ -108,6 +151,8 @@ const ForumModal = () => {
     data ? editForum(payload) : addForum(payload);
   };
 
+  const { quillRef } = useQuillHook({ fetchingCourse: fetchingForum, setImageLoading });
+
   return (
     <Modal
       open={forumState.status}
@@ -118,8 +163,15 @@ const ForumModal = () => {
       {fetchingForum ? (
         <Spinner />
       ) : (
-        <>
+        <div className="relative">
           {(isEditError || isAddError) && <AlertDestructive error={editError || addError} />}
+          {imageLoading && (
+            <div className="absolute top-0 left-0 right-0 bottom-0 bg-[#ffffff36] z-[99999999]">
+              <div className="w-full h-full flex justify-center items-center">
+                <Spinner className="!text-primary w-16 h-16" />
+              </div>
+            </div>
+          )}
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               <div className="grid grid-cols-1 gap-4">
@@ -133,8 +185,6 @@ const ForumModal = () => {
                         <FormControl>
                           <Input onChange={onChange} value={value} />
                         </FormControl>
-
-                        {/* <FormMessage>{errors?.title?.message}</FormMessage> */}
                       </FormItem>
                     );
                   }}
@@ -144,8 +194,9 @@ const ForumModal = () => {
                   control={control}
                   name={`content`}
                   render={({ field: { onChange, value } }) => (
-                    <ReactQuill
+                    <ReactQuillComponent
                       id="quill"
+                      ref={quillRef}
                       modules={{
                         toolbar: [
                           [{ header: [1, 2, false] }],
@@ -154,8 +205,8 @@ const ForumModal = () => {
                           ['link', 'image'],
                           ['clean'],
                         ],
+                        blotFormatter: {},
                       }}
-                      // style={{ minHeight: '200px' }}
                       value={value}
                       onChange={(data: string) => {
                         onChange(data);
@@ -176,7 +227,7 @@ const ForumModal = () => {
               </div>
             </form>
           </Form>
-        </>
+        </div>
       )}
     </Modal>
   );
