@@ -73,10 +73,14 @@ const Page = () => {
           <div className="p-4 rounded-xl border bg-white dark:bg-black mb-4">
             <div className="flex gap-2">
               <div className="w-[80px]">
-                <NameInitials
-                  className={`w-16 h-16 font-normal shadow-sm border border-white text-2xl`}
-                  initials={getInitials(`${user?.firstName} ${user?.lastName ?? ''}`)}
-                />
+                {user?.photo ? (
+                  <img src={user?.photo} alt="" className={`w-16 h-16 rounded-full`} />
+                ) : (
+                  <NameInitials
+                    className={`w-16 h-16 font-normal shadow-sm border border-white text-2xl`}
+                    initials={getInitials(`${user?.firstName} ${user?.lastName ?? ''}`)}
+                  />
+                )}
               </div>
               <div className="flex-1">
                 <p className="font-medium text-gray-900 dark:text-white/80 text-lg">{title}</p>
@@ -105,10 +109,16 @@ const Page = () => {
 
           <div className="p-4 rounded-xl border bg-white dark:bg-black">
             <div className="flex gap-2 items-start">
-              <NameInitials
-                className={`w-16 h-16 font-normal shadow-sm border border-white text-2xl`}
-                initials={getInitials(`${userData?.user?.firstName ?? ''} ${userData?.user?.lastName ?? ''}`)}
-              />
+              {userData?.user?.photo ? (
+                <img src={userData?.user?.photo} alt="" className={`w-16 h-16 rounded-full`} />
+              ) : (
+                <NameInitials
+                  className={`w-16 h-16 font-normal shadow-sm border border-white text-2xl`}
+                  initials={getInitials(
+                    `${userData?.user?.firstName ?? ''} ${userData?.user?.lastName ?? ''}`,
+                  )}
+                />
+              )}
               <div className="flex-1 flex flex-col gap-4">
                 <Textarea
                   value={comment}

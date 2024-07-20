@@ -63,10 +63,14 @@ const Comment = ({ comment }: any) => {
         <div className="flex items-center gap-2">
           {/* <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full mr-2" /> */}
           {/* <Icons iconName="customer" className="w-10 h-10 cursor-pointer text-accent" /> */}
-          <NameInitials
-            className={`w-10 h-10 font-normal  shadow-sm border border-white text-sm`}
-            initials={getInitials(`${comment?.user?.firstName} ${comment?.user?.lastName}`)}
-          />
+          {comment?.user?.photo ? (
+            <img src={comment?.user?.photo} alt="" className={`w-10 h-10 rounded-full`} />
+          ) : (
+            <NameInitials
+              className={`w-10 h-10 font-normal rounded-full  shadow-sm border border-white text-sm`}
+              initials={getInitials(`${comment?.user?.firstName} ${comment?.user?.lastName}`)}
+            />
+          )}
           <div className="flex flex-col">
             <div className="text-sm font-semibold text-gray-800 dark:text-white/80">{`${comment?.user?.firstName} ${comment?.user?.lastName}`}</div>
             <div className="text-gray-600 dark:text-white/60 text-sm">{formatDate(comment?.createdAt)}</div>

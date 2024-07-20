@@ -243,7 +243,12 @@ const ForumList = ({ data }: any) => {
           >
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div className="relative rounded-full mb-4 md:mb-0 md:w-20 md:h-20">
-                <NameInitials initials={getInitials(`${item?.user?.firstName} ${item?.user?.lastName}`)} />
+                {item?.user?.photo ? (
+                  <img src={item?.user?.photo} className="h-20 w-20  rounded-full" alt="postedByUser" />
+                ) : (
+                  <NameInitials initials={getInitials(`${item?.user?.firstName} ${item?.user?.lastName}`)} />
+                )}
+
                 {item?.isFavorite && (
                   <div className="bg-orange-500 absolute right-0 top-2 z-10 p-1 rounded-full">
                     <Pin className="fill-white stroke-white w-3 h-3" />
@@ -277,15 +282,29 @@ const ForumList = ({ data }: any) => {
 
               <div className="flex items-center mt-4 md:mt-0 md:ml-auto">
                 <div className="flex gap-1">
-                  {item?.ForumComment?.slice(0, 3).map((el: any, index: number) => (
-                    <NameInitials
-                      key={index}
-                      className={`h-8 w-8 font-normal text-xs shadow-sm border border-white ${
-                        index > 0 ? '-ml-2' : ''
-                      }`}
-                      initials={getInitials(`${el?.user?.firstName} ${el?.user?.lastName}`)}
-                    />
-                  ))}
+                  {item?.ForumComment?.slice(0, 3).map((el: any, index: number) => {
+                    if (el?.user?.photo) {
+                      return (
+                        <img
+                          key={index}
+                          src={el?.user?.photo}
+                          alt="commenter photo"
+                          className={`h-8 w-8 font-normal rounded-full text-xs shadow-sm border border-white ${
+                            index > 0 ? '-ml-2' : ''
+                          }`}
+                        />
+                      );
+                    }
+                    return (
+                      <NameInitials
+                        key={index}
+                        className={`h-8 w-8 font-normal text-xs shadow-sm border border-white ${
+                          index > 0 ? '-ml-2' : ''
+                        }`}
+                        initials={getInitials(`${el?.user?.firstName} ${el?.user?.lastName}`)}
+                      />
+                    );
+                  })}
                   {item?.ForumComment?.length > 3 && (
                     <NameInitials
                       className="h-8 w-8 font-normal text-xs shadow-sm border bg-white -ml-2 text-gray-700"
