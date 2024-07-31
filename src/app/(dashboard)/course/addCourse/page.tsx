@@ -3,8 +3,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import axios from 'axios';
 import { useAtom } from 'jotai';
 import { ArrowLeft, Trash } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import React from 'react';
 import { FileUploader } from 'react-drag-drop-files';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
@@ -24,7 +25,23 @@ import { addCourseModalAtom } from '@/store/modals';
 import Assessment from './FormFields/Assessment';
 import Resources from './FormFields/Resources';
 import Syllabus from './FormFields/Syllabus';
-const ReactQuill = typeof window === 'object' ? require('react-quill') : () => false;
+
+// const ReactQuill = typeof window === 'object' ? require('react-quill') : () => false;
+
+const ReactQuill: any = dynamic(
+  async () => {
+    const { default: RQ } = await import('react-quill');
+    const { default: BlotFormatter } = await import('quill-blot-formatter');
+    RQ.Quill.register('modules/blotFormatter', BlotFormatter);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line react/display-name
+    return ({ forwardedRef, ...props }) => <RQ ref={forwardedRef} {...props} />;
+  },
+  {
+    ssr: false,
+  },
+);
 
 type Syllabus = {
   file: string;
@@ -48,6 +65,7 @@ const Page = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [courseModalState] = useAtom(addCourseModalAtom);
+  const quillRef: any = useRef(null);
 
   const [tabValue, setTabValue] = useState('default');
   const [imageLoading, setImageLoading] = useState(false);
@@ -111,13 +129,23 @@ const Page = () => {
     title: Yup.string().required('title is required'),
     description: Yup.string().required('description is required'),
     image: Yup.string().required('course image is required'),
+    duration: Yup.string().required('duration is required'),
   });
 
   const form = useForm<CourseFormTypes>({
     defaultValues,
     resolver: yupResolver(validationSchema) as any,
   });
-  const { handleSubmit, control, reset, setError, clearErrors, watch, getValues } = form;
+  const {
+    handleSubmit,
+    control,
+    reset,
+    setError,
+    clearErrors,
+    watch,
+    getValues,
+    formState: { errors },
+  } = form;
 
   const {
     mutate: addCourse,
@@ -153,6 +181,55 @@ const Page = () => {
       },
     },
   });
+  const imageHandler = () => {
+    try {
+      const input = document.createElement('input');
+      input.setAttribute('type', 'file');
+      input.setAttribute('accept', 'image/*');
+      input.click();
+
+      input.onchange = async () => {
+        const selectedFile = input?.files?.[0];
+        if (selectedFile) {
+          const formData = new FormData();
+          formData.append('file', selectedFile);
+          formData.append('upload_preset', 'my_uploads');
+          formData.append('cloud_name', 'dp9urvlsz');
+          try {
+            setImageLoading(true);
+            const response = await axios.post('https://api.cloudinary.com/v1/image/upload', formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            });
+
+            const url = response.data.url;
+            const quill = quillRef.current.getEditor();
+            const range = quill.getSelection();
+            quill.insertEmbed(range.index, 'image', url);
+            setImageLoading(false);
+          } catch (error) {
+            setImageLoading(false);
+
+            console.error('Error uploading image:', error);
+          }
+        }
+      };
+    } catch (error) {
+      console.log({ error });
+    }
+  };
+
+  useEffect(() => {
+    if (quillRef.current) {
+      try {
+        const quill = quillRef.current?.getEditor();
+        quill.getModule('toolbar').addHandler('image', imageHandler);
+      } catch (error) {
+        console.log({ error });
+      }
+    }
+  }, [quillRef, quillRef.current, fetchingCourse]);
 
   const {
     fields: syllabusFields,
@@ -217,6 +294,7 @@ const Page = () => {
       addCourse(values);
     }
   };
+  console.log({ errors });
   if (fetchingCourse) {
     return <Spinner />;
   }
@@ -360,14 +438,6 @@ const Page = () => {
                               }}
                               handleChange={async (value: any) => {
                                 clearErrors(['image']);
-                                // const file = value;
-                                // const reader = new FileReader();
-                                // reader.onload = (e: any) => {
-                                //   const base64 = e.target.result;
-                                //   onChange(base64);
-                                // };
-
-                                // reader.readAsDataURL(file);
                                 const selectedFile = value;
                                 if (selectedFile) {
                                   const formData = new FormData();
@@ -396,7 +466,6 @@ const Page = () => {
                               }}
                               name="file"
                               value={value}
-                              // disabled={true}
                               types={['jpeg', 'png', 'jpg', 'svg+xml', 'webp']}
                             />
                             <FormMessage>{errors.image?.message}</FormMessage>
@@ -425,7 +494,8 @@ const Page = () => {
                       name={`overview`}
                       render={({ field: { onChange, value } }) => (
                         <ReactQuill
-                          id="overview"
+                          // id={'overview'}
+                          forwardedRef={quillRef}
                           modules={{
                             toolbar: [
                               [{ header: [1, 2, false] }],
@@ -434,6 +504,7 @@ const Page = () => {
                               ['link', 'image'],
                               ['clean'],
                             ],
+                            blotFormatter: {},
                           }}
                           value={value}
                           onChange={(data: string) => {
@@ -478,10 +549,6 @@ const Page = () => {
             )}
 
             <div className="flex items-center justify-end gap-2">
-              {/* <Button variant={'outline'} onClick={closeModal}>
-              Cancel
-            </Button> */}
-
               <LoadingButton loading={addingCourse || editingCourse} type="submit" variant="default">
                 Submit
               </LoadingButton>
