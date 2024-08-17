@@ -46,6 +46,12 @@ export const sidebarMenu: SidebarMenu = {
       link: '/forum',
     },
     {
+      id: 'contactUs',
+      title: 'Contact us',
+      icon: 'contactUs',
+      link: '/contact-us',
+    },
+    {
       id: 'settings',
       title: 'Settings',
       icon: 'setting',
@@ -70,6 +76,12 @@ export const sidebarMenu: SidebarMenu = {
       title: 'Forum',
       icon: 'forum',
       link: '/forum',
+    },
+    {
+      id: 'contactUs',
+      title: 'Contact us',
+      icon: 'contactUs',
+      link: '/contact-us',
     },
     {
       id: 'settings',

@@ -17,6 +17,7 @@ export const viewUserCoursesModal = createModalAtom();
 export const viewAssignedQuizzesModal = createModalAtom();
 export const confirmationModalAtom = createModalAtom();
 export const unAssignQuizModalAtom = createModalAtom();
+export const viewContactMessage = createModalAtom();
 export const unAssignCourseModalAtom = createModalAtom();
 export const createNewPostModalAtom = createModalAtom();
 export const updateStatusModalAtom = createModalAtom();
