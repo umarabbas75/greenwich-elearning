@@ -50,7 +50,11 @@ const PopularCourses = () => {
                       </p>
                     </div>
                     <div className="flex items-center">
-                      <div className="text-lg text-white font-light">${item?.price || 0}</div>
+                      <div className="text-lg text-white font-light">
+                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
+                          item?.price || 0,
+                        )}
+                      </div>
                       <button className="rounded-full bg-purple-900 text-white hover:bg-white hover:text-purple-900 hover:shadow-xl focus:outline-none w-10 h-10 flex ml-auto transition duration-300">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"

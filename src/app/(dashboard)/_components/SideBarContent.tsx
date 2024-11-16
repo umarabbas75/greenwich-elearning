@@ -33,7 +33,7 @@ const SideBarContent = () => {
           />
         )}
         {sideBarWidth === 'lg' && (
-          <Link href="/">
+          <Link href="/home">
             <Image src="/assets/images/greenwich_logo.png" width={60} height={40} alt="greenwich logo" />
           </Link>
         )}

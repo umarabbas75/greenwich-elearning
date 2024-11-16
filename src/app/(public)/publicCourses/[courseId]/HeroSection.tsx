@@ -19,6 +19,7 @@ const HeroSection = ({ title, desc, id, price }: any) => {
     queryKey: ['get-all-assigned-courses-public', userData?.user.id],
     config: {
       keepPreviousData: true,
+      enabled: !!userData?.user.id,
       onSuccess: (res) => {
         const isAssigned = res?.data?.some((el: any) => el?.id === id);
         setIsThisCourseAlreadyAssigned(isAssigned);
@@ -47,7 +48,7 @@ const HeroSection = ({ title, desc, id, price }: any) => {
                 <div className="col-span-2 flex items-center">
                   <div>
                     <h1 className="text-white text-6xl font-semibold mb-2">{title}</h1>
-                    <p className="text-white mb-6">{desc}</p>
+                    <p className="text-white mb-6 max-w-lg">{desc}</p>
                     {isLoading ? (
                       ''
                     ) : isThisCourseAlreadyAssigned ? (
@@ -73,7 +74,10 @@ const HeroSection = ({ title, desc, id, price }: any) => {
                         size="lg"
                         className="w-[300px]"
                       >
-                        Buy course - ${price ?? 0}
+                        Buy course -{' '}
+                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
+                          price || 0,
+                        )}
                       </Button>
                     )}
                   </div>

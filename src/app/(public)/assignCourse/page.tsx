@@ -55,26 +55,26 @@ const Page = () => {
             <div className="py-6 px-12">
               {isAssignError && <AlertDestructive error={assignError} />}
 
-              <h1 className="text-5xl font-medium">Assign this course to continue</h1>
+              <h1 className="text-5xl font-medium">Buy course</h1>
 
               <p className="mt-4 text-gray-700">
-                To start, please assign this course to your account. Once assigned, you will be guided to
-                complete a bank transfer payment. After payment is confirmed, the admin will activate your
-                course access, unlocking all the valuable resources.
+                To start, please confirm by clicking the confirm button below, if you want to buy this course.
+                Once confirmed, you will be guided to complete a bank transfer payment. After payment is
+                confirmed, the admin will activate your course access, unlocking all the valuable resources.
               </p>
 
               <div className="mt-6 text-gray-700">
                 <div className="flex items-center gap-2">
                   <Icons iconName="user" className="w-6 h-6 text-publicRed" />
-                  <p>Step 1: Assign the course to your account.</p>
+                  <p>Step 1: Confirm the purchase of this course.</p>
                 </div>
                 <div className="flex items-center gap-2 mt-2">
                   <Icons iconName="dashboard" className="w-6 h-6 text-publicRed" />
-                  <p>Step 2: Make a manual bank transfer for the course fee.</p>
+                  <p>Step 2: In next step make a manual bank transfer for the course fee.</p>
                 </div>
                 <div className="flex items-center gap-2 mt-2">
                   <Icons iconName="edit" className="w-6 h-6 text-publicRed" />
-                  <p>Step 3: Admin will activate the course upon payment confirmation.</p>
+                  <p>Step 3: Then Admin will activate the course upon payment confirmation.</p>
                 </div>
               </div>
 
@@ -88,7 +88,7 @@ const Page = () => {
                 }}
                 className="mt-8 w-full py-3 px-4 bg-publicBlue text-white font-medium rounded-md shadow-md hover:bg-red-600 transition-colors"
               >
-                {assigningCourse ? 'assigning' : 'Assign course to myself'}
+                {assigningCourse ? 'Confirming...' : 'Confirm'}
               </button>
             </div>
           </div>

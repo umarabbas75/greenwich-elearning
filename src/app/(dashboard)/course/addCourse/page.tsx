@@ -53,6 +53,7 @@ type CourseFormTypes = {
   description: string;
   image: string;
   overview: string;
+  price: string;
   assessment: string;
   duration: string;
   syllabus: Syllabus[];
@@ -130,6 +131,7 @@ const Page = () => {
     description: Yup.string().required('description is required'),
     image: Yup.string().required('course image is required'),
     duration: Yup.string().required('duration is required'),
+    price: Yup.string().required('price is required'),
   });
 
   const form = useForm<CourseFormTypes>({
@@ -376,7 +378,6 @@ const Page = () => {
                       );
                     }}
                   />
-
                   <FormField
                     control={control}
                     name="duration"
@@ -411,8 +412,7 @@ const Page = () => {
                       }}
                     />
                   </div>
-
-                  <div className="col-span-2">
+                  <div className="col-span-1">
                     <Controller
                       control={control}
                       name="image"
@@ -473,8 +473,25 @@ const Page = () => {
                         );
                       }}
                     />
-                  </div>
+                  </div>{' '}
+                  <div className="col-span-1">
+                    <FormField
+                      control={control}
+                      name="price"
+                      render={({ field: { onChange, value }, formState: { errors } }) => {
+                        return (
+                          <FormItem>
+                            <FormLabel>Price</FormLabel>
+                            <FormControl>
+                              <Input startIcon={'$'} type="number" onChange={onChange} value={value} />
+                            </FormControl>
 
+                            <FormMessage>{errors.price?.message}</FormMessage>
+                          </FormItem>
+                        );
+                      }}
+                    />
+                  </div>
                   <div className="col-span-2">
                     <FormLabel className="mb-3 block">Overview</FormLabel>
 

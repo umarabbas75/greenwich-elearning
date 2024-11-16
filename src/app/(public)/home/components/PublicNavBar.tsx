@@ -57,7 +57,7 @@ const PublicNavBar = () => {
                   onClick={() => {
                     router.replace('/');
                   }}
-                  className="text-sm text-publicBlue underline font-semibold hover:underline"
+                  className="text-sm cursor-pointer text-publicBlue underline font-semibold hover:underline"
                 >
                   Go to Dashboard
                 </span>
