@@ -22,7 +22,6 @@ import 'react-quill/dist/quill.snow.css';
 
 const NewPostModal = () => {
   const [newPostModalState, setCreateNewPostModalAtom] = useAtom(createNewPostModalAtom);
-  console.log({ newPostModalState });
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const {

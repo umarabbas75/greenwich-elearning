@@ -11,9 +11,9 @@ const FileCard = ({ fileName, fileType, seen, onClick, file, item }: any) => {
         window.open(file, '_blank');
       }}
     >
-      <div className="flex items-center mb-3">
-        <File className="w-12 h-12 mr-2 text-primary" />
-        <span className="text-base font-semibold dark:text-white/80">{fileName}</span>
+      <div className="flex items-center flex-col mb-3">
+        <File className="h-12 w-12 min-w-12 min-h-12 mr-2 text-primary" size={40} />
+        <span className=" text-sm font-semibold dark:text-white/80">{fileName}</span>
       </div>
       <div className="flex items-center text-gray-500 text-sm mb-3">
         <span>{fileType}</span>

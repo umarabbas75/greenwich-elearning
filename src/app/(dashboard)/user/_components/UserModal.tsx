@@ -154,19 +154,7 @@ const UserModal = () => {
     defaultValues,
     resolver: yupResolver(validationSchema) as any,
   });
-  const { reset, handleSubmit, control, getValues, setValue } = form;
-
-  // const { data, isLoading: fetchingUser } = useFetchUser({
-  //   variables: {
-  //     id: userState?.data?.id,
-  //   },
-  //   onSuccessCallback: (data: any) => {
-  //     form.reset({
-  //       ...data,
-  //       customer: data?.customer,
-  //     });
-  //   },
-  // });
+  const { reset, handleSubmit, control, setValue } = form;
 
   const { data, isLoading: fetchingUser } = useApiGet<any>({
     endpoint: `/users/${userState?.data?.id}`,
@@ -202,8 +190,6 @@ const UserModal = () => {
     };
     data ? editUser(editPayload) : addUser(addPayload);
   };
-
-  console.log('getvalues', getValues());
 
   return (
     <>
@@ -377,32 +363,6 @@ const UserModal = () => {
                             classes="upload-doc !w-full !min-w-full"
                             multiple={false}
                             handleChange={async (value: any) => {
-                              // const selectedFile = value;
-                              // if (selectedFile) {
-                              //   const formData = new FormData();
-                              //   formData.append('file', selectedFile);
-                              //   formData.append('upload_preset', 'my_uploads');
-                              //   formData.append('cloud_name', 'dp9urvlsz');
-                              //   try {
-                              //     setImageLoading(true);
-                              //     const response = await axios.post(
-                              //       'https://api.cloudinary.com/v1/image/upload',
-                              //       formData,
-                              //       {
-                              //         headers: {
-                              //           'Content-Type': 'multipart/form-data',
-                              //         },
-                              //       },
-                              //     );
-                              //     setImageLoading(false);
-                              //     const { url } = response.data;
-                              //     onChange(url);
-                              //   } catch (error) {
-                              //     setImageLoading(false);
-                              //     console.error('Error uploading image:', error);
-                              //   }
-                              // }
-
                               const file = value;
                               const reader = new FileReader();
 
@@ -437,8 +397,6 @@ const UserModal = () => {
                                     onChange(url);
                                   } catch (error) {
                                     setImageLoading(false);
-
-                                    console.error('Error uploading image:', error);
                                   }
                                 };
                               };

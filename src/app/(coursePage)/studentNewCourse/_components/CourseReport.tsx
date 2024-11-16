@@ -7,7 +7,7 @@ import { ChaptersDataResponse } from '@/app/(dashboard)/course/[courseId]/[modul
 import { Button } from '@/components/ui/button';
 import { useApiGet } from '@/lib/dashboard/client/user';
 
-const CourseReport = () => {
+const CourseReport = ({ setShowCourseReport }: any) => {
   // const router = useRouter();
   const params = useParams();
 
@@ -41,6 +41,14 @@ const CourseReport = () => {
         </div>
         <h1 className="text-3xl font-bold text-gray-800 mb-4">Congratulations!</h1>
         <p className="text-lg text-gray-700 mb-6">{`You've reached the end of the lesson.`}</p>
+
+        <Button
+          onClick={() => {
+            setShowCourseReport((prev: any) => !prev);
+          }}
+        >
+          Back
+        </Button>
       </div>
       <Link
         href={{

@@ -54,10 +54,8 @@ const Page = () => {
       },
     },
   });
-  console.log({ creatingMessage, isAddError, addError });
 
   const onSubmit = (values: any) => {
-    console.log({ values });
     const payload = {
       message: values?.message,
     };
@@ -68,8 +66,6 @@ const Page = () => {
     endpoint: `/users/contact-message`,
     queryKey: ['get-contact-us-message', userData?.user?.id],
   });
-
-  console.log({ contactUsMessages });
 
   return (
     <div className="container mx-auto p-3 sm:p-6">

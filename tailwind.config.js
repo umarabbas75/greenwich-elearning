@@ -21,6 +21,8 @@ module.exports = {
         themeOrange: 'var(--orange)',
         themeGreen: '#344e41',
         themeBlue: '#0057B0',
+        publicRed: '#ed1c24',
+        publicBlue: '#002f5f',
         ring: 'var(--ring)',
         background: 'var(--background)',
         foreground: 'var(--foreground)',

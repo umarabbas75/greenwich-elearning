@@ -136,16 +136,7 @@ const Page = () => {
     defaultValues,
     resolver: yupResolver(validationSchema) as any,
   });
-  const {
-    handleSubmit,
-    control,
-    reset,
-    setError,
-    clearErrors,
-    watch,
-    getValues,
-    formState: { errors },
-  } = form;
+  const { handleSubmit, control, reset, setError, clearErrors, watch, getValues } = form;
 
   const {
     mutate: addCourse,
@@ -280,7 +271,6 @@ const Page = () => {
       ...watchResources?.[index],
     };
   });
-  console.log('getValues', getValues());
 
   const onSubmit = (values: any) => {
     values.resources = getValues('resources');
@@ -294,7 +284,6 @@ const Page = () => {
       addCourse(values);
     }
   };
-  console.log({ errors });
   if (fetchingCourse) {
     return <Spinner />;
   }

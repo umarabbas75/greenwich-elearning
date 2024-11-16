@@ -12,7 +12,6 @@ import { userTimezoneAtom } from '@/store/course';
 const WorldClock = () => {
   const { data: session } = useSession();
   const [userTimezoneState] = useAtom(userTimezoneAtom);
-  console.log({ userTimezoneState });
   const timezoneOptions = [
     { label: 'US/Pacific', value: 'US/Pacific' },
     { label: 'US/Eastern', value: 'US/Eastern' },
@@ -62,7 +61,6 @@ const WorldClock = () => {
     }
   }, [userTimezoneState]);
 
-  console.log('user', session?.user);
   const queryClient = useQueryClient();
   // Function to handle timezone change
   const handleTimezoneChange = (timezone: any) => {
@@ -76,7 +74,7 @@ const WorldClock = () => {
     endpoint: `/users/${session?.user?.id}`,
     method: 'put',
     config: {
-      select: (res) => res?.data,
+      select: (res: any) => res?.data,
       onSuccess: async () => {
         queryClient.invalidateQueries({
           queryKey: ['get-user'],
@@ -89,7 +87,6 @@ const WorldClock = () => {
       },
     },
   });
-  console.log({ selectedTimezone });
 
   return (
     <div className="">

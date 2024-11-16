@@ -65,7 +65,7 @@ const ForumList = ({ data }: any) => {
           queryKey: ['get-forum-threads'],
         });
       },
-      onError: (data) => {
+      onError: (data: any) => {
         toast({
           variant: 'destructive',
           title: 'Error ',
@@ -96,11 +96,7 @@ const ForumList = ({ data }: any) => {
     },
   });
 
-  const {
-    mutate: followForumThread,
-    isLoading: followingForumThread,
-    data: followingData,
-  } = useApiMutation<any>({
+  const { mutate: followForumThread, isLoading: followingForumThread } = useApiMutation<any>({
     endpoint: `/forum-thread/subscribe`,
     method: 'post',
     config: {
@@ -224,7 +220,6 @@ const ForumList = ({ data }: any) => {
   const onRowClick = (data: any) => {
     router.push(`/forum/${data.id}`);
   };
-  console.log({ followingData });
 
   return (
     <>

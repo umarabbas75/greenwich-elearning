@@ -77,7 +77,7 @@ const Page = ({ params }: { params: { moduleId: string } }) => {
           queryKey: ['get-all-assigned-quizzes', viewAssignQuizModalState?.data?.id],
         });
       },
-      onError: (data) => {
+      onError: (data: any) => {
         toast({
           variant: 'destructive',
           title: 'Error ',

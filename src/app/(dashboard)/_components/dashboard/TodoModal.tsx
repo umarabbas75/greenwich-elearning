@@ -92,14 +92,7 @@ const TodoModal = () => {
     defaultValues,
     resolver: yupResolver(validationSchema) as any,
   });
-  const {
-    reset,
-    handleSubmit,
-    control,
-    getValues,
-    watch,
-    formState: { errors },
-  } = form;
+  const { reset, handleSubmit, control, watch } = form;
 
   const { data, isLoading: fetchingUser } = useApiGet<any>({
     endpoint: `/todos/${todoState?.data?.id}`,
@@ -116,10 +109,7 @@ const TodoModal = () => {
   });
   const date = watch('dueDate');
 
-  console.log('getValues', getValues(), { errors });
-
   const onSubmit = (values: any) => {
-    console.log('due data', values?.dueDate, new Date(values?.dueDate)?.toISOString());
     const addPayload = {
       title: values.title,
       content: values.content,

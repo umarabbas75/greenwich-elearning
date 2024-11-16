@@ -201,7 +201,7 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
           queryKey: ['get-chapters', moduleId],
         });
       },
-      onError: (data) => {
+      onError: (data: any) => {
         toast({
           variant: 'destructive',
           title: 'Error ',

@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios';
 import { AlertCircle } from 'lucide-react';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -15,9 +14,15 @@ export function AlertDestructive({ title = 'Error', error }: props) {
       return `${key}: ${value}`;
     });
   }
-  const renderError = (error: AxiosError) => {
+  const renderError = (error: any) => {
     if (error.request)
-      return <p>{error?.message ?? 'Network error. Please check your internet connection.'} </p>;
+      return (
+        <p>
+          {error?.response?.data?.error ??
+            error?.message ??
+            'Network error. Please check your internet connection.'}{' '}
+        </p>
+      );
     else if (error.response) {
       const value = error.response.data;
       const result = transformObjectToArray(value);

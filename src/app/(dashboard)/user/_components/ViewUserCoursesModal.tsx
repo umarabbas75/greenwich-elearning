@@ -3,6 +3,10 @@ import { useAtom, useSetAtom } from 'jotai';
 import { ArrowLeft, Undo } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
+import { MdOutlineDone } from 'react-icons/md';
+import { MdOutlineClose } from 'react-icons/md';
+import { MdOutlinePaid } from 'react-icons/md';
+import { MdMoneyOff } from 'react-icons/md';
 
 import Grades from '@/app/(studentDashboard)/studentCourses/[courseId]/_components/Grades';
 import Modal from '@/components/common/Modal';
@@ -11,7 +15,12 @@ import Spinner from '@/components/common/Spinner';
 import TableComponent from '@/components/common/Table';
 import TableActions from '@/components/common/TableActions';
 import { useApiGet } from '@/lib/dashboard/client/user';
-import { unAssignCourseModalAtom, viewUserCoursesModal } from '@/store/modals';
+import {
+  coursePaymentConfirmModalAtom,
+  courseStatusConfirmModalAtom,
+  unAssignCourseModalAtom,
+  viewUserCoursesModal,
+} from '@/store/modals';
 import { Icons } from '@/utils/icon';
 /* const MAX_FILE_SIZE = 102400; */
 
@@ -19,6 +28,10 @@ const ViewUserCoursesModal = () => {
   const [selectedCourseId, setSelectedCourseId] = useState<any>(null);
   const setConfirmState = useSetAtom(unAssignCourseModalAtom);
   const [userCoursesState, setUserCoursesState] = useAtom(viewUserCoursesModal);
+  const setCourseStatusConfirm = useSetAtom(courseStatusConfirmModalAtom);
+
+  const setCoursePaymentConfirm = useSetAtom(coursePaymentConfirmModalAtom);
+
   const closeModal = () => {
     setUserCoursesState({
       ...userCoursesState,
@@ -49,6 +62,32 @@ const ViewUserCoursesModal = () => {
         >
           <Undo />
           Unassign Course
+        </span>
+
+        <span
+          onClick={() => {
+            setCourseStatusConfirm({
+              status: true,
+              data: row,
+            });
+          }}
+          className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
+        >
+          {row?.isActive === false ? <MdOutlineDone size={22} /> : <MdOutlineClose size={22} />}
+          {row?.isActive === false ? 'Activate Course' : 'Deactivate Course'}
+        </span>
+
+        <span
+          onClick={() => {
+            setCoursePaymentConfirm({
+              status: true,
+              data: row,
+            });
+          }}
+          className="dark-icon text-accent flex gap-2  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover"
+        >
+          {row?.isPaid === false ? <MdOutlinePaid size={22} /> : <MdMoneyOff size={22} />}
+          {row?.isPaid === false ? 'Amount Paid' : 'Amount Unpaid'}
         </span>
       </div>
     );
@@ -92,6 +131,19 @@ const ViewUserCoursesModal = () => {
       id: 'percentage',
       header: 'Completed',
       cell: (props) => <h1>{props.row.original.percentage?.toFixed(2)}%</h1>,
+      footer: (props) => props.column.id,
+    }),
+
+    columnHelper.accessor('isActive', {
+      id: 'isActive',
+      header: 'Course status',
+      cell: (props) => <h1>{props.row.original.isActive === true ? 'Active' : 'Inactive'}</h1>,
+      footer: (props) => props.column.id,
+    }),
+    columnHelper.accessor('isPaid', {
+      id: 'isPaid',
+      header: 'Payment status',
+      cell: (props) => <h1>{props.row.original.isPaid === true ? 'Paid' : 'Unpaid'}</h1>,
       footer: (props) => props.column.id,
     }),
 

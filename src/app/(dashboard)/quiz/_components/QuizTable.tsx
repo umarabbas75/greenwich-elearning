@@ -139,7 +139,7 @@ const UserTable: FC<any> = ({ data, pagination, setPagination, isLoading }) => {
           queryKey: ['get-quizzes'],
         });
       },
-      onError: (data) => {
+      onError: (data: any) => {
         toast({
           variant: 'destructive',
           title: 'Error ',

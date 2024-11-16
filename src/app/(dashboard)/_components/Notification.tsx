@@ -31,7 +31,7 @@ const Notification = () => {
   });
   const showNotificationDot = notificationsList?.filter((item: any) => item?.isRead === false)?.length;
 
-  const { mutate: markAsRead, isLoading: markingAsRead } = useApiMutation({
+  const { mutate: markAsRead } = useApiMutation({
     method: 'put',
     endpoint: `/notifications/markAsRead`,
     config: {
@@ -42,7 +42,6 @@ const Notification = () => {
       },
     },
   });
-  console.log({ markingAsRead });
 
   return (
     <DropdownMenu onOpenChange={onMenuChange} open={openMenu}>

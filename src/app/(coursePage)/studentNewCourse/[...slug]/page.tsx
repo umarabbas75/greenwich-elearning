@@ -10,7 +10,6 @@ import { useQueryClient } from 'react-query';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
-import { lastSelectedSectionAtom, selectedAnswerAtom } from '@/store/course';
 import { courseDrawerAtom } from '@/store/modals';
 import useWindowWidth from '@/utils/hooks/useWindowWidth';
 import { Icons } from '@/utils/icon';
@@ -18,7 +17,6 @@ import { Icons } from '@/utils/icon';
 import CourseReport from '../_components/CourseReport';
 import CourseSideBarDrawer from '../_components/CourseSideBarDrawer';
 import DiscussionForum from '../_components/DiscussionForum';
-import Question from '../_components/Question';
 import SideBarAllSection from '../_components/SideBarAllSection';
 
 const Page = () => {
@@ -28,8 +26,6 @@ const Page = () => {
   const [showDiscussion, setShowDiscussion] = useState(false);
   const [courseDrawerState, setCourseDrawerState] = useAtom(courseDrawerAtom);
   const [showCourseReport, setShowCourseReport] = useState(false);
-  const [selectedAnswer, setSelectedAnswer] = useAtom(selectedAnswerAtom);
-  const [lastSelectedSection, setLastSelectedSection] = useAtom(lastSelectedSectionAtom);
 
   const courseId = params.slug?.[0] || '';
   const chapterId = params.slug?.[1] || '';
@@ -44,39 +40,25 @@ const Page = () => {
     queryKey: ['get-users-sections-list', chapterId],
     config: {
       keepPreviousData: true,
-      select: (data) => {
+      select: (data: any) => {
         return data?.data;
       },
     },
   });
   const selectedItem = sectionsData?.find((item: any) => item?.id === sectionId);
   const lastSection = sectionsData?.[sectionsData?.length - 1];
-  const remainingQuestions = sectionsData?.filter((item: any) => item?.question);
-  console.log({ sectionsData, remainingQuestions }, remainingQuestions?.length);
-
-  const { data: courseData, isLoading: courseDataLoading } = useApiGet<any, Error>({
-    endpoint: `/courses/getAllAssignedCourses/${userData?.user.id}`,
-    queryKey: ['get-all-assigned-courses', userData?.user.id],
-    config: {
-      keepPreviousData: true,
-    },
-  });
 
   const { data: allPosts, isLoading: allPostsLoading } = useApiGet<any, Error>({
     endpoint: `/courses/posts/${courseId}`,
     queryKey: ['posts', courseId],
     config: {
-      select: (data) => {
+      select: (data: any) => {
         return data?.data?.data;
       },
     },
   });
 
-  const {
-    data: lastSeenSection,
-
-    isSuccess: lastSeenSectionSuccess,
-  } = useApiGet<any, Error>({
+  const { data: lastSeenSection, isSuccess: lastSeenSectionSuccess } = useApiGet<any, Error>({
     endpoint: `/courses/section/getLastSeen/${userData?.user.id}/${chapterId}`,
     queryKey: ['last-seen-section', userData?.user.id, chapterId],
     config: {
@@ -113,8 +95,7 @@ const Page = () => {
   const width = useWindowWidth();
 
   const renderButtonText = () => {
-    if (updatingProgress || checkingQuizAnswer) return 'updating...';
-    // if (updatingProgress || checkingQuizAnswer) return 'updating...';
+    if (updatingProgress) return 'updating...';
     if (lastSection?.id === selectedItem?.id) return 'End of lesson';
     return 'Next';
   };
@@ -123,38 +104,41 @@ const Page = () => {
     method: 'put',
     config: {
       onSuccess: () => {
-        try {
-          const selectedIndex = sectionsData?.findIndex((item: any) => item.id === sectionId);
-          const isLastSection = lastSection?.id === selectedItem?.id;
-          if (!isLastSection) {
-            const nextItem = sectionsData?.[(selectedIndex ?? 0) + 1];
-            !selectedItem?.question && setLastSelectedSection(sectionId);
-            setSelectedSection(nextItem?.id);
+        const selectedIndex = sectionsData?.findIndex((item: any) => item.id === sectionId);
+        const isLastSection = lastSection?.id === selectedItem?.id;
+        if (!isLastSection) {
+          const nextItem = sectionsData?.[(selectedIndex ?? 0) + 1];
 
-            queryClient.invalidateQueries({
-              queryKey: ['get-all-assigned-courses'],
-            });
+          const payload1 = {
+            chapterId: chapterId,
+            sectionId: nextItem?.id,
+            moduleId,
+            courseId,
+          };
+          updateLastSeenSection(payload1);
+          setSelectedSection(nextItem?.id);
 
-            queryClient.invalidateQueries({
-              queryKey: ['get-users-sections-list'],
-            });
+          queryClient.invalidateQueries({
+            queryKey: ['get-all-assigned-courses'],
+          });
 
-            toast({
-              variant: 'success',
-              description: 'Progress saved!',
-            });
-          } else {
-            setShowCourseReport(true);
-            queryClient.invalidateQueries({
-              queryKey: ['get-all-assigned-courses'],
-            });
+          queryClient.invalidateQueries({
+            queryKey: ['get-users-sections-list'],
+          });
 
-            queryClient.invalidateQueries({
-              queryKey: ['get-users-sections-list'],
-            });
-          }
-        } catch (error) {
-          console.log({ error });
+          toast({
+            variant: 'success',
+            description: 'Progress saved!',
+          });
+        } else {
+          setShowCourseReport(true);
+          queryClient.invalidateQueries({
+            queryKey: ['get-all-assigned-courses'],
+          });
+
+          queryClient.invalidateQueries({
+            queryKey: ['get-users-sections-list'],
+          });
         }
       },
       keepPreviousData: true,
@@ -166,69 +150,28 @@ const Page = () => {
     const isLastSection = lastSection?.id === selectedItem?.id;
     if (!isLastSection) {
       const nextItem = sectionsData?.[(selectedIndex ?? 0) + 1];
-      console.log('setting last section', sectionId);
-      !selectedItem?.question && setLastSelectedSection(sectionId);
+
+      const payload1 = {
+        chapterId: chapterId,
+        sectionId: nextItem?.id,
+        moduleId,
+        courseId,
+      };
+      updateLastSeenSection(payload1);
       setSelectedSection(nextItem?.id);
     } else {
       setShowCourseReport(true);
     }
   };
-  console.log('lastSelectedSection 0', lastSelectedSection);
-
-  const { mutate: checkQuizAnswer, isLoading: checkingQuizAnswer } = useApiMutation<any>({
-    endpoint: `/quizzes/checkQuiz`,
-    method: 'post',
-    config: {
-      onSuccess: (res) => {
-        console.log('lastSelectedSection 1', lastSelectedSection);
-        const selectedIndex = sectionsData?.findIndex((item: any) => item.id === lastSelectedSection);
-        console.log('lastSelectedSection selectedIndex', selectedIndex);
-        const nextItem = sectionsData?.[(selectedIndex ?? 0) + 1];
-        console.log('lastSelectedSection nextItem', nextItem);
-        setSelectedSection(nextItem?.id);
-        queryClient.invalidateQueries({
-          queryKey: ['get-users-sections-list'],
-        });
-        console.log('isAnswerCorrect', res?.data?.data?.isAnswerCorrect);
-        toast({
-          variant: res?.data?.data?.isAnswerCorrect ? 'success' : 'destructive',
-          description: res?.data?.data?.isAnswerCorrect
-            ? `Congratulations! You've given the correct answer.`
-            : `Sorry, that's not the correct answer.`,
-        });
-      },
-      onError: () => {
-        // queryClient.invalidateQueries({
-        //   queryKey: ['get-users-sections-list'],
-        // });
-      },
-    },
-  });
-  console.log({ selectedItem });
 
   const updateCourseProgress = () => {
-    if (selectedItem.question) {
-      if (!selectedAnswer) {
-        return toast({
-          variant: 'destructive',
-          title: 'Error ',
-          description: 'kindly select at least one option',
-        });
-      }
-      setSelectedAnswer('');
-      return checkQuizAnswer({
-        quizId: selectedItem?.id,
-        chapterId: chapterId,
-        answer: selectedAnswer,
-      });
-    }
-
     const payload = {
       courseId: courseId,
       chapterId: chapterId,
       sectionId: sectionId,
       moduleId: moduleId,
     };
+
     !selectedItem?.isCompleted ? updateProgress(payload) : goToNextSection();
   };
 
@@ -237,25 +180,21 @@ const Page = () => {
       <>
         {!showDiscussion && (
           <SideBarAllSection
-            courseData={courseData}
-            courseDataLoading={courseDataLoading}
             chapter={chapter}
             allSections={sectionsData}
-            setSelectedSection={setSelectedSection}
             selectedSection={selectedSection}
             isLoading={isLoading}
+            setSelectedSection={setSelectedSection}
           />
         )}
         {width < 1024 && courseDrawerState.status && (
           <CourseSideBarDrawer>
             <SideBarAllSection
-              courseData={courseData}
-              courseDataLoading={courseDataLoading}
               chapter={chapter}
               allSections={sectionsData}
-              setSelectedSection={setSelectedSection}
               selectedSection={selectedSection}
               isSidebar={true}
+              setSelectedSection={setSelectedSection}
             />
           </CourseSideBarDrawer>
         )}
@@ -308,20 +247,14 @@ const Page = () => {
           )}
 
           {showCourseReport ? (
-            <CourseReport />
+            <CourseReport setShowCourseReport={setShowCourseReport} />
           ) : (
             <>
               <div className="flex-1 overflow-y-auto mt-4 px-2 md:px-8">
                 {isLoading ? (
                   <MainContentLoader />
-                ) : selectedItem?.question ? (
-                  <Question questionData={selectedItem} />
                 ) : (
                   <div>
-                    <p className="mb-4">
-                      You have earned {chapter?.quizzes?.length - (remainingQuestions?.length ?? 0)} point(s)
-                      out of {chapter?.quizzes?.length} point(s) thus far.
-                    </p>
                     <div
                       className="text-[15px]"
                       contentEditable="false"
@@ -333,16 +266,16 @@ const Page = () => {
 
               <div className="flex justify-center gap-4 py-4 border-t border-gray-300">
                 <Button
-                  disabled={updatingProgress || checkingQuizAnswer}
-                  onClick={() => !updatingProgress && !checkingQuizAnswer && updateCourseProgress()}
+                  disabled={updatingProgress}
+                  onClick={() => !updatingProgress && updateCourseProgress()}
                 >
                   {renderButtonText()}
                 </Button>
+
+                <Button variant="outline">Start Quiz</Button>
               </div>
             </>
           )}
-
-          {/* {isUpdateError && <AlertDestructive error={updateError} />} */}
         </div>
       </>
       {showDiscussion && <DiscussionForum allPosts={allPosts} setShowDiscussion={setShowDiscussion} />}

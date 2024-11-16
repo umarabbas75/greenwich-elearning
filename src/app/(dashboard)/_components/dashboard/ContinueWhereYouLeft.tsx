@@ -17,7 +17,6 @@ const ContinueWhereYouLeft = () => {
       keepPreviousData: true,
     },
   });
-  console.log({ isLoading });
   if (isLoading) {
     return <SkeletonLoader />;
   }

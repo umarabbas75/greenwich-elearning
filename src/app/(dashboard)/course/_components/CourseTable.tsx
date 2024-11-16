@@ -159,8 +159,7 @@ const CourseTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) 
           queryKey: ['get-courses'],
         });
       },
-      onError: (data) => {
-        console.log({ data });
+      onError: (data: any) => {
         toast({
           variant: 'destructive',
           title: 'Error ',

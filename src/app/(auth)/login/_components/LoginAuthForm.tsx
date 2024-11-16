@@ -29,7 +29,6 @@ export const LoginAuthForm = () => {
       email: state.email,
       password: state.password,
     });
-
     if (res?.error) {
       toast({
         variant: 'destructive',
@@ -37,7 +36,7 @@ export const LoginAuthForm = () => {
         //   'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4',
         // ),
         //title: 'Error',
-        description: 'Incorrect email/password',
+        description: res?.error ?? 'Incorrect email/password',
       });
     }
     setIsLoading(false);

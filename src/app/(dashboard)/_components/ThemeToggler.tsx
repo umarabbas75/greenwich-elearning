@@ -16,7 +16,6 @@ const ThemeToggler = () => {
   const onMenuChange = () => {
     setOpenMenu((prev) => !prev);
   };
-  console.log({ theme });
   if (!mounted) {
     return (
       <div className=" dark-icon border  rounded  p-2 text-accent transition duration-300  hover:bg-dark-icon-hover hover:text-primary">

@@ -27,6 +27,7 @@ const AssignCoursesModal = () => {
   const [assignCoursesState, setAssignCoursesState] = useAtom(assignCoursesModalAtom);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
   const {
     mutate: assignCourse,
     isLoading: assigningCourse,
@@ -118,11 +119,6 @@ const AssignCoursesModal = () => {
                           getOptionLabel={(val: Course) => val.title}
                           getOptionValue={(val: Course) => val.id}
                           isOptionDisabled={(option) => {
-                            console.log(
-                              { option },
-                              assignedCourses,
-                              assignedCourses?.data?.some((el: any) => el?.id === option.id),
-                            );
                             return assignedCourses?.data?.some((el: any) => el?.id === option.id);
                           }}
                         />

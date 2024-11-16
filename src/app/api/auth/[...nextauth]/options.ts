@@ -38,9 +38,12 @@ export const options = {
           const userData = await res.json();
 
           if (!res.ok) {
+            if (userData?.error) {
+              throw new Error(userData?.error);
+            }
             throw new Error('Something went wrong');
           }
-          console.log({ userData }, userData?.data?.user, res.ok);
+
           return {
             ...userData.data.user,
             access: userData?.data.jwt,

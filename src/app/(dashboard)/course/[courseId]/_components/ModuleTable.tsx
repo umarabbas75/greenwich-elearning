@@ -134,7 +134,7 @@ const ModuleTable: FC<Props> = ({ data, pagination, setPagination, isLoading, co
           queryKey: ['get-modules', courseId],
         });
       },
-      onError: (data) => {
+      onError: (data: any) => {
         toast({
           variant: 'destructive',
           title: 'Error ',

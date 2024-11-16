@@ -20,9 +20,6 @@ const Resources = ({ resources, resourcesOverview }: any) => {
               fileName={item?.name}
               fileType={item?.type}
               file={item?.file}
-              onClick={() => {
-                console.log('item', item);
-              }}
               seen={false}
             />
           );

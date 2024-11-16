@@ -6,14 +6,22 @@ import React from 'react';
 import Skeleton from 'react-loading-skeleton';
 
 import ProgressBar from '@/components/common/Progress';
+import { useApiGet } from '@/lib/dashboard/client/user';
 import { courseDrawerAtom } from '@/store/modals';
 
-const ProgressCourse = ({ courseData, courseDataLoading }: any) => {
+const ProgressCourse = () => {
   const setCourseDrawerState = useSetAtom(courseDrawerAtom);
   const params = useParams();
   const courseId = params.slug?.[0] || '';
 
-  const course = courseData?.data.find((item: any) => item.id === courseId);
+  const { data: course, isLoading: courseDataLoading } = useApiGet<any, Error>({
+    endpoint: `/courses/${courseId}`,
+    queryKey: ['course-detail', courseId],
+    config: {
+      keepPreviousData: true,
+      select: (res) => res?.data?.data,
+    },
+  });
 
   const router = useRouter();
 
@@ -94,7 +102,7 @@ const ProgressCourse = ({ courseData, courseDataLoading }: any) => {
             Back
           </p>
           <X
-            className="h-4 w-4 cursor-pointer"
+            className="h-4 w-4 cursor-pointer block lg:hidden"
             onClick={() => {
               setCourseDrawerState({
                 data: null,
@@ -104,7 +112,7 @@ const ProgressCourse = ({ courseData, courseDataLoading }: any) => {
           />
         </div>
 
-        <h1 className="text-2xl font-bold mt-4">{course?.title}</h1>
+        <h1 className="text-xl font-bold mt-4">{course?.title}</h1>
         <div className="mt-4">
           <ProgressBar percentage={parseInt(course?.percentage)} className="h-1" />
           <div className="mt-1 flex gap-1 items-center">

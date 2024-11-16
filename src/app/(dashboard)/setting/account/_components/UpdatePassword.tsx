@@ -55,20 +55,13 @@ const UpdatePassword = ({ isEdit }: { isEdit: boolean }) => {
           description: 'Your password has been updated successfully',
         });
       },
-      onError: (error) => {
+      onError: (error: any) => {
         toast({
           variant: 'destructive',
           // title: 'Success ',
           description: error?.response?.data?.error,
         });
       },
-      // onError: (data) => {
-      //   toast({
-      //     variant: 'destructive',
-      //     title: 'Error ',
-      //     description: data?.response?.data?.error ?? 'Some error occured',
-      //   });
-      // },
     },
   });
 

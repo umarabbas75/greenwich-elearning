@@ -6,6 +6,12 @@ import { sidebarMenu } from './app/(dashboard)/_components/menu';
 type RoleType = 'user' | 'admin';
 export default withAuth(
   async function middleware(req) {
+    const publicPages = ['/home', '/publicCourses/:id', '/signUp', '/payment'];
+    const isPublicPage =
+      publicPages.includes(req.nextUrl.pathname) || req.nextUrl.pathname.startsWith('/publicCourses/');
+    if (isPublicPage) {
+      return null;
+    }
     const token: any = await getToken({ req });
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URI}/auth/me`, {
       method: 'GET',
@@ -15,14 +21,13 @@ export default withAuth(
       },
     });
     const data = await res?.json();
-    console.log({ data, token });
 
     const isAuth = !!token && data?.statusCode !== 403;
     const isAuthPage = req.nextUrl.pathname.startsWith('/login');
 
     // Check if user is already authenticated and trying to visit login page
     if (isAuthPage && isAuth) {
-      return NextResponse.redirect(new URL('/?expire=true', req.url));
+      return NextResponse.redirect(new URL('/', req.url));
     }
 
     const pathname = req.nextUrl.pathname; // "/dashboard"

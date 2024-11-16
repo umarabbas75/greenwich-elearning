@@ -57,7 +57,7 @@ const Grades = ({
   const courseProgress = grades?.length > 0 ? calculateTotalContribution(grades) : 0;
   const renderQuizGrade = (row: any) => {
     const percentage = (row._count?.QuizAnswer * 100) / row?._count?.quizzes;
-    return isNaN(percentage) ? 0 : percentage;
+    return isNaN(percentage) ? 0 : percentage?.toFixed(2);
   };
 
   const renderStatus = (row: any) => {
@@ -65,7 +65,6 @@ const Grades = ({
       row?._count?.LastSeenSection > 0 ? (+row?.progress === 100 ? 'completed' : 'Inprogress') : 'notOpened';
     return status;
   };
-  console.log({ grades });
 
   return (
     <div>

@@ -11,7 +11,13 @@ import TableSkeletonLoader from '@/components/common/TableSkeletonLoader';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
-import { unAssignCourseModalAtom, userModalAtom, viewUserCoursesModal } from '@/store/modals';
+import {
+  coursePaymentConfirmModalAtom,
+  courseStatusConfirmModalAtom,
+  unAssignCourseModalAtom,
+  userModalAtom,
+  viewUserCoursesModal,
+} from '@/store/modals';
 
 import UserModal from './_components/UserModal';
 import UserTable from './_components/UserTable';
@@ -27,6 +33,7 @@ export type UserData = {
   createdAt: string;
   updatedAt: string;
   courses: string[];
+  status: string;
 };
 
 export type UsersDataResponse = {
@@ -36,6 +43,8 @@ export type UsersDataResponse = {
 };
 const Page = () => {
   const [confirmState, setConfirmState] = useAtom(unAssignCourseModalAtom);
+  const [courseStatusConfirm, setCourseStatusConfirm] = useAtom(courseStatusConfirmModalAtom);
+  const [coursePaymentConfirm, setCoursePaymentConfirm] = useAtom(coursePaymentConfirmModalAtom);
 
   const [userCoursesState] = useAtom(viewUserCoursesModal);
 
@@ -74,7 +83,71 @@ const Page = () => {
           queryKey: ['get-user', userCoursesState?.data?.id],
         });
       },
-      onError: (data) => {
+      onError: (data: any) => {
+        toast({
+          variant: 'destructive',
+          title: 'Error ',
+          description: data?.response?.data?.error ?? 'Some error occurred',
+        });
+      },
+    },
+  });
+
+  const { mutate: updateCourseStatus, isLoading: updatingCourseStatus } = useApiMutation({
+    method: 'put',
+    endpoint: `/courses/updateStatus/user`,
+    config: {
+      onSuccess: () => {
+        setCourseStatusConfirm({
+          ...courseStatusConfirm,
+          status: false,
+          data: null,
+        });
+        toast({
+          variant: 'success',
+          title: 'Success ',
+          description: 'Course status updated successfully',
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['get-users'],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['get-user', userCoursesState?.data?.id],
+        });
+      },
+      onError: (data: any) => {
+        toast({
+          variant: 'destructive',
+          title: 'Error ',
+          description: data?.response?.data?.error ?? 'Some error occurred',
+        });
+      },
+    },
+  });
+
+  const { mutate: updatePaymentStatus, isLoading: updatingPaymentStatus } = useApiMutation({
+    method: 'put',
+    endpoint: `/courses/updatePayment/user`,
+    config: {
+      onSuccess: () => {
+        setCoursePaymentConfirm({
+          ...coursePaymentConfirm,
+          status: false,
+          data: null,
+        });
+        toast({
+          variant: 'success',
+          title: 'Success ',
+          description: 'Course payment status updated successfully',
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['get-users'],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['get-user', userCoursesState?.data?.id],
+        });
+      },
+      onError: (data: any) => {
         toast({
           variant: 'destructive',
           title: 'Error ',
@@ -145,6 +218,56 @@ const Page = () => {
           secondaryAction={{
             label: 'Cancel',
             onClick: () => setConfirmState({ status: false, data: null }),
+          }}
+        />
+      )}
+
+      {courseStatusConfirm.status && (
+        <ConfirmationModal
+          open={courseStatusConfirm.status}
+          onClose={() => setCourseStatusConfirm({ status: false, data: null })}
+          title={'Update Course Status'}
+          content={`Are you sure you want to update course status?`}
+          primaryAction={{
+            label: 'Update',
+            onClick: () => {
+              const payload = {
+                userId: userCoursesState?.data?.id,
+                courseId: courseStatusConfirm?.data?.id,
+                isActive: courseStatusConfirm?.data?.isActive === false ? true : false,
+              };
+              updateCourseStatus(payload);
+            },
+            loading: updatingCourseStatus,
+          }}
+          secondaryAction={{
+            label: 'Cancel',
+            onClick: () => setCourseStatusConfirm({ status: false, data: null }),
+          }}
+        />
+      )}
+
+      {coursePaymentConfirm.status && (
+        <ConfirmationModal
+          open={coursePaymentConfirm.status}
+          onClose={() => setCoursePaymentConfirm({ status: false, data: null })}
+          title={'Update Payment Status'}
+          content={`Are you sure you want to update payment status?`}
+          primaryAction={{
+            label: 'Update',
+            onClick: () => {
+              const payload = {
+                userId: userCoursesState?.data?.id,
+                courseId: coursePaymentConfirm?.data?.id,
+                isPaid: coursePaymentConfirm?.data?.isPaid === false ? true : false,
+              };
+              updatePaymentStatus(payload);
+            },
+            loading: updatingPaymentStatus,
+          }}
+          secondaryAction={{
+            label: 'Cancel',
+            onClick: () => setCoursePaymentConfirm({ status: false, data: null }),
           }}
         />
       )}

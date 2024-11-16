@@ -84,7 +84,6 @@ const AssignQuizModal = () => {
       select: (res) => res?.data?.data,
     },
   });
-  console.log({ assignedQuizzes });
   const onSubmit = (values: UserFormTypes) => {
     const payload = {
       quizId: (values.quizzes as any).value,

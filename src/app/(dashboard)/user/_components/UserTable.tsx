@@ -3,6 +3,8 @@ import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from 
 import { useAtom } from 'jotai';
 import { Eye, Redo } from 'lucide-react';
 import { FC } from 'react';
+import { FaUserAlt } from 'react-icons/fa';
+import { FaUserAltSlash } from 'react-icons/fa';
 import { useQueryClient } from 'react-query';
 
 import ConfirmationModal from '@/components/common/Modal/ConfirmationModal';
@@ -14,6 +16,7 @@ import { useApiMutation } from '@/lib/dashboard/client/user';
 import {
   assignCoursesModalAtom,
   confirmationModalAtom,
+  updateConfirmationUpdateStatusModalAtom,
   updatePasswordModalAtom,
   userModalAtom,
   viewUserCoursesModal,
@@ -42,8 +45,26 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
   const [userCoursesState, setUserCoursesState] = useAtom(viewUserCoursesModal);
   const [assignCoursesState, setAssignCoursesState] = useAtom(assignCoursesModalAtom);
   const [confirmState, setConfirmState] = useAtom(confirmationModalAtom);
+  const [confirmStatusUpdate, setConfirmStatusUpdate] = useAtom(updateConfirmationUpdateStatusModalAtom);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  const { mutate: updateUserStatus, isLoading: updatingStatus } = useApiMutation<any>({
+    endpoint: `/users/${confirmStatusUpdate?.data?.id}`,
+    method: 'put',
+    config: {
+      onSuccess: () => {
+        setConfirmStatusUpdate({ status: false, data: null });
+        queryClient.invalidateQueries({ queryKey: ['get-users'] });
+        toast({
+          variant: 'success',
+          // title: 'Success ',
+          description: 'Status updated successfully',
+        });
+      },
+    },
+  });
+
   const renderActions = (row: UserData) => {
     return (
       <div className="flex flex-col p-2 gap-1 ">
@@ -98,8 +119,33 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
           <Icons iconName="delete" className="w-6 h-6 cursor-pointer " />
           Delete
         </span>
+
+        <span
+          className="dark-icon text-accent flex gap-4  p-2 font-medium transition-all easy-in duration-400 cursor-pointer  hover:text-primary hover:bg-light-hover items-center"
+          onClick={(e) => {
+            const { id } = row || {};
+            setConfirmStatusUpdate({
+              status: true,
+              data: { id, status: row?.status === 'active' ? 'inactive' : 'active' },
+            });
+            e.stopPropagation();
+          }}
+        >
+          {row?.status === 'active' ? <FaUserAltSlash /> : <FaUserAlt />}
+
+          {row.status === 'active' ? 'Inactive' : 'Active'}
+        </span>
       </div>
     );
+  };
+
+  const renderStatus = (status: any) => {
+    if (status === 'active') {
+      return <div className="bg-[#05eb7412] text-green-600 py-3 px-4 rounded-[40px] w-fit">Active</div>;
+    }
+    if (status === 'inactive') {
+      return <div className="bg-[#0000000d] text-red-600 py-3 px-4 rounded-[40px] w-fit">Inactive</div>;
+    }
   };
 
   const columns = [
@@ -179,6 +225,24 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
       ),
       footer: (props) => props.column.id,
     }),
+    columnHelper.accessor('status', {
+      id: 'status',
+      header: 'Status',
+      cell: (props) => (
+        <h1
+        // className="cursor-pointer text-themeBlue dark:text-blue-500 whitespace-nowrap"
+        // onClick={() => {
+        //   setUserCoursesState({
+        //     status: true,
+        //     data: props.row.original,
+        //   });
+        // }}
+        >
+          {renderStatus(props.row.original.status)}
+        </h1>
+      ),
+      footer: (props) => props.column.id,
+    }),
     {
       id: 'actions',
       cell: (props: CellContext<UserData, string>) => (
@@ -219,7 +283,7 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
           queryKey: ['get-users'],
         });
       },
-      onError: (data) => {
+      onError: (data: any) => {
         toast({
           variant: 'destructive',
           title: 'Error ',
@@ -260,6 +324,26 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
           secondaryAction={{
             label: 'Cancel',
             onClick: () => setConfirmState({ status: false, data: null }),
+          }}
+        />
+      )}
+
+      {confirmStatusUpdate.status && (
+        <ConfirmationModal
+          open={confirmStatusUpdate.status}
+          onClose={() => setConfirmStatusUpdate({ status: false, data: null })}
+          title={'Update user status'}
+          content={`Are you sure you want to update user status?`}
+          primaryAction={{
+            label: 'Update',
+            onClick: () => {
+              updateUserStatus(confirmStatusUpdate.data);
+            },
+            loading: updatingStatus,
+          }}
+          secondaryAction={{
+            label: 'Cancel',
+            onClick: () => setConfirmStatusUpdate({ status: false, data: null }),
           }}
         />
       )}

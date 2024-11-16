@@ -7,10 +7,8 @@ const TableActions = ({ children }: { children: React.ReactNode }) => {
   const [openMenu, setOpenMenu] = useState(false);
 
   const onMenuChange = () => {
-    console.log({ onMenuChange });
     setOpenMenu((prev) => !prev);
   };
-  console.log({ openMenu });
 
   return (
     <DropdownMenu onOpenChange={onMenuChange} open={openMenu}>

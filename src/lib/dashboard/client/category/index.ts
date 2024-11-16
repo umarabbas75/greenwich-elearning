@@ -36,7 +36,7 @@ export const useCategoryData = ({ variables, onSuccessCallback, onErrorCallback 
   return useQuery(['category', variables?.id], () => fetchCategory(axiosAuth, variables?.id), {
     enabled: variables?.id ? true : false,
 
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       onSuccessCallback && onSuccessCallback(data);
     },
     onError: (error) => {

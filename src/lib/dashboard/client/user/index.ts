@@ -171,7 +171,7 @@ export function useApiGet<TData = any, TError = any>({
 type ApiMutationCallProps<TData = any, TError = any> = {
   endpoint: string;
   method: 'post' | 'put' | 'delete';
-  config?: UseQueryOptions<TData, TError>;
+  config?: UseQueryOptions<TData, TError> | any;
   queryKey?: any[];
   axiosConfig?: AxiosRequestConfig;
   sendDataInParams?: boolean;

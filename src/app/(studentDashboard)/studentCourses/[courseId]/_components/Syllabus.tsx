@@ -22,9 +22,6 @@ const Syllabus = ({ syllabusOverview, syllabus }: any) => {
               fileName={item?.name || 'Syllabus'}
               fileType={extractFileType(item?.file)?.toUpperCase()}
               file={item?.file}
-              onClick={() => {
-                console.log('item', item);
-              }}
               seen={false}
             />
           );

@@ -132,7 +132,7 @@ const SectionTable: FC<Props> = ({ data, pagination, setPagination, isLoading })
           queryKey: ['get-sections', chapterId],
         });
       },
-      onError: (data) => {
+      onError: (data: any) => {
         queryClient.invalidateQueries({
           queryKey: ['get-sections', chapterId],
         });
