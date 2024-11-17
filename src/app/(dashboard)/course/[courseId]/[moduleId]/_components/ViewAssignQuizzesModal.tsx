@@ -67,7 +67,7 @@ const ViewAssignQuizzesModal = () => {
       id: 'options',
       header: 'Options',
       cell: (props) => (
-        <h1>
+        <div className="flex gap-2 flex-wrap">
           {props.row.original.options?.map((item: any) => {
             return (
               <span key={item} className="inline-block p-2 border rounded-sm mx-1">
@@ -75,7 +75,7 @@ const ViewAssignQuizzesModal = () => {
               </span>
             );
           })}
-        </h1>
+        </div>
       ),
       footer: (props) => props.column.id,
     }),
@@ -104,6 +104,7 @@ const ViewAssignQuizzesModal = () => {
         closeModal();
       }}
       title={'Assigned Quizzes'}
+      className="min-w-[90%] w-full md:min-w-[55rem]  md:m-0"
     >
       {fetchingAssignedQuizzes ? (
         <Spinner />

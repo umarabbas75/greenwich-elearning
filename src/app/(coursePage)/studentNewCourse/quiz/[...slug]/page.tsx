@@ -1,41 +1,37 @@
 'use client';
 import { useAtom } from 'jotai';
 import { Menu } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
-import React, { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import React, { useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import { useQueryClient } from 'react-query';
 
-import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
 import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
 import { courseDrawerAtom } from '@/store/modals';
 import useWindowWidth from '@/utils/hooks/useWindowWidth';
 import { Icons } from '@/utils/icon';
 
-import CourseReport from '../_components/CourseReport';
-import CourseSideBarDrawer from '../_components/CourseSideBarDrawer';
-import DiscussionForum from '../_components/DiscussionForum';
-import SideBarAllSection from '../_components/SideBarAllSection';
-import StartQuiz from '../_components/StartQuiz';
+import Question from '../_components/Question';
+import { selectedAnswerAtom } from '@/store/course';
+import { toast } from '@/components/ui/use-toast';
+import Spinner from '@/components/common/Spinner';
+import { useQueryClient } from 'react-query';
+import QuizReport from '../_components/QuizReport';
+import SideBarAllSection from '../../_components/SideBarAllSection';
+import CourseSideBarDrawer from '../../_components/CourseSideBarDrawer';
+import DiscussionForum from '../../_components/DiscussionForum';
 
 const Page = () => {
   const params = useParams();
-  const router = useRouter();
-  const { data: userData } = useSession();
   const [showDiscussion, setShowDiscussion] = useState(false);
   const [courseDrawerState, setCourseDrawerState] = useAtom(courseDrawerAtom);
-  const [showCourseReport, setShowCourseReport] = useState(false);
-
+  const [selectedQuiz, setSelectedQuiz] = useState<any>({ index: 1, data: null });
   const courseId = params.slug?.[0] || '';
   const chapterId = params.slug?.[1] || '';
-  const moduleId = params.slug?.[2] || '';
   const sectionId = params.slug?.[3] || '';
-  const queryClient = useQueryClient();
-
+  const [selectedAnswer, setSelectedAnswer] = useAtom(selectedAnswerAtom);
+  const [showQuizReport, setShowQuizReport] = useState(false);
   const [selectedSection, setSelectedSection] = useState(sectionId);
-
+  const queryClient = useQueryClient();
   const { data: { data: sectionsData, chapter } = {}, isLoading } = useApiGet<any, Error>({
     endpoint: `/courses/user/module/chapter/allSections/${chapterId}/${courseId}`,
     queryKey: ['get-users-sections-list', chapterId],
@@ -46,8 +42,6 @@ const Page = () => {
       },
     },
   });
-  const selectedItem = sectionsData?.find((item: any) => item?.id === sectionId);
-  const lastSection = sectionsData?.[sectionsData?.length - 1];
 
   const { data: allPosts, isLoading: allPostsLoading } = useApiGet<any, Error>({
     endpoint: `/courses/posts/${courseId}`,
@@ -59,125 +53,84 @@ const Page = () => {
     },
   });
 
-  const { data: lastSeenSection, isSuccess: lastSeenSectionSuccess } = useApiGet<any, Error>({
-    endpoint: `/courses/section/getLastSeen/${userData?.user.id}/${chapterId}`,
-    queryKey: ['last-seen-section', userData?.user.id, chapterId],
+  const {
+    data: allQuizzes,
+    isLoading: quizzesLoading,
+    isRefetching,
+  } = useApiGet<any, Error>({
+    endpoint: `/quizzes/getAllAssignQuizzes/${chapterId}`,
+    queryKey: ['get-chapter-quizzes', chapterId],
     config: {
-      select: (res) => res?.data?.data,
-    },
-  });
-  const { mutate: updateLastSeenSection } = useApiMutation<any>({
-    endpoint: `/courses/section/updateLastSeen/`,
-    method: 'post',
-  });
-
-  useEffect(() => {
-    if (lastSeenSectionSuccess) {
-      if (selectedSection) {
-        router.replace(`/studentNewCourse/${courseId}/${chapterId}/${moduleId}/${selectedSection}`);
-      } else {
-        if (lastSeenSection?.sectionId) {
-          setSelectedSection(lastSeenSection?.sectionId);
+      keepPreviousData: true,
+      select: (data: any) => {
+        return data?.data;
+      },
+      onSuccess: (data: any) => {
+        const isAllQuestionsAreAnswered = data?.data?.every((item: any) => item?.userAnswered === true);
+        console.log({ data, isAllQuestionsAreAnswered });
+        if (!isAllQuestionsAreAnswered) {
+          const firstUnAnsweredQuiz = data?.data?.find((item: any) => item?.userAnswered === false);
+          const firstUnAnsweredQuizIndex = data?.data?.findIndex((item: any) => item?.userAnswered === false);
+          setSelectedQuiz({ index: firstUnAnsweredQuizIndex, data: firstUnAnsweredQuiz });
         } else {
-          const firstSection = sectionsData?.[0];
-          const payload = {
-            chapterId: chapterId,
-            sectionId: firstSection?.id,
-            moduleId,
-            courseId,
-          };
-          updateLastSeenSection(payload);
-          setSelectedSection(firstSection?.id);
-        }
-      }
-    }
-  }, [selectedSection, sectionsData, lastSeenSectionSuccess, lastSeenSection]);
-
-  const width = useWindowWidth();
-
-  const renderButtonText = () => {
-    if (updatingProgress) return 'updating...';
-    if (lastSection?.id === selectedItem?.id) return 'End of lesson';
-    return 'Next';
-  };
-  const { mutate: updateProgress, isLoading: updatingProgress } = useApiMutation<any>({
-    endpoint: `/courses/updateUserChapter/Progress`,
-    method: 'put',
-    config: {
-      onSuccess: () => {
-        const selectedIndex = sectionsData?.findIndex((item: any) => item.id === sectionId);
-        const isLastSection = lastSection?.id === selectedItem?.id;
-        if (!isLastSection) {
-          const nextItem = sectionsData?.[(selectedIndex ?? 0) + 1];
-
-          const payload1 = {
-            chapterId: chapterId,
-            sectionId: nextItem?.id,
-            moduleId,
-            courseId,
-          };
-          updateLastSeenSection(payload1);
-          setSelectedSection(nextItem?.id);
-
-          queryClient.invalidateQueries({
-            queryKey: ['get-all-assigned-courses'],
-          });
-
-          queryClient.invalidateQueries({
-            queryKey: ['get-users-sections-list'],
-          });
-
-          toast({
-            variant: 'success',
-            description: 'Progress saved!',
-          });
-        } else {
-          setShowCourseReport(true);
-          queryClient.invalidateQueries({
-            queryKey: ['get-all-assigned-courses'],
-          });
-
-          queryClient.invalidateQueries({
-            queryKey: ['get-users-sections-list'],
-          });
+          setShowQuizReport(true);
         }
       },
-      keepPreviousData: true,
     },
   });
+  console.log({ allQuizzes, quizzesLoading, isRefetching });
+  const lastQuestion = allQuizzes?.data?.[allQuizzes?.data?.length - 1];
 
-  const goToNextSection = () => {
-    const selectedIndex = sectionsData?.findIndex((item: any) => item.id === sectionId);
-    const isLastSection = lastSection?.id === selectedItem?.id;
-    if (!isLastSection) {
-      const nextItem = sectionsData?.[(selectedIndex ?? 0) + 1];
+  const width = useWindowWidth();
+  console.log({ selectedQuiz });
+  console.log({ selectedAnswer });
 
-      const payload1 = {
-        chapterId: chapterId,
-        sectionId: nextItem?.id,
-        moduleId,
-        courseId,
-      };
-      updateLastSeenSection(payload1);
-      setSelectedSection(nextItem?.id);
-    } else {
-      setShowCourseReport(true);
-    }
-  };
+  const { mutate: checkQuizAnswer, isLoading: checkingQuizAnswer } = useApiMutation<any>({
+    endpoint: `/quizzes/checkQuiz`,
+    method: 'post',
+    config: {
+      onSuccess: (res: any, variables: any) => {
+        try {
+          const selectedIndex = allQuizzes?.data?.findIndex((item: any) => item.id === variables?.quizId);
+          console.log({ selectedIndex });
+          const isLastQuestion = lastQuestion?.id === selectedQuiz?.data?.id;
+          if (!isLastQuestion) {
+            const nextQuestion = allQuizzes?.data?.[(selectedIndex ?? 0) + 1];
 
-  const updateCourseProgress = () => {
-    const payload = {
-      courseId: courseId,
-      chapterId: chapterId,
-      sectionId: sectionId,
-      moduleId: moduleId,
-    };
+            console.log({ nextQuestion });
+            setSelectedQuiz(nextQuestion);
+            console.log({ selectedIndex, allQuizzes, nextQuestion, variables, lastQuestion, isLastQuestion });
+          } else {
+            setShowQuizReport(true);
+          }
 
-    !selectedItem?.isCompleted ? updateProgress(payload) : goToNextSection();
-  };
+          queryClient.invalidateQueries({
+            queryKey: ['get-chapter-quizzes', chapterId],
+          });
+          toast({
+            variant: res?.data?.data?.isAnswerCorrect ? 'success' : 'destructive',
+            description: res?.data?.data?.isAnswerCorrect
+              ? `The answer is correct.`
+              : `The answer is incorrect.`,
+          });
+          setSelectedAnswer(null);
+        } catch (error) {
+          console.log({ error });
+        }
+      },
+    },
+  });
 
   return (
     <div className="flex gap-4 min-h-full p-4">
+      {checkingQuizAnswer && (
+        <div className="absolute top-0 left-0 bottom-0 right-0 h-screen w-screen">
+          <div className="h-full w-full flex items-center justify-center">
+            <Spinner />
+          </div>
+        </div>
+      )}
+
       <>
         {!showDiscussion && (
           <SideBarAllSection
@@ -246,38 +199,39 @@ const Page = () => {
             </div>
           )}
 
-          {showCourseReport ? (
-            <CourseReport setShowCourseReport={setShowCourseReport} />
+          {showQuizReport ? (
+            <QuizReport allQuizzes={allQuizzes} />
           ) : (
-            <>
-              <div className="flex-1 overflow-y-auto mt-4 px-2 md:px-8">
-                {isLoading ? (
-                  <MainContentLoader />
-                ) : (
-                  <div>
-                    <div
-                      className="text-[15px]"
-                      contentEditable="false"
-                      dangerouslySetInnerHTML={{ __html: selectedItem?.description }}
-                    ></div>
-                  </div>
-                )}
-              </div>
+            <div className="container px-20">
+              <h1 className="mt-12 text-sm text-gray-500 mb-2">
+                QUESTION {selectedQuiz?.index + 1} of {allQuizzes?.data?.length}{' '}
+              </h1>
 
-              <div className="flex justify-center gap-4 py-4 border-t border-gray-300">
-                <Button
-                  disabled={updatingProgress}
-                  onClick={() => !updatingProgress && updateCourseProgress()}
-                >
-                  {renderButtonText()}
-                </Button>
+              {quizzesLoading || isRefetching ? 'loading...' : <Question questionData={selectedQuiz?.data} />}
 
-                <StartQuiz />
-              </div>
-            </>
+              <button
+                onClick={() => {
+                  if (!checkingQuizAnswer) {
+                    checkQuizAnswer({
+                      quizId: selectedQuiz?.data?.id,
+                      chapterId: chapterId,
+                      answer: selectedAnswer,
+                      isAnswered: true,
+                    });
+                  }
+                }}
+                disabled={!selectedAnswer ? true : false}
+                className={`bg-[#36394D] mt-4 text-white flex items-center gap-1 justify-center rounded-sm  px-4 py-2 ${
+                  !selectedAnswer ? 'opacity-20' : 'opacity-100'
+                }`}
+              >
+                {checkingQuizAnswer ? 'Confirming...' : 'Confirm'}
+              </button>
+            </div>
           )}
         </div>
       </>
+
       {showDiscussion && <DiscussionForum allPosts={allPosts} setShowDiscussion={setShowDiscussion} />}
     </div>
   );
@@ -354,23 +308,6 @@ const HeaderLoader = () => {
           />
         </h1>
       </div>
-    </div>
-  );
-};
-
-const MainContentLoader = () => {
-  return (
-    <div className="flex flex-col gap-4">
-      {[...Array(5)].map((_, index) => (
-        <h1 key={index} className="text-2xl font-bold">
-          <Skeleton
-            width="100%"
-            height={22}
-            baseColor="var(--skeleton-base-color)"
-            highlightColor="var(--skeleton-highlight-color)"
-          />
-        </h1>
-      ))}
     </div>
   );
 };

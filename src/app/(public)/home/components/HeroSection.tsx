@@ -34,7 +34,7 @@ const HeroSection = () => {
         <div>
           <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
             <Image
-              src="/assets/images/home/e-learning-1.jpg"
+              src="/assets/images/home/banner/e-learning-1.jpg"
               alt="Banner Image"
               layout="fill" // makes the image cover the full width and height
               objectFit="cover" // ensures the image covers the container without being stretched
@@ -68,7 +68,7 @@ const HeroSection = () => {
         <div>
           <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
             <Image
-              src="/assets/images/home/e-learning-2.jpg"
+              src="/assets/images/home/banner/e-learning-2.jpg"
               alt="Banner Image"
               layout="fill" // makes the image cover the full width and height
               objectFit="cover" // ensures the image covers the container without being stretched
@@ -102,7 +102,7 @@ const HeroSection = () => {
         <div>
           <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
             <Image
-              src="/assets/images/home/e-learning-3.jpg"
+              src="/assets/images/home/banner/e-learning-3.jpg"
               alt="Banner Image"
               layout="fill" // makes the image cover the full width and height
               objectFit="cover" // ensures the image covers the container without being stretched
@@ -136,7 +136,7 @@ const HeroSection = () => {
         <div>
           <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
             <Image
-              src="/assets/images/home/e-learning-4.jpg"
+              src="/assets/images/home/banner/e-learning-4.jpg"
               alt="Banner Image"
               layout="fill" // makes the image cover the full width and height
               objectFit="cover" // ensures the image covers the container without being stretched

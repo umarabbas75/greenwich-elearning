@@ -7,10 +7,11 @@ const Question = ({ questionData }: any) => {
   const [selectedAnswer, setSelectedAnswer] = useAtom(selectedAnswerAtom);
 
   return (
-    <div className="mt-12">
-      <h1 className="text-2xl font-bold mb-4">{questionData.question}</h1>
+    <div className="">
+      <h1 className="text-2xl font-bold mb-4">{questionData?.question}</h1>
 
-      <div className="grid gap-4">
+      <small>Choose only ONE best answer.</small>
+      <div className="grid gap-4 mt-2">
         {questionData?.options?.map((item: any, index: any) => {
           const isSelected = selectedAnswer === item;
           return (
