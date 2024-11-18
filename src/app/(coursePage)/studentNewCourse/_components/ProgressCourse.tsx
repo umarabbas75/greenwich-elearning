@@ -5,7 +5,6 @@ import { useParams, useRouter } from 'next/navigation';
 import React from 'react';
 import Skeleton from 'react-loading-skeleton';
 
-import ProgressBar from '@/components/common/Progress';
 import { useApiGet } from '@/lib/dashboard/client/user';
 import { courseDrawerAtom } from '@/store/modals';
 
@@ -113,14 +112,14 @@ const ProgressCourse = () => {
         </div>
 
         <h1 className="text-xl font-bold mt-4">{course?.title}</h1>
-        <div className="mt-4">
+        {/* <div className="mt-4">
           <ProgressBar percentage={parseInt(course?.percentage)} className="h-1" />
           <div className="mt-1 flex gap-1 items-center">
             Course is
             <span className=" font-semibold">{parseInt(course?.percentage ?? 0).toFixed(0)}%</span>
             <span>complete</span>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

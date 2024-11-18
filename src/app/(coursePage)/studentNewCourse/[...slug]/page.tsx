@@ -18,7 +18,6 @@ import CourseReport from '../_components/CourseReport';
 import CourseSideBarDrawer from '../_components/CourseSideBarDrawer';
 import DiscussionForum from '../_components/DiscussionForum';
 import SideBarAllSection from '../_components/SideBarAllSection';
-import StartQuiz from '../_components/StartQuiz';
 
 const Page = () => {
   const params = useParams();
@@ -97,7 +96,6 @@ const Page = () => {
 
   const renderButtonText = () => {
     if (updatingProgress) return 'updating...';
-    if (lastSection?.id === selectedItem?.id) return 'End of lesson';
     return 'Next';
   };
   const { mutate: updateProgress, isLoading: updatingProgress } = useApiMutation<any>({
@@ -272,7 +270,7 @@ const Page = () => {
                   {renderButtonText()}
                 </Button>
 
-                <StartQuiz />
+                {/* {lastSection?.id === selectedItem?.id && <StartQuiz />} */}
               </div>
             </>
           )}

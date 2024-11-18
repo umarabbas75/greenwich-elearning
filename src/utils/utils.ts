@@ -6,18 +6,17 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatDate(timestamp: any) {
+export function formatDate(timestamp: any, dateFormat = 'MMMM d, yyyy h:mm:ss a') {
   // Parse the timestamp string to a Date object
   const date = parseISO(timestamp);
 
   // Check if the parsed date is valid
   if (!isValid(date)) {
     return;
-    throw new Error('Invalid timestamp');
   }
 
   // Format the date
-  const formattedDate = format(date, 'MMMM d, yyyy h:mm:ss a');
+  const formattedDate = format(date, dateFormat);
 
   return formattedDate;
 }

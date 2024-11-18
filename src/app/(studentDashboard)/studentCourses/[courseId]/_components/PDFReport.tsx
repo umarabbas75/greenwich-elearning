@@ -6,10 +6,10 @@ const PDFReport = ({
   courseProgressState,
   instituteName,
   instituteAddress,
-  today,
   columns,
   grades,
   userDetails,
+  startDate,
 }: any) => {
   const styles = StyleSheet.create({
     page: {
@@ -262,7 +262,7 @@ const PDFReport = ({
               alignItems: 'center',
             }}
           >
-            <Text style={styles.date}>Date: {today}</Text>
+            <Text style={styles.date}>Course start date: {startDate}</Text>
           </View>
         </View>
       </View>

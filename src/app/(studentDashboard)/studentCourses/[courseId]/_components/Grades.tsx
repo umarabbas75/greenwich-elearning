@@ -9,7 +9,7 @@ import TableSkeletonLoader from '@/components/common/TableSkeletonLoader';
 import NameInitials from '@/components/NameInitials';
 import { Button } from '@/components/ui/button';
 import { useApiGet } from '@/lib/dashboard/client/user';
-import { getInitials } from '@/utils/utils';
+import { formatDate, getInitials } from '@/utils/utils';
 
 import PDFReport from './PDFReport';
 
@@ -26,10 +26,20 @@ const Grades = ({
 
   const { data, isLoading } = useApiGet<any, Error>({
     endpoint: `/courses/report/${courseIdParam}/${userId}`,
-    queryKey: ['get-chapters', courseIdParam],
+    queryKey: ['get-course-report', courseIdParam],
     config: {
       enabled: !!courseIdParam,
       select: (res) => res?.data,
+      keepPreviousData: true,
+    },
+  });
+
+  const { data: courseDates, isLoading: courseDatesLoading } = useApiGet<any, Error>({
+    endpoint: `/courses/report/dates/${courseIdParam}/${userId}`,
+    queryKey: ['get-course-dates', courseIdParam],
+    config: {
+      enabled: !!courseIdParam,
+      select: (res) => res?.data?.data,
       keepPreviousData: true,
     },
   });
@@ -75,8 +85,9 @@ const Grades = ({
           grades={grades}
           courseNameProp={courseNameProp}
           userDetails={userDetails}
+          courseDates={courseDates}
         />
-        {isLoading ? (
+        {isLoading || courseDatesLoading ? (
           <TableSkeletonLoader />
         ) : (
           <div className="py-4 overflow-x-auto">
@@ -138,14 +149,20 @@ const Grades = ({
 
 export default Grades;
 
-const ReportHeader = ({ courseProgressState, columns, grades, courseNameProp, userDetails }: any) => {
+const ReportHeader = ({
+  courseProgressState,
+  columns,
+  grades,
+  courseNameProp,
+  userDetails,
+  courseDates,
+}: any) => {
   const session = useSession();
   const search = useSearchParams();
   const courseName = search.get('title') ?? courseNameProp;
 
   const instituteName = 'Greenwich Training and consulting';
   const instituteAddress = 'I-8/4, Islamabad';
-  const today = new Date().toLocaleDateString();
 
   const getNewDocument = async () => {
     return new Promise((resolve) => {
@@ -158,9 +175,12 @@ const ReportHeader = ({ courseProgressState, columns, grades, courseNameProp, us
             courseProgressState={courseProgressState}
             instituteName={instituteName}
             instituteAddress={instituteAddress}
-            today={today}
             columns={columns}
             grades={grades}
+            courseDates={courseDates}
+            startDate={
+              courseDates?.courseStartDate ? formatDate(courseDates?.courseStartDate, 'MMMM d, yyyy') : '----'
+            }
           />
         </Document>,
       );
@@ -246,26 +266,12 @@ const ReportHeader = ({ courseProgressState, columns, grades, courseNameProp, us
             </a>
           </Button>
 
-          <div className="date text-gray-500 text-right text-xs">Date: {today}</div>
+          <div className="date text-gray-500 text-right text-xs">
+            Course start date:{' '}
+            {courseDates?.courseStartDate ? formatDate(courseDates?.courseStartDate, 'MMMM d, yyyy') : '---'}
+          </div>
         </div>
       </div>
-      {/* {session && courseProgressState && courseName && grades && (
-        <PDFViewer style={{ width: '600px', height: '800px' }}>
-          <Document style={{ width: '600px' }}>
-            <PDFReport
-              session={session}
-              userDetails={userDetails}
-              courseName={courseName}
-              courseProgressState={courseProgressState}
-              instituteName={instituteName}
-              instituteAddress={instituteAddress}
-              today={today}
-              columns={columns}
-              grades={grades}
-            />
-          </Document>
-        </PDFViewer>
-      )} */}
     </div>
   );
 };

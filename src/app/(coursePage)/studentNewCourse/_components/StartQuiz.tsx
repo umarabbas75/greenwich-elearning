@@ -13,7 +13,7 @@ const StartQuiz = () => {
   return (
     <div>
       <Button
-        variant="outline"
+        variant="public-primary"
         onClick={() => {
           router.replace(`/studentNewCourse/quiz/${courseId}/${chapterId}/${moduleId}`);
         }}

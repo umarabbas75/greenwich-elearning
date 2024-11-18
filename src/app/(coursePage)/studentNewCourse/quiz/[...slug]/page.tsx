@@ -4,21 +4,21 @@ import { Menu } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import React, { useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
+import { useQueryClient } from 'react-query';
 
+import Spinner from '@/components/common/Spinner';
+import { toast } from '@/components/ui/use-toast';
 import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
+import { selectedAnswerAtom } from '@/store/course';
 import { courseDrawerAtom } from '@/store/modals';
 import useWindowWidth from '@/utils/hooks/useWindowWidth';
 import { Icons } from '@/utils/icon';
 
-import Question from '../_components/Question';
-import { selectedAnswerAtom } from '@/store/course';
-import { toast } from '@/components/ui/use-toast';
-import Spinner from '@/components/common/Spinner';
-import { useQueryClient } from 'react-query';
-import QuizReport from '../_components/QuizReport';
-import SideBarAllSection from '../../_components/SideBarAllSection';
 import CourseSideBarDrawer from '../../_components/CourseSideBarDrawer';
 import DiscussionForum from '../../_components/DiscussionForum';
+import SideBarAllSection from '../../_components/SideBarAllSection';
+import Question from '../_components/Question';
+import QuizReport from '../_components/QuizReport';
 
 const Page = () => {
   const params = useParams();
@@ -78,12 +78,21 @@ const Page = () => {
       },
     },
   });
+
   console.log({ allQuizzes, quizzesLoading, isRefetching });
   const lastQuestion = allQuizzes?.data?.[allQuizzes?.data?.length - 1];
 
   const width = useWindowWidth();
-  console.log({ selectedQuiz });
-  console.log({ selectedAnswer });
+
+  const { mutate: createQuizReport, isLoading: creatingQuizReport } = useApiMutation<any>({
+    endpoint: `/quizzes/createChapterQuizzesReport`,
+    method: 'post',
+    config: {
+      onSuccess: () => {
+        setShowQuizReport(true);
+      },
+    },
+  });
 
   const { mutate: checkQuizAnswer, isLoading: checkingQuizAnswer } = useApiMutation<any>({
     endpoint: `/quizzes/checkQuiz`,
@@ -92,16 +101,29 @@ const Page = () => {
       onSuccess: (res: any, variables: any) => {
         try {
           const selectedIndex = allQuizzes?.data?.findIndex((item: any) => item.id === variables?.quizId);
-          console.log({ selectedIndex });
           const isLastQuestion = lastQuestion?.id === selectedQuiz?.data?.id;
           if (!isLastQuestion) {
             const nextQuestion = allQuizzes?.data?.[(selectedIndex ?? 0) + 1];
 
-            console.log({ nextQuestion });
             setSelectedQuiz(nextQuestion);
-            console.log({ selectedIndex, allQuizzes, nextQuestion, variables, lastQuestion, isLastQuestion });
           } else {
-            setShowQuizReport(true);
+            const passingPercentage = 70;
+            const totalQuizzesLength = allQuizzes.data?.length;
+            const correctAnswers =
+              allQuizzes.data?.filter((item: any) => item?.isAnswerCorrect === true)?.length +
+              (res?.data?.data?.isAnswerCorrect ? 1 : 0);
+
+            const quizPercentage = (correctAnswers * 100) / totalQuizzesLength;
+            const isPassed = quizPercentage >= passingPercentage ? true : false;
+
+            const payload = {
+              chapterId,
+              totalAttempts: 1,
+              isPassed: isPassed,
+              score: quizPercentage,
+            };
+
+            createQuizReport(payload);
           }
 
           queryClient.invalidateQueries({
@@ -211,7 +233,7 @@ const Page = () => {
 
               <button
                 onClick={() => {
-                  if (!checkingQuizAnswer) {
+                  if (!checkingQuizAnswer && !creatingQuizReport) {
                     checkQuizAnswer({
                       quizId: selectedQuiz?.data?.id,
                       chapterId: chapterId,

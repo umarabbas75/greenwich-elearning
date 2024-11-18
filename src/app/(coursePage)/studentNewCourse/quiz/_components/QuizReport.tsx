@@ -1,14 +1,59 @@
-import React from 'react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import React, { useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
 
 const QuizReport = ({ allQuizzes }: any) => {
-  console.log({ allQuizzes });
+  const params = useParams();
   const passingPercentage = 70;
   const totalQuizzesLength = allQuizzes.data?.length;
   const correctAnswers = allQuizzes.data?.filter((item: any) => item?.isAnswerCorrect);
   const quizPercentage = (correctAnswers.length * 100) / totalQuizzesLength;
-
   const isPassed = quizPercentage >= passingPercentage ? true : false;
-  console.log({ totalQuizzesLength, correctAnswers, quizPercentage, isPassed });
+
+  const courseId = params.slug?.[0] || '';
+  const chapterId = params.slug?.[1] || '';
+  const moduleId = params.slug?.[2] || '';
+
+  const { data: quizReport } = useApiGet<any, Error>({
+    endpoint: `/quizzes/getChapterQuizzesReport/${chapterId}`,
+    queryKey: ['quiz-report', chapterId],
+    config: {
+      select: (data: any) => {
+        return data?.data?.data;
+      },
+    },
+  });
+
+  const { mutate: retakeChapterQuiz, isLoading: retakingQuiz } = useApiMutation<any>({
+    endpoint: `/quizzes/retakeChapterQuiz`,
+    method: 'post',
+    config: {
+      onSuccess: () => {
+        window.location.reload();
+      },
+    },
+  });
+
+  const [nextElement, setNextElement] = useState<any>();
+  const { isLoading } = useApiGet<any, Error>({
+    endpoint: `/courses/module/allChapters/${moduleId}`,
+    queryKey: ['get-chapters', moduleId],
+    config: {
+      enabled: !!moduleId,
+      onSuccess: (res) => {
+        const elements = res?.data;
+        elements?.forEach((item: any, index: any) => {
+          if (item.id === chapterId) {
+            setNextElement(elements?.[index + 1]);
+          }
+        });
+      },
+    },
+  });
+
   return (
     <div className="w-full bg-white shadow-xl rounded-lg p-8 my-10 border border-gray-200">
       {/* Header Section */}
@@ -33,9 +78,15 @@ const QuizReport = ({ allQuizzes }: any) => {
           <h4 className="text-sm font-medium text-gray-600">Your Score</h4>
           <p className="text-2xl font-bold text-gray-800">{quizPercentage?.toFixed(2)}%</p>
         </div>
+
         <div className="text-center">
           <h4 className="text-sm font-medium text-gray-600">Passing Criteria</h4>
           <p className="text-2xl font-bold text-gray-800">{passingPercentage}%</p>
+        </div>
+
+        <div className="text-center">
+          <h4 className="text-sm font-medium text-gray-600">Total Attempts</h4>
+          <p className="text-2xl font-bold text-gray-800">{quizReport?.totalAttempts}</p>
         </div>
       </div>
 
@@ -70,13 +121,40 @@ const QuizReport = ({ allQuizzes }: any) => {
       </div>
 
       {/* Action Section */}
-      {/* <div className="mt-8 flex justify-center text-center">
-        <button
-          className={`bg-[#36394D] mt-4 text-white flex items-center gap-1 justify-center rounded-sm  px-4 py-2 `}
-        >
-          Retake Quiz
-        </button>
-      </div> */}
+      {!quizReport?.isPassed && (
+        <div className="mt-8 flex justify-center text-center">
+          <button
+            onClick={() => {
+              if (!retakingQuiz) {
+                const payload = {
+                  chapterId,
+                };
+                retakeChapterQuiz(payload);
+              }
+            }}
+            className={`bg-[#36394D] mt-4 text-white flex items-center gap-1 justify-center rounded-sm  px-4 py-2 `}
+          >
+            {retakingQuiz ? 'Loading....' : 'Retake Quiz'}
+          </button>
+        </div>
+      )}
+
+      {quizReport?.isPassed && !isLoading && (
+        <div className="flex justify-center">
+          <Link
+            href={{
+              pathname: `/studentNewCourse/${courseId}/${nextElement?.id}/${moduleId}`,
+            }}
+          >
+            {nextElement?.title && (
+              <Button variant="secondary" className="mt-4">
+                Go to next element :{' '}
+                <span className="text-orange-400 ml-2">{nextElement?.title ?? 'next element'}</span>
+              </Button>
+            )}
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

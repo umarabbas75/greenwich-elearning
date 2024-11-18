@@ -1,4 +1,5 @@
 'use client';
+import { Tooltip } from '@radix-ui/react-tooltip';
 import { useAtom } from 'jotai';
 import { FolderClosed, FolderOpen } from 'lucide-react';
 import Link from 'next/link';
@@ -6,6 +7,7 @@ import React from 'react';
 import { buildStyles, CircularProgressbar } from 'react-circular-progressbar';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { lockedContentModal } from '@/store/modals';
 
 import LockedContentModal from './LockedContentModal';
@@ -34,7 +36,10 @@ const CourseContent = ({ modulesRecord, toggleAccordion, openAccordions, courseI
 
   // Helper function to check if chapter is complete
   const isChapterCompleted = (chapter: any) => {
-    return chapter._count.UserCourseProgress === chapter._count.sections;
+    const isChapterCompleted = chapter._count.UserCourseProgress === chapter._count.sections;
+    const isQuizCompleted = chapter?.QuizProgress?.[0]?.isPassed ? true : false;
+
+    return isChapterCompleted && isQuizCompleted;
   };
 
   // Helper function to check if module is complete (all chapters)
@@ -97,6 +102,7 @@ const CourseContent = ({ modulesRecord, toggleAccordion, openAccordions, courseI
                       {item.chapters.map((chapter: any, i: number, arr: any[]) => {
                         const chapterCompleted = i > 0 && isChapterCompleted(arr?.[i - 1]);
                         const isDisabled = isModuleDisabled ? true : i > 0 ? !chapterCompleted : false;
+
                         return !isDisabled ? (
                           <Link
                             className="text-black"
@@ -107,7 +113,7 @@ const CourseContent = ({ modulesRecord, toggleAccordion, openAccordions, courseI
                           >
                             <li
                               key={chapter.id}
-                              className="p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-black/10 rounded-md flex justify-between"
+                              className="p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-black/10 rounded-md flex justify-between items-center"
                             >
                               <div>
                                 <h3 className="uppercase font-semibold dark:text-white/80">
@@ -121,6 +127,64 @@ const CourseContent = ({ modulesRecord, toggleAccordion, openAccordions, courseI
                                   % completed
                                 </small>
                               </div>
+                              <div className="flex items-center gap-4">
+                                {chapter?.QuizProgress?.length > 0 && (
+                                  <TooltipProvider delayDuration={0}>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <img src="/assets/images/quiz.png" className="w-10" alt="" />
+                                      </TooltipTrigger>
+                                      <TooltipContent className="bg-white">
+                                        <p>
+                                          Quiz Status :{' '}
+                                          {chapter?.QuizProgress?.[0]?.isPassed ? 'Passed' : 'Failed'}
+                                        </p>
+                                        <p>Percentage : {chapter?.QuizProgress?.[0]?.score}% </p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                )}
+
+                                <div className="w-8 h-8">
+                                  <CircularProgressbar
+                                    value={
+                                      calculateProgress(
+                                        chapter?._count?.UserCourseProgress,
+                                        chapter?._count?.sections,
+                                      ) as number
+                                    }
+                                    styles={buildStyles({
+                                      pathColor: `#f88`,
+                                      trailColor: '#d6d6d6',
+                                      backgroundColor: '#3e98c7',
+                                    })}
+                                  />
+                                </div>
+                                {/* Quiz Status Indicator */}
+                              </div>
+                            </li>
+                          </Link>
+                        ) : (
+                          <li
+                            onClick={() => {
+                              setLockedContentModalState({ status: true, data: null });
+                            }}
+                            key={chapter.id}
+                            className="p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-black/10 rounded-md flex justify-between items-center"
+                          >
+                            <div>
+                              <h3 className="uppercase font-semibold dark:text-white/80">
+                                🔒 {chapter.title}
+                              </h3>
+                              <small className="dark:text-white/80">
+                                {calculateProgress(
+                                  chapter?._count?.UserCourseProgress,
+                                  chapter?._count?.sections,
+                                )}
+                                % completed
+                              </small>
+                            </div>
+                            <div className="flex items-center gap-4">
                               <div className="w-8 h-8">
                                 <CircularProgressbar
                                   value={
@@ -136,42 +200,6 @@ const CourseContent = ({ modulesRecord, toggleAccordion, openAccordions, courseI
                                   })}
                                 />
                               </div>
-                            </li>
-                          </Link>
-                        ) : (
-                          <li
-                            onClick={() => {
-                              setLockedContentModalState({ status: true, data: null });
-                            }}
-                            key={chapter.id}
-                            className="p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-black/10 rounded-md flex justify-between"
-                          >
-                            <div>
-                              <h3 className="uppercase font-semibold dark:text-white/80">
-                                🔒 {chapter.title}
-                              </h3>
-                              <small className="dark:text-white/80">
-                                {calculateProgress(
-                                  chapter?._count?.UserCourseProgress,
-                                  chapter?._count?.sections,
-                                )}
-                                % completed
-                              </small>
-                            </div>
-                            <div className="w-8 h-8">
-                              <CircularProgressbar
-                                value={
-                                  calculateProgress(
-                                    chapter?._count?.UserCourseProgress,
-                                    chapter?._count?.sections,
-                                  ) as number
-                                }
-                                styles={buildStyles({
-                                  pathColor: `#f88`,
-                                  trailColor: '#d6d6d6',
-                                  backgroundColor: '#3e98c7',
-                                })}
-                              />
                             </div>
                           </li>
                         );
