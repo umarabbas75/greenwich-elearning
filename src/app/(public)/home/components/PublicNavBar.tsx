@@ -1,7 +1,6 @@
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import React from 'react';
 
@@ -10,13 +9,12 @@ import { Icons } from '@/utils/icon';
 const PublicNavBar = () => {
   const { data: userData } = useSession();
   const isUserLoggedIn = Boolean(userData?.user?.id);
-  const router = useRouter();
   return (
     <div className="shadow-sm bg-white">
       <div className="app-container">
         <div className="flex justify-between items-center py-4">
           <div>
-            <Link href="/home">
+            <Link href="/home" replace>
               <Image src="/assets/images/greenwich_logo.png" height={70} width={75} alt="greenwich logo" />
             </Link>
           </div>
@@ -52,15 +50,11 @@ const PublicNavBar = () => {
                 <p className="text-sm text-gray-700 dark:text-primary">
                   Welcome, {userData?.user.firstName || 'User'}
                 </p>
-
-                <span
-                  onClick={() => {
-                    router.replace('/');
-                  }}
-                  className="text-sm cursor-pointer text-publicBlue underline font-semibold hover:underline"
-                >
-                  Go to Dashboard
-                </span>
+                <Link href="/" replace>
+                  <span className="text-sm cursor-pointer text-publicBlue underline font-semibold hover:underline">
+                    Go to Dashboard
+                  </span>
+                </Link>
               </div>
             )}
           </div>

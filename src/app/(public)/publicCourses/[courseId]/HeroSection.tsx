@@ -8,13 +8,14 @@ import 'slick-carousel/slick/slick-theme.css';
 import { useApiGet } from '@/lib/dashboard/client/user';
 
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 const HeroSection = ({ title, desc, id, price }: any) => {
   const router = useRouter();
   const { data: userData } = useSession();
   const [isThisCourseAlreadyAssigned, setIsThisCourseAlreadyAssigned] = useState(false);
 
-  const { isLoading } = useApiGet<any, Error>({
+  const { isLoading, isRefetching } = useApiGet<any, Error>({
     endpoint: `/courses/getAllAssignedCourses/public/${userData?.user.id}`,
     queryKey: ['get-all-assigned-courses-public', userData?.user.id],
     config: {
@@ -49,36 +50,39 @@ const HeroSection = ({ title, desc, id, price }: any) => {
                   <div>
                     <h1 className="text-white text-6xl font-semibold mb-2">{title}</h1>
                     <p className="text-white mb-6 max-w-lg">{desc}</p>
-                    {isLoading ? (
+                    {isLoading || isRefetching ? (
                       ''
                     ) : isThisCourseAlreadyAssigned ? (
-                      <Button
-                        onClick={() => {
-                          router.push(`/studentCourses`);
-                        }}
-                        variant="public-primary"
-                        size="lg"
-                        className="w-[300px]"
-                      >
-                        {userData?.user.id ? 'Continue' : ''}
-                      </Button>
+                      <Link href="/studentCourses">
+                        <Button variant="public-primary" size="lg" className="w-[300px]">
+                          {userData?.user.id ? 'Continue' : ''}
+                        </Button>
+                      </Link>
                     ) : (
-                      <Button
-                        onClick={() => {
-                          if (userData?.user.id) {
-                            return router.push(`/assignCourse?courseId=${id}&userId=${userData?.user.id}`);
-                          }
-                          router.push(`/signUp?courseId=${id}`);
-                        }}
-                        variant="public-primary"
-                        size="lg"
-                        className="w-[300px]"
+                      <Link
+                        href={`${
+                          userData?.user.id
+                            ? `/assignCourse?courseId=${id}&userId=${userData?.user.id}`
+                            : `/signUp?courseId=${id}`
+                        }`}
                       >
-                        Buy course -{' '}
-                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
-                          price || 0,
-                        )}
-                      </Button>
+                        <Button
+                          onClick={() => {
+                            if (userData?.user.id) {
+                              return router.push(`/assignCourse?courseId=${id}&userId=${userData?.user.id}`);
+                            }
+                            router.push(`/signUp?courseId=${id}`);
+                          }}
+                          variant="public-primary"
+                          size="lg"
+                          className="w-[300px]"
+                        >
+                          Buy course -{' '}
+                          {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
+                            price || 0,
+                          )}
+                        </Button>
+                      </Link>
                     )}
                   </div>
                 </div>
