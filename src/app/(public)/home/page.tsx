@@ -1,9 +1,7 @@
 'use client';
 import React from 'react';
 
-import Accreditation from './components/Accreditation';
 import ContactUs from './components/ContactUs';
-import CorporateClient from './components/CorporateClient';
 import HeroSection from './components/HeroSection';
 import PopularCourses from './components/PopularCourses';
 import StatisticsCounter from './components/StatisticsCounter';
@@ -16,11 +14,8 @@ const Page = () => {
         <HeroSection />
       </div>
 
-      <Accreditation />
-
       <PopularCourses />
 
-      <CorporateClient />
       <WhyChooseUs />
       <StatisticsCounter />
 
