@@ -23,7 +23,7 @@ const HeroSection = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      (document as any).querySelector('.slick-next').click(); // Move to the next slide after animation
+      (document as any)?.querySelector('.slick-next')?.click(); // Move to the next slide after animation
     }, animationDuration);
 
     return () => clearTimeout(timer); // Clear timeout when component unmounts

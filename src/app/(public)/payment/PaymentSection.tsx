@@ -59,7 +59,7 @@ const PaymentSection = () => {
 
       <div className="mb-4">
         <h3 className="text-sm font-semibold text-gray-700">Amount to Pay</h3>
-        <p className="text-sm text-gray-800">$ {coursesData?.price || 0}</p>
+        <p className="text-2xl font-bold text-gray-800">$ {coursesData?.price || 0}</p>
       </div>
 
       <div className="mb-6 p-4 bg-gray-100 rounded-lg shadow-inner">

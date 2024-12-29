@@ -189,7 +189,7 @@ const ViewUserCoursesModal = () => {
       >
         {fetchingUser ? (
           <Spinner />
-        ) : (
+        ) : assignedCourses?.data?.length > 0 ? (
           <div className="">
             {selectedCourseId ? (
               <div>
@@ -215,6 +215,8 @@ const ViewUserCoursesModal = () => {
               <TableComponent table={table} />
             )}
           </div>
+        ) : (
+          'No courses found!'
         )}
       </Modal>
     </>

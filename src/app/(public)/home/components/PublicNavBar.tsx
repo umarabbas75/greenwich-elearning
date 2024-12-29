@@ -44,6 +44,13 @@ const PublicNavBar = () => {
             <div className="self-center">
               <Image src="/assets/images/home/wso-logo.png" height={70} width={70} alt="wso logo" />
             </div>
+            {!isUserLoggedIn && (
+              <Link href="/" replace>
+                <span className="text-sm cursor-pointer text-publicBlue underline font-semibold hover:underline">
+                  Login
+                </span>
+              </Link>
+            )}
 
             {isUserLoggedIn && (
               <div className="flex items-center space-x-4">
