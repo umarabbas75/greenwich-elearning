@@ -145,6 +145,7 @@ const QuizReport = ({ allQuizzes }: any) => {
             href={{
               pathname: `/studentNewCourse/${courseId}/${nextElement?.id}/${moduleId}`,
             }}
+            replace
           >
             {nextElement?.title && (
               <Button variant="secondary" className="mt-4">

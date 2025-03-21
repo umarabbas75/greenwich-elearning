@@ -225,11 +225,17 @@ const Page = () => {
             <QuizReport allQuizzes={allQuizzes} />
           ) : (
             <div className="container px-20">
-              <h1 className="mt-12 text-sm text-gray-500 mb-2">
-                QUESTION {selectedQuiz?.index + 1} of {allQuizzes?.data?.length}{' '}
-              </h1>
+              {quizzesLoading || isRefetching ? (
+                <QuestionSkeletonLoader />
+              ) : (
+                <>
+                  <h1 className="mt-12 text-sm text-gray-500 mb-2">
+                    QUESTION {selectedQuiz?.index + 1} of {allQuizzes?.data?.length}{' '}
+                  </h1>
 
-              {quizzesLoading || isRefetching ? 'loading...' : <Question questionData={selectedQuiz?.data} />}
+                  <Question questionData={selectedQuiz?.data} />
+                </>
+              )}
 
               <button
                 onClick={() => {
@@ -329,6 +335,56 @@ const HeaderLoader = () => {
             highlightColor="var(--skeleton-highlight-color)"
           />
         </h1>
+      </div>
+    </div>
+  );
+};
+
+const QuestionSkeletonLoader = () => {
+  return (
+    <div className="bg-white dark:bg-black flex flex-col rounded-xl shadow-md p-6 mt-12">
+      {/* Question title skeleton */}
+      <h1 className="text-2xl font-bold mb-4">
+        <Skeleton
+          width={250}
+          height={28}
+          baseColor="var(--skeleton-base-color)"
+          highlightColor="var(--skeleton-highlight-color)"
+        />
+      </h1>
+
+      {/* Instruction skeleton */}
+      <small>
+        <Skeleton
+          width={180}
+          height={16}
+          baseColor="var(--skeleton-base-color)"
+          highlightColor="var(--skeleton-highlight-color)"
+        />
+      </small>
+
+      {/* Options skeleton */}
+      <div className="grid gap-4 mt-4">
+        {[...Array(4)].map((_, index) => (
+          <div
+            key={index}
+            className="flex items-center md:w-1/2 justify-between rounded-lg border border-gray-200 overflow-hidden p-3"
+          >
+            <Skeleton
+              width={200}
+              height={24}
+              baseColor="var(--skeleton-base-color)"
+              highlightColor="var(--skeleton-highlight-color)"
+            />
+            <Skeleton
+              circle
+              width={24}
+              height={24}
+              baseColor="var(--skeleton-base-color)"
+              highlightColor="var(--skeleton-highlight-color)"
+            />
+          </div>
+        ))}
       </div>
     </div>
   );

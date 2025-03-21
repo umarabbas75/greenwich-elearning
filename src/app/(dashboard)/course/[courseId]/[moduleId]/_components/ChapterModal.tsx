@@ -159,16 +159,8 @@ const ChapterModal = () => {
                 name="pdfFile"
                 render={({ field: { onChange, value } }) => {
                   return (
-                    // <FormItem>
-                    //   <FormLabel>PDF file</FormLabel>
-                    //   <FormControl>
-                    //     <Input onChange={onChange} value={value} />
-                    //   </FormControl>
-
-                    //   <FormMessage>{errors.pdfFile?.message}</FormMessage>
-                    // </FormItem>
                     <div className="flex flex-col space-y-2 justify-between">
-                      <FormLabel className="mt-3">PDF file</FormLabel>
+                      <FormLabel className="mt-3">Document file</FormLabel>
                       <FileUploader
                         classes="upload-doc !w-full !min-w-full"
                         multiple={false}
@@ -182,7 +174,7 @@ const ChapterModal = () => {
                             try {
                               setImageLoading(true);
                               const response = await axios.post(
-                                'https://api.cloudinary.com/v1/image/upload',
+                                'https://api.cloudinary.com/v1/raw/upload',
                                 formData,
                                 {
                                   headers: {
@@ -202,12 +194,12 @@ const ChapterModal = () => {
                         name="file"
                         value={value}
                         // disabled={true}
-                        types={['pdf']}
+                        types={['pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv', 'txt']} // Add supported file types here
                       />
                       {value && (
                         <div className="flex justify-between items-center border border-gray-200 p-2 border-dashed">
                           <a href={value} target="_blank" className="text-themeBlue underline">
-                            PDF Document
+                            Document
                           </a>
                           <Trash
                             className="cursor-pointer hover:text-red-500"

@@ -192,7 +192,7 @@ const PDFReport = ({
   };
   const renderQuizGrade = (row: any) => {
     const percentage = (row._count?.QuizAnswer * 100) / row?._count?.quizzes;
-    return isNaN(percentage) ? 0 : percentage;
+    return isNaN(percentage) ? 0 : percentage?.toFixed(2);
   };
   const renderStatus = (row: any) => {
     const status =
@@ -299,11 +299,19 @@ const PDFReport = ({
                 <View style={[styles.tableBodyCell, { width: '150px' }]}>
                   <Text>{row.title}</Text>
                 </View>
-                <View style={[styles.tableBodyCell, { width: '80px' }]}>
+                <View style={[styles.tableBodyCell, { width: '80px', textAlign: 'center' }]}>
                   <Text
                     style={[
                       getStyles(renderStatus(row)),
-                      { padding: '2px', width: 'auto', display: 'flex', justifyContent: 'justify-center' },
+                      {
+                        padding: '2px',
+                        width: 'auto',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        textAlign: 'center',
+                        borderRadius: '5px',
+                      },
                     ]}
                   >
                     {formatCamelCase(renderStatus(row))}

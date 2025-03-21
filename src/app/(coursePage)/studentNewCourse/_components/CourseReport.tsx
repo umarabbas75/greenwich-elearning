@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 
 import StartQuiz from './StartQuiz';
 
-const CourseReport = ({ setShowCourseReport }: any) => {
+const CourseReport = ({ setShowCourseReport, containQuizzes }: any) => {
   // const router = useRouter();
 
   return (
@@ -25,7 +25,7 @@ const CourseReport = ({ setShowCourseReport }: any) => {
             Back
           </Button>
 
-          <StartQuiz />
+          {containQuizzes && <StartQuiz />}
         </div>
       </div>
     </div>

@@ -40,7 +40,7 @@ const ContactUs = () => {
                   </span>
                 </p>
                 <p className="text-sm text-gray-700 mt-2 group-hover:text-white">
-                  Suite no. 02, Ground Floor, Twin City Plaza, I-8/4 Ext. Islamabad
+                  1137, Street No. 66, adjacent to Riphah International University, I-14/3
                 </p>
               </div>
 
@@ -54,7 +54,7 @@ const ContactUs = () => {
                   </span>
                 </p>
 
-                <p className="text-sm text-gray-700 mt-2 group-hover:text-white"> +92-51-8890705</p>
+                <p className="text-sm text-gray-700 mt-2 group-hover:text-white"> +92-51-5179324</p>
                 <p className="text-sm text-gray-700 group-hover:text-white">+92-312-5343061</p>
               </div>
 

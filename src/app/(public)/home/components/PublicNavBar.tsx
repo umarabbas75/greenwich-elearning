@@ -25,7 +25,7 @@ const PublicNavBar = () => {
               <div>
                 <p className="text-sm text-gray-700 font-semibold dark:text-primary">Call us on:</p>
                 <div className="flex flex-col">
-                  <p className="text-gray-500 text-xs dark:text-white">+92-51-8890705</p>
+                  <p className="text-gray-500 text-xs dark:text-white">+92-51-5179324</p>
                   <p className="text-gray-500 text-xs dark:text-white">+92-312-5343061</p>
                 </div>
               </div>
@@ -36,7 +36,7 @@ const PublicNavBar = () => {
               <div>
                 <p className="text-sm text-gray-700 font-semibold dark:text-primary">Our office address:</p>
                 <p className="text-gray-500 text-xs dark:text-white">
-                  Suite no. 02, Ground Floor, Twin City Plaza, I-8/4 Ext. Islamabad
+                  1137, Street No. 66, adjacent to Riphah International University, I-14/3
                 </p>
               </div>
             </div>

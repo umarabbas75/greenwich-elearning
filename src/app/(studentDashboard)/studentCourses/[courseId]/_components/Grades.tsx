@@ -162,7 +162,7 @@ const ReportHeader = ({
   const courseName = search.get('title') ?? courseNameProp;
 
   const instituteName = 'Greenwich Training and consulting';
-  const instituteAddress = 'I-8/4, Islamabad';
+  const instituteAddress = 'Islamabad, Pakistan';
 
   const getNewDocument = async () => {
     return new Promise((resolve) => {
