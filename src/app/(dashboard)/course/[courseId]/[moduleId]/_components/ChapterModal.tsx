@@ -120,6 +120,33 @@ const ChapterModal = () => {
   const onSubmit = (values: ChapterFormTypes) => {
     data ? editChapter(values) : addChapter({ ...values, id: moduleId });
   };
+  function arrayToCommaSeparatedString(arr: any) {
+    if (!Array.isArray(arr)) {
+      return ''; // Return an empty string if input is not an array
+    }
+    return arr.join(',');
+  }
+
+  const renderDocuments = (value: any, onChange: any) => {
+    const documents = value?.split(',');
+    return documents?.map((item: any, index: number) => {
+      return (
+        <span key={item} className="flex gap-4 p-2">
+          {' '}
+          <a href={item} target="_blank" className="text-themeBlue underline">
+            Document - {index}
+          </a>
+          <Trash
+            className="cursor-pointer hover:text-red-500"
+            onClick={() => {
+              const newDocuments = documents.filter((_: any, i: any) => i !== index);
+              onChange(newDocuments.join(','));
+            }}
+          />
+        </span>
+      );
+    });
+  };
 
   return (
     <Modal open={chapterModalState.status} onClose={() => {}} title={data ? 'Edit Element' : 'New Element'}>
@@ -158,55 +185,60 @@ const ChapterModal = () => {
                 control={control}
                 name="pdfFile"
                 render={({ field: { onChange, value } }) => {
+                  console.log({ value });
                   return (
                     <div className="flex flex-col space-y-2 justify-between">
                       <FormLabel className="mt-3">Document file</FormLabel>
                       <FileUploader
                         classes="upload-doc !w-full !min-w-full"
-                        multiple={false}
-                        handleChange={async (value: any) => {
-                          const selectedFile = value;
-                          if (selectedFile) {
-                            const formData = new FormData();
-                            formData.append('file', selectedFile);
-                            formData.append('upload_preset', 'my_uploads');
-                            formData.append('cloud_name', 'dp9urvlsz');
+                        multiple={true}
+                        handleChange={async (files: FileList | File[]) => {
+                          // Convert FileList to array if needed
+                          const selectedFiles = Array.isArray(files) ? files : Array.from(files);
+
+                          if (selectedFiles && selectedFiles.length > 0) {
                             try {
                               setImageLoading(true);
-                              const response = await axios.post(
-                                'https://api.cloudinary.com/v1/raw/upload',
-                                formData,
-                                {
-                                  headers: {
-                                    'Content-Type': 'multipart/form-data',
+
+                              // Upload all files in parallel
+                              const uploadPromises = selectedFiles.map(async (file) => {
+                                const formData = new FormData();
+                                formData.append('file', file);
+                                formData.append('upload_preset', 'my_uploads');
+                                formData.append('cloud_name', 'dp9urvlsz');
+
+                                const response = await axios.post(
+                                  'https://api.cloudinary.com/v1_1/dp9urvlsz/raw/upload',
+                                  formData,
+                                  {
+                                    headers: {
+                                      'Content-Type': 'multipart/form-data',
+                                    },
                                   },
-                                },
-                              );
+                                );
+
+                                return response.data.url;
+                              });
+
+                              // Wait for all uploads to complete
+                              const urls = await Promise.all(uploadPromises);
+
                               setImageLoading(false);
-                              const { url } = response.data;
-                              onChange(url);
+                              const commaSeparatedString = arrayToCommaSeparatedString(urls);
+                              // Call onChange with array of URLs
+                              onChange(commaSeparatedString);
                             } catch (error) {
                               setImageLoading(false);
-                              console.error('Error uploading image:', error);
                             }
                           }
                         }}
-                        name="file"
+                        name="files" // Changed to plural since multiple files
                         value={value}
-                        // disabled={true}
-                        types={['pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv', 'txt']} // Add supported file types here
+                        types={['pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv', 'txt']}
                       />
                       {value && (
-                        <div className="flex justify-between items-center border border-gray-200 p-2 border-dashed">
-                          <a href={value} target="_blank" className="text-themeBlue underline">
-                            Document
-                          </a>
-                          <Trash
-                            className="cursor-pointer hover:text-red-500"
-                            onClick={() => {
-                              onChange('');
-                            }}
-                          />
+                        <div className="flex justify-between items-start border flex-col border-gray-200 p-2 border-dashed">
+                          {renderDocuments(value, onChange)}
                         </div>
                       )}
                       {imageLoading && <Spinner />}

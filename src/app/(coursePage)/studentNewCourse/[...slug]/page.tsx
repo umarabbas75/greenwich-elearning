@@ -229,20 +229,38 @@ const Page = () => {
 
   // Component to render the download link with the appropriate icon
   const DownloadLink = ({ fileUrl }: any) => {
-    const fileExtension = getFileExtension(fileUrl) as keyof typeof fileIcons;
-    const icon = fileExtension ? fileIcons[fileExtension] || <FaFileAlt className="w-4 h-4" /> : ''; // Default icon for unknown file types
+    const files = fileUrl?.split(',');
 
-    return (
-      <a
-        href={fileUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="bg-red-800 w-fit text-white pl-1 cursor-pointer flex items-center gap-1 justify-center rounded-sm text-xs px-2 py-1"
-      >
-        {icon}
-        DOWNLOAD
-      </a>
-    );
+    return files?.map((file: any, index: number) => {
+      const fileExtension = getFileExtension(file) as keyof typeof fileIcons;
+      const icon = fileExtension ? fileIcons[fileExtension] || <FaFileAlt className="w-4 h-4" /> : ''; // Default icon for unknown file types
+      return (
+        <a
+          href={file}
+          key={file}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-red-800 w-fit text-white pl-1 cursor-pointer flex items-center gap-1 justify-center rounded-sm text-xs px-2 py-1"
+        >
+          {icon}
+          DOWNLOAD - {index + 1}
+        </a>
+      );
+    });
+    // const fileExtension = getFileExtension(fileUrl) as keyof typeof fileIcons;
+    // const icon = fileExtension ? fileIcons[fileExtension] || <FaFileAlt className="w-4 h-4" /> : ''; // Default icon for unknown file types
+
+    // return (
+    //   <a
+    //     href={fileUrl}
+    //     target="_blank"
+    //     rel="noopener noreferrer"
+    //     className="bg-red-800 w-fit text-white pl-1 cursor-pointer flex items-center gap-1 justify-center rounded-sm text-xs px-2 py-1"
+    //   >
+    //     {icon}
+    //     DOWNLOAD
+    //   </a>
+    // );
   };
 
   return (

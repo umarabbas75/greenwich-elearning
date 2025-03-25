@@ -15,7 +15,7 @@ const SingleCourse = ({ item }: any) => {
         <img
           src={item?.image}
           alt="course"
-          className="rounded-sm w-full h-64 mb-3 object-contain md:object-cover"
+          className="rounded-sm w-full h-64 mb-3 object-contain md:object-contain"
         />
         <div className="flex justify-between items-center mb-4">
           <p>{item?.totalSections} Lessons</p>

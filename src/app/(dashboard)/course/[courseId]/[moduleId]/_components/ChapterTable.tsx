@@ -87,6 +87,19 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
       </div>
     );
   };
+  const renderDocuments = (value: any) => {
+    const documents = value?.split(',');
+    return documents?.map((item: any, index: number) => {
+      return (
+        <span key={item} className="flex gap-4 p-2">
+          {' '}
+          <a href={item} target="_blank" className="text-themeBlue underline">
+            Document - {index + 1}
+          </a>
+        </span>
+      );
+    });
+  };
 
   const columns = [
     // Accessor Columns
@@ -121,21 +134,7 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
       header: 'Document',
       cell: (props) =>
         props.row.original.pdfFile ? (
-          <>
-            <span
-              role="presentation"
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(props.row.original.pdfFile, '_blank');
-              }}
-              // href={props.row.original.pdfFile}
-              // target="_blank"
-              className="bg-red-800 w-fit text-white pl-1 flex items-center gap-1 justify-center rounded-sm text-xs px-2 py-1"
-            >
-              {/* <PDFSVG className="w-4 h-4" /> */}
-              DOWNLOAD
-            </span>
-          </>
+          <div className="min-w-[120px]">{renderDocuments(props.row.original.pdfFile)}</div>
         ) : (
           '----'
         ),

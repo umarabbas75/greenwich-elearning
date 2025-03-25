@@ -161,7 +161,7 @@ const UserTable: FC<Props> = ({ data, pagination, setPagination, isLoading }) =>
                 alt="user image"
                 width={50}
                 height={50}
-                className="rounded-full"
+                className="rounded-full object-contain h-[50px]"
               />
             ) : (
               <NameInitials
