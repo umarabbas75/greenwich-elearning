@@ -1,5 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import axios from 'axios';
+import { saveAs } from 'file-saver';
 import { useAtom } from 'jotai';
 import { Trash } from 'lucide-react';
 import { useParams } from 'next/navigation';
@@ -126,6 +127,18 @@ const ChapterModal = () => {
     }
     return arr.join(',');
   }
+  function getFileExtensionFromUrl(url: any) {
+    if (!url) {
+      return ''; // Return empty string for null or undefined URLs
+    }
+
+    const parts = url.split('.');
+    if (parts.length > 1) {
+      return parts[parts.length - 1].split('?')[0]; // handle query parameters
+    } else {
+      return ''; // No extension found
+    }
+  }
 
   const renderDocuments = (value: any, onChange: any) => {
     const documents = value?.split(',');
@@ -133,8 +146,15 @@ const ChapterModal = () => {
       return (
         <span key={item} className="flex gap-4 p-2">
           {' '}
-          <a href={item} target="_blank" className="text-themeBlue underline">
-            Document - {index}
+          <a
+            onClick={() => {
+              saveAs(item, `Document-${index}.${getFileExtensionFromUrl(item)}`);
+            }}
+            href={item}
+            target="_blank"
+            className="text-themeBlue underline"
+          >
+            Document-{index}.{getFileExtensionFromUrl(item)}
           </a>
           <Trash
             className="cursor-pointer hover:text-red-500"

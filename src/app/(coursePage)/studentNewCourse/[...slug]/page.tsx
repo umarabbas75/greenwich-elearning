@@ -1,4 +1,5 @@
 'use client';
+import { saveAs } from 'file-saver';
 import { useAtom } from 'jotai';
 import { Menu } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -238,12 +239,15 @@ const Page = () => {
         <a
           href={file}
           key={file}
+          onClick={() => {
+            saveAs(file, `Document-${index + 1}.${fileExtension}`);
+          }}
           target="_blank"
           rel="noopener noreferrer"
           className="bg-red-800 w-fit text-white pl-1 cursor-pointer flex items-center gap-1 justify-center rounded-sm text-xs px-2 py-1"
         >
           {icon}
-          DOWNLOAD - {index + 1}
+          DOWNLOAD-{index + 1}.{fileExtension}
         </a>
       );
     });
