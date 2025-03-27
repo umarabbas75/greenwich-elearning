@@ -18,6 +18,7 @@ import {
   viewAssignedQuizzesModal,
 } from '@/store/modals';
 import { Icons } from '@/utils/icon';
+import { extractFilenameFromCloudinaryUrl } from '@/utils/utils';
 
 import { Chapter, ChaptersDataResponse } from '../page';
 
@@ -89,12 +90,13 @@ const ChapterTable: FC<Props> = ({ data, pagination, setPagination, isLoading, m
   };
   const renderDocuments = (value: any) => {
     const documents = value?.split(',');
-    return documents?.map((item: any, index: number) => {
+    return documents?.map((item: any) => {
       return (
         <span key={item} className="flex gap-4 p-2">
           {' '}
           <a href={item} target="_blank" className="text-themeBlue underline">
-            Document - {index + 1}
+            {/* Document - {index + 1} */}
+            {extractFilenameFromCloudinaryUrl(item)}
           </a>
         </span>
       );

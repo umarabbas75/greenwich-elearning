@@ -130,3 +130,47 @@ export const resizeImage = (image: any, maxWidth: any, maxHeight: any) => {
     resolve(canvas.toDataURL('image/jpeg', 0.7)); // Adjust quality as needed
   });
 };
+
+/**
+ * Extracts and decodes the filename from a Cloudinary URL
+ * @param url The Cloudinary URL string
+ * @returns The decoded filename with extension, or null if invalid URL
+ */
+export function extractFilenameFromCloudinaryUrl(url: string): string | null {
+  if (!url || typeof url !== 'string') return null;
+
+  try {
+    // Handle cases where URL might be malformed
+    const urlObj = new URL(url);
+    const pathParts = urlObj.pathname.split('/').filter(Boolean); // Remove empty strings
+
+    // The filename should be the last part of the path
+    if (pathParts.length === 0) return null;
+
+    const encodedFilename = pathParts[pathParts.length - 1];
+
+    // Handle cases where the "filename" might actually be a directory
+    if (encodedFilename.includes('.')) {
+      return decodeURIComponent(encodedFilename);
+    }
+
+    return null; // No valid filename found
+  } catch (e) {
+    // Fallback for invalid URLs or environments without URL class
+    const lastSlashIndex = url.lastIndexOf('/');
+    if (lastSlashIndex === -1 || lastSlashIndex === url.length - 1) {
+      return null;
+    }
+
+    const encodedFilename = url
+      .slice(lastSlashIndex + 1)
+      .split('?')[0]
+      .split('#')[0];
+
+    if (encodedFilename.includes('.')) {
+      return decodeURIComponent(encodedFilename);
+    }
+
+    return null;
+  }
+}

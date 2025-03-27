@@ -15,6 +15,7 @@ import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
 import { courseDrawerAtom } from '@/store/modals';
 import useWindowWidth from '@/utils/hooks/useWindowWidth';
 import { Icons } from '@/utils/icon';
+import { extractFilenameFromCloudinaryUrl } from '@/utils/utils';
 
 import CourseReport from '../_components/CourseReport';
 import CourseSideBarDrawer from '../_components/CourseSideBarDrawer';
@@ -232,22 +233,23 @@ const Page = () => {
   const DownloadLink = ({ fileUrl }: any) => {
     const files = fileUrl?.split(',');
 
-    return files?.map((file: any, index: number) => {
+    return files?.map((file: any) => {
       const fileExtension = getFileExtension(file) as keyof typeof fileIcons;
       const icon = fileExtension ? fileIcons[fileExtension] || <FaFileAlt className="w-4 h-4" /> : ''; // Default icon for unknown file types
+      const fileName = extractFilenameFromCloudinaryUrl(file);
       return (
         <a
           href={file}
           key={file}
           onClick={() => {
-            saveAs(file, `Document-${index + 1}.${fileExtension}`);
+            saveAs(file, `${fileName}`);
           }}
           target="_blank"
           rel="noopener noreferrer"
           className="bg-red-800 w-fit text-white pl-1 cursor-pointer flex items-center gap-1 justify-center rounded-sm text-xs px-2 py-1"
         >
           {icon}
-          DOWNLOAD-{index + 1}.{fileExtension}
+          {extractFilenameFromCloudinaryUrl(file)}
         </a>
       );
     });

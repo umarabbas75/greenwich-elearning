@@ -22,6 +22,7 @@ import { useToast } from '@/components/ui/use-toast';
 //import { useAddCategory } from '@/lib/dashboard/client/useGensetsData';
 import { useApiGet, useApiMutation } from '@/lib/dashboard/client/user';
 import { addChapterModalAtom } from '@/store/modals';
+import { extractFilenameFromCloudinaryUrl } from '@/utils/utils';
 /* const MAX_FILE_SIZE = 102400; */
 
 type ChapterFormTypes = {
@@ -154,7 +155,8 @@ const ChapterModal = () => {
             target="_blank"
             className="text-themeBlue underline"
           >
-            Document-{index}.{getFileExtensionFromUrl(item)}
+            {extractFilenameFromCloudinaryUrl(item)}
+            {/* Document-{index}.{getFileExtensionFromUrl(item)} */}
           </a>
           <Trash
             className="cursor-pointer hover:text-red-500"
@@ -226,6 +228,11 @@ const ChapterModal = () => {
                                 formData.append('file', file);
                                 formData.append('upload_preset', 'my_uploads');
                                 formData.append('cloud_name', 'dp9urvlsz');
+                                // Get filename without extension
+                                const originalName = file.name.replace(/\.[^/.]+$/, '');
+                                console.log({ originalName });
+                                // Set public_id to the original filename
+                                formData.append('public_id', originalName?.trim());
 
                                 const response = await axios.post(
                                   'https://api.cloudinary.com/v1_1/dp9urvlsz/raw/upload',
