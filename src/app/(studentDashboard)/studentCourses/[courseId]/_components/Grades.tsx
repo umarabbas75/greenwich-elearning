@@ -43,6 +43,7 @@ const Grades = ({
       keepPreviousData: true,
     },
   });
+  console.log({ courseDates });
 
   const grades = data?.data;
   const userDetails = data?.user;
@@ -67,7 +68,7 @@ const Grades = ({
   const courseProgress = grades?.length > 0 ? calculateTotalContribution(grades) : 0;
   const renderQuizGrade = (row: any) => {
     const percentage = (row._count?.QuizAnswer * 100) / row?._count?.quizzes;
-    return isNaN(percentage) ? 0 : percentage?.toFixed(2);
+    return isNaN(percentage) ? (0).toFixed(2) : percentage?.toFixed(2);
   };
 
   const renderStatus = (row: any) => {
@@ -161,7 +162,7 @@ const ReportHeader = ({
   const search = useSearchParams();
   const courseName = search.get('title') ?? courseNameProp;
 
-  const instituteName = 'Greenwich Training and consulting';
+  const instituteName = 'Greenwich Training & consulting';
   const instituteAddress = 'Islamabad, Pakistan';
 
   const getNewDocument = async () => {

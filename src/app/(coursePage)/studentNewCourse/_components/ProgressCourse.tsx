@@ -94,7 +94,7 @@ const ProgressCourse = () => {
           <p
             className="text-gray-500 flex gap-1 text-sm cursor-pointer"
             onClick={() => {
-              router.back();
+              router.push(`/studentCourses/${courseId}?title=${course?.title}`);
             }}
           >
             <ArrowLeft />
